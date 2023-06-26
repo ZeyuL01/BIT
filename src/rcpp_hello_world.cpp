@@ -2,6 +2,11 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+//' Name
+//'
+//' Description
+//' @param variable Parameter_Description
+//' @return Return_Description
 // [[Rcpp::export]]
 List rcpp_hello_world() {
 
