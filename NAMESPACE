@@ -1,0 +1,3 @@
+useDynLib(BayesIMTR, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
