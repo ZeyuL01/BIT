@@ -264,14 +264,41 @@ double tau1S_0(arma::vec xct, arma::vec nct, arma::vec Mc_indicator){
 
 arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat){
   int i;
+  double x;
+  double n;
   arma::vec sigmaS_0(label_mat.n_cols,fill::zeros);
 
+  for(i=0;i<sigmaS_0.n_rows;i++){
+    int j;
+    arma::uvec indices = find(label_mat.row(i));
+    arma::vec temp_vals(indices.n_rows);
 
+    for(j=0;j<indices.n_rows;j++){
+      x = xct(indices(j));
+      n = nct(indices(j));
+      temp_vals(j) = log((x+0.5)/(n-x+0.5));
+    }
+
+    sigmaS_0(i) = arma::var(temp_vals);
+  }
+
+  return(sigmaS_0);
 };
 
-arma::vec theta_ij_0(arma::vec xct,arma::vec nct);
+arma::vec theta_ij_0(arma::vec xct,arma::vec nct){
+  return(log((xct+0.5)/(nct-xct+0.5)));
+};
 
-arma::vec theta_i_0(arma::vec xct,arma::vec nct);
+arma::vec theta_i_0(arma::vec theta_ij_0,arma::mat label_mat){
+  int i;
+  arma::vec theta_i_0(theta_ij_0.n_rows,fill::zeros);
+
+  for(i=0;i<label_mat.n_cols;i++){
+    arma::mat theta_i_val = (theta_ij_0 * label_mat.row(i)) / sum(label_mat.row(i));
+    theta_i_0 = theta_i_0 + trans(label_mat.row(i) * theta_i_val(0,0));
+  }
+  return(theta_i_0);
+};
 
 arma::vec lambda_ij_0(arma::vec xct,arma::vec nct);
 
