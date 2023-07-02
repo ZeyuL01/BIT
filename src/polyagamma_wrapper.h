@@ -22,6 +22,7 @@
 #define POLYAGAMMA_HYBRID
 
 #ifdef __cplusplus
+double rpg_hybrid(double b_, double z_);
 extern "C" {
 #endif
 
