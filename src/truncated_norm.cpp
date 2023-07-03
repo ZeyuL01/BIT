@@ -52,7 +52,7 @@ double lowerbound(double left)
     double astar  = alphastar(left);
     double lbound = left + exp(0.5 * + 0.5 * left * (left - astar)) / astar;
     return lbound;
-} 
+}
 
 double tnorm(double left)
 {
@@ -69,10 +69,9 @@ double tnorm(double left)
                 #ifndef USE_R
 		fprintf(stderr, "left < 0; count: %i\n", count);
                 #else
-		rprintf("left < 0; count: %i\n", count);
+		Rprintf("left < 0; count: %i\n", count);
                 #endif
 	    }
-	    p
             #endif
         }
     }
@@ -118,7 +117,7 @@ double tnorm(double left, double right)
 	    TREOR("tnorm: parameter problem.\n", 0.5 * (left + right));
 	    // throw std::runtime_error("tnorm: parameter problem.\n");
 	}
-    
+
     if (right < left) {
 	#ifndef USE_R
         fprintf(stderr, "Warning: left: %g, right:%g.\n", left, right);
@@ -127,10 +126,10 @@ double tnorm(double left, double right)
 	#endif
         TREOR("tnorm: parameter problem.\n", 0.5 * (left + right));
     }
-    
+
     double rho, ppsl;
     int count = 1;
-    
+
     if (left >= 0) {
         double lbound = lowerbound(left);
         if (right > lbound) { // Truncated Exponential.
@@ -205,7 +204,7 @@ double tnorm(double left, double right)
     else {
         return -1. * tnorm(-1.0 * right, -1.0 * left);
     }
-} 
+}
 
 double tnorm(double left, double mu, double sd)
 {

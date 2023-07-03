@@ -11,22 +11,23 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// main_draw
-List main_draw(int M, arma::mat xct, arma::mat nct);
-RcppExport SEXP _BayesIMTR_main_draw(SEXP MSEXP, SEXP xctSEXP, SEXP nctSEXP) {
+// Main_Sampling
+List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tf_labels);
+RcppExport SEXP _BayesIMTR_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type xct(xctSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type nct(nctSEXP);
-    rcpp_result_gen = Rcpp::wrap(main_draw(M, xct, nct));
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type xct(xctSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type nct(nctSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type tf_labels(tf_labelsSEXP);
+    rcpp_result_gen = Rcpp::wrap(Main_Sampling(N, xct, nct, tf_labels));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BayesIMTR_main_draw", (DL_FUNC) &_BayesIMTR_main_draw, 3},
+    {"_BayesIMTR_Main_Sampling", (DL_FUNC) &_BayesIMTR_Main_Sampling, 4},
     {NULL, NULL, 0}
 };
 

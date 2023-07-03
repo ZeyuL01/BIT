@@ -56,13 +56,13 @@ public:
 protected:
 
   // Helper.
-  
+
   double w_left (double trunc, double h, double z);
   double w_right(double trunc, double h, double z);
 
   void   delta_func(double x, double z  , FD& delta);
   double phi_func  (double x, double mid, FD& phi);
-  
+
   double tangent_to_eta(double x, double z, double mid, Line& tl);
 
   double sp_approx(double x, double n, double z);
