@@ -22,20 +22,17 @@ You can install the development version of BayesIMTR from
 ``` r
 # install.packages("devtools")
 devtools::install_github("ZeyuL01/BayesIMTR")
-#> Skipping install of 'BayesIMTR' from a github remote, the SHA1 (8f4c634e) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to run **BayesIMTR**:
 
 ``` r
 library(BayesIMTR)
 #> Loading required package: RcppArmadillo
 #> Loading required package: RcppDist
 #> Loading required package: RcppProgress
-library(kableExtra)
 
 ##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A")
 ##can take ~10 mins to finish for 1000 rounds.
