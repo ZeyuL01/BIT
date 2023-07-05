@@ -22,8 +22,6 @@ You can install the development version of BayesIMTR from
 ``` r
 # install.packages("devtools")
 devtools::install_github("ZeyuL01/BayesIMTR")
-#> Skipping install of 'BayesIMTR' from a github remote, the SHA1 (8f4c634e) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 ```
 
 ## Example
