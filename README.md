@@ -33,7 +33,6 @@ library(BayesIMTR)
 #> Loading required package: RcppArmadillo
 #> Loading required package: RcppDist
 #> Loading required package: RcppProgress
-library(kableExtra)
 
 ##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A")
 ##can take ~10 mins to finish for 1000 rounds.
