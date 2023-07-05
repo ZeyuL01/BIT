@@ -25,7 +25,7 @@ The goal of **BayesIMTR** is to identify the potential master transcriptional re
 
 You can install the development version of BayesIMTR from [GitHub](https://github.com/ZeyuL01/BayesIMTR) with:
 
-```{r, echo=FALSE}
+```{r}
 # install.packages("devtools")
 devtools::install_github("ZeyuL01/BayesIMTR")
 ```
@@ -63,5 +63,5 @@ We may also check the higher level parameters that integrate information from in
 head(CTCF_Theta_i_db,10)
 ```
 
-This time CTCF is ranked even higher to the top 1 position over all 1472 TFs.
+This time CTCF is ranked even higher to the top 1 position over all 1476 TFs.
 

@@ -19,8 +19,12 @@ analysis(e.g. DiffBind).
 You can install the development version of BayesIMTR from
 [GitHub](https://github.com/ZeyuL01/BayesIMTR) with:
 
-    #> Skipping install of 'BayesIMTR' from a github remote, the SHA1 (4d6fe904) has not changed since last install.
-    #>   Use `force = TRUE` to force installation
+``` r
+# install.packages("devtools")
+devtools::install_github("ZeyuL01/BayesIMTR")
+#> Skipping install of 'BayesIMTR' from a github remote, the SHA1 (8f4c634e) has not changed since last install.
+#>   Use `force = TRUE` to force installation
+```
 
 ## Example
 
@@ -36,7 +40,7 @@ library(kableExtra)
 ##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A")
 ##can take ~10 mins to finish for 1000 rounds.
 CTCF_Demo_mat <- Demo(1000,"CTCF")
-#> [1] "Time used: 3.55 mins for 1000 rounds."
+#> [1] "Time used: 3.57 mins for 1000 rounds."
 ```
 
 Let’s see the results of CTCF demo data.
@@ -49,7 +53,17 @@ CTCF_Theta_ij_db <- CTCF_Results[["Theta_ij"]]
 CTCF_Theta_i_db <- CTCF_Results[["Theta_i"]]
 
 head(CTCF_Theta_ij_db,10)
-#> NULL
+#>        TF  Theta_ij Rank_ij
+#> 1   STAG2 -1.711725       1
+#> 2   KDM5B -1.719854       2
+#> 3   STAG1 -1.730364       3
+#> 4  ZNF143 -1.736727       4
+#> 5  ZNF143 -1.765155       5
+#> 6   STAG1 -1.779381       6
+#> 7   RAD21 -1.787433       7
+#> 8    CTCF -1.788355       8
+#> 9     MAX -1.791023       9
+#> 10  STAG1 -1.793131      10
 ```
 
 As we can see, CTCF is ranked into the top 10 TF in the final result.
@@ -59,8 +73,18 @@ from individual ChIP-seq tracks to give one unique rank to each TF.
 
 ``` r
 head(CTCF_Theta_i_db,10)
-#> NULL
+#>         TF   Theta_i Rank_i
+#> 1     CTCF -2.174761      1
+#> 2    RAD21 -2.639377      2
+#> 3     BRD4 -2.824606      3
+#> 4      MYC -2.910914      4
+#> 5     BRD2 -2.938636      5
+#> 6  SMARCA4 -2.952647      6
+#> 7     SMC3 -2.962993      7
+#> 8    RUNX1 -2.980765      8
+#> 9    STAG1 -2.982066      9
+#> 10   SMC1A -2.986807     10
 ```
 
-This time CTCF is ranked even higher to the top 1 position over all 1472
+This time CTCF is ranked even higher to the top 1 position over all 1476
 TFs.
