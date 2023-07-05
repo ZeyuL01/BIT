@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // Main_Sampling
-List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tf_labels);
-RcppExport SEXP _BayesIMTR_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP) {
+List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tf_labels, bool display_progress);
+RcppExport SEXP _BayesIMTR_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,13 +21,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type xct(xctSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type nct(nctSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type tf_labels(tf_labelsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Main_Sampling(N, xct, nct, tf_labels));
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(Main_Sampling(N, xct, nct, tf_labels, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BayesIMTR_Main_Sampling", (DL_FUNC) &_BayesIMTR_Main_Sampling, 4},
+    {"_BayesIMTR_Main_Sampling", (DL_FUNC) &_BayesIMTR_Main_Sampling, 5},
     {NULL, NULL, 0}
 };
 

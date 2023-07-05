@@ -1,3 +1,7 @@
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppDist)]]
+// [[Rcpp::depends(RcppProgress)]]
+
 #include <RcppArmadillo.h>
 #include "RcppArmadillo.h"
 #include "polyagamma_wrapper.h"
@@ -6,11 +10,12 @@
 #include <truncnorm.h>
 #include <RcppArmadilloExtensions/sample.h>
 #include "PolyaGammaApproxSP.h"
+#include <progress.hpp>
+#include <progress_bar.hpp>
+
 
 using namespace Rcpp;
 using namespace arma;
-// [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppDist)]]
 
 //Claim used matrix
 arma::vec xct(int N);
@@ -46,10 +51,11 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct);
 arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat);
 
 // [[Rcpp::export]]
-List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels){
+List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool display_progress=true){
   int i;
   int I;
   arma::vec kappa_ij = xct - nct / 2;
+  Progress p(N, display_progress);
 
   //generate auxiliary lists for the ease of computation.
   List auxiliary_lists = auxiliary_list_generator(tf_labels);
@@ -83,6 +89,7 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels){
   lambda_ij_mat.col(0) = lambda_ij_0(theta_ij_mat.col(0), nct);
 
   for(i=0;i<N-1;i++){
+    p.increment();
     mu0_vec(i+1) = draw_mu0(I, tau0S_vec(i), theta_i_mat.col(i), mu0_vec(0)-5, mu0_vec(0)+5);
 
     tau0S_vec(i+1) = draw_tau0S(I, mu0_vec(i+1), theta_i_mat.col(i));
@@ -107,7 +114,7 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels){
                       Rcpp::Named("theta_i") = theta_i_mat,
                       Rcpp::Named("sigmaS") = sigmaS_mat,
                       Rcpp::Named("lambda_ij") = lambda_ij_mat,
-                      Rcpp::Named("Ji_counts") = Ji_counts));
+                      Rcpp::Named("label_mat") = label_mat));
 };
 
 //functions to update parameters
@@ -122,10 +129,10 @@ double draw_tau0S(int I, double mu0, arma::vec theta_i, const double a0, const d
 
 
 double draw_mu0(int I, double tau0S, arma::vec theta_i, double upperli, double lowerli){
-  double mean = sum(theta_i) / I;
-  double var = tau0S / I;
 
-  double mu0_new = r_truncnorm(mean,var,lowerli,upperli);
+  double mean_new = mean(theta_i);
+  double sd_new = sqrt(tau0S / I);
+  double mu0_new = R::rnorm(mean_new,sd_new);
 
   return(mu0_new);
 };
@@ -321,6 +328,9 @@ arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat){
     }
 
     sigmaS_0(i) = arma::var(temp_vals);
+    if(sigmaS_0(i)==0){
+      sigmaS_0(i)=0.01;
+    }
   }
 
   return(sigmaS_0);
@@ -351,5 +361,9 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct){
 
   return(lambda_ij_0);
 };
+
+
+
+
 
 
