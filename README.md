@@ -19,6 +19,11 @@ analysis(e.g. DiffBind).
 You can install the development version of BayesIMTR from
 [GitHub](https://github.com/ZeyuL01/BayesIMTR) with:
 
+``` r
+# install.packages("devtools")
+devtools::install_github("ZeyuL01/BayesIMTR")
+```
+
 If you meet a compilation problem, 
 
 for mac users please refer:
@@ -27,10 +32,6 @@ https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-ma
 for windows users please refer:
 https://cran.r-project.org/bin/windows/base/howto-R-devel.html
 
-``` r
-# install.packages("devtools")
-devtools::install_github("ZeyuL01/BayesIMTR")
-```
 
 ## Example
 
