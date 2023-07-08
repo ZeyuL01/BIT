@@ -24,6 +24,15 @@ You can install the development version of BayesIMTR from
 devtools::install_github("ZeyuL01/BayesIMTR")
 ```
 
+If you meet a compilation problem, 
+
+for mac users please refer to:
+https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
+
+for windows users please refer to:
+https://cran.r-project.org/bin/windows/base/howto-R-devel.html
+
+
 ## Example
 
 This is a basic example which shows you how to run **BayesIMTR**:
