@@ -1,5 +1,4 @@
 ##functions to transform peaks to windows.
-
 import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak"), window_length = 1000){
   window_inds<-c()
 

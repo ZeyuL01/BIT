@@ -11,6 +11,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// Alignment
+List Alignment(NumericVector input_vec, NumericVector ref_vec);
+RcppExport SEXP _BayesIMTR_Alignment(SEXP input_vecSEXP, SEXP ref_vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type input_vec(input_vecSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ref_vec(ref_vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(Alignment(input_vec, ref_vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Main_Sampling
 List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tf_labels, bool display_progress);
 RcppExport SEXP _BayesIMTR_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP, SEXP display_progressSEXP) {
@@ -28,6 +40,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_BayesIMTR_Alignment", (DL_FUNC) &_BayesIMTR_Alignment, 2},
     {"_BayesIMTR_Main_Sampling", (DL_FUNC) &_BayesIMTR_Main_Sampling, 5},
     {NULL, NULL, 0}
 };
