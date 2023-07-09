@@ -1,5 +1,5 @@
 ##functions to transform peaks to windows.
-import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak"), window_length = 1000){
+import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), window_length = 1000){
   window_inds<-c()
 
   if(format=="bed"){
@@ -15,6 +15,8 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak"), window_len
                              qValue = "numeric", peak = "integer")
     peak_dat <- rtracklayer::import(broadPeak_file, format = "BED",
                                     extraCols = extraCols_broadPeak)
+  }else if(format=="bigNarrowPeak"){
+    peak_dat <- rtracklayer::import(file)
   }
 
 #Fixed window numbers with 3031030 windows in total.
@@ -36,12 +38,14 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak"), window_len
       start <- rtracklayer::start(peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab])
       end <- rtracklayer::end(peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab])
       inds <- (end + start) %/% (2 * window_length) + 1
-    }else{
-      inds <- peak_dat$peak %/% window_length + 1
+    }else if(format=="narrowPeak" | format=="broadPeak"){
+      inds <- peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$peak %/% window_length + 1
+    }else if(format=="bigNarrowPeak"){
+      inds <- peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$abs_summit %/% window_length + 1
     }
 
     inds <- inds[inds<=chr_windows[i+1]]
-
+    inds <- inds[!duplicated(inds)]
     window_inds <- c(window_inds,(chr_windows_cs[i]+inds))
   }
   return(window_inds)
