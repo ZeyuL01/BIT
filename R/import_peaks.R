@@ -21,7 +21,7 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 
 #Fixed window numbers with 3031030 windows in total.
   N <- 3031030
-#Fixed windown numbers for each choromsome.
+#Fixed window numbers for each chromosome.
   chr_windows <- c(0,248956,242193,198295,190214,181538,170805,
                    159345,145138,138394,133797,135086,133275,
                    114364,107043,101991,90338,83257,80373,
