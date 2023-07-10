@@ -1,13 +1,13 @@
 Package: BayesIMTR
 Type: Package
-Title: Bayesian Identification of Master Transcriptional Regulators.
+Title: Bayesian Identification of Master Transcriptional Regulators
 Version: 1.0
 Date: 2023-06-26
-Author: Zeyu Lu, Xinlei Wang, Lin Xu, Yanfeng Zhang.
+Author: Zeyu Lu, Xinlei Wang, Lin Xu, Yanfeng Zhang
 Maintainer: Zeyu Lu <zeyul@smu.edu>
 Description: A Bayesian approach for identifying the potential master transcriptional regulators given input of high accessibility regions.
 License: GPL (>= 3)
-Imports: Rcpp (>= 1.0.10), RcppArmadillo, RcppDist, RcppProgress, rtracklayer, GenomicRanges
+Imports: Rcpp (>= 1.0.10), rtracklayer, GenomicRanges, data.table, R.utils
 LinkingTo: Rcpp, RcppArmadillo, RcppDist, RcppProgress
 Encoding: UTF-8
 Suggests: 

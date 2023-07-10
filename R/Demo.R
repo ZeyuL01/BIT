@@ -1,5 +1,18 @@
 #Show the demo
 
+#' Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.
+#'
+#' @param N number of rounds for gibbs sampler, recommended for > 1000.
+#' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
+#'
+#' @return A list object contains results of Gibbs sampler.
+#' @export
+#'
+#' @examples
+#' CTCF_Demo <- Demo(1000, "CTCF")
+#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
+#' head(CTCF_Results[["Theta_ij"]],10)
+#' head(CTCF_Results[["Theta_i"]],10)
 Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
   if(dat=="CTCF"){
     dat = CTCF_Demo
@@ -24,6 +37,19 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
   return(results)
 }
 
+#' To show the ranking table by inspecting the results of Gibbs sampler.
+#'
+#' @param dat results from Main_sampling.
+#' @param burnin number of samples used for burn-in.
+#'
+#' @return a list object contains two data.frame. one by ranking the theta_ij, the other one by ranking theta_i.
+#' @export
+#'
+#' @examples
+#' CTCF_Demo <- Demo(1000, "CTCF")
+#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
+#' head(CTCF_Results[["Theta_ij"]],10)
+#' head(CTCF_Results[["Theta_i"]],10)
 Show_Results<-function(dat,burnin){
   TF_names=CTCF_Demo$TF
   theta_ij_mat<-dat$theta_ij
