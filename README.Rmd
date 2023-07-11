@@ -49,7 +49,7 @@ Pre-compiled ChIP-seq database can be accessed through: https://smu.box.com/s/mh
 
 #The function below just need to run once to setup.
 #bin_width has to map with the loaded chip-seq file, we have three options: 100/500/1000.
-chip_path = "/Users/zeyulu/Dropbox/datasets/macs2_peak_inds"
+chip_path = "/Users/user/Desktop/data/ChIP-seqs"
 load_chip_data(chip_path, bin_width = 1000)
 ```
 
@@ -58,12 +58,12 @@ It is very simple to run **BayesIMTR** as long as you have the peak file derived
 
 ```{r}
 #As an example, the user-input peak set file path is "/Users/user/Desktop/input.bed"
-input_path = "/Users/zeyulu/Dropbox/datasets/ATAC_seq/LSD1.bed"
-KDM1A_test<-BayesIMTR(input_path,format = "bed", N = 1000, bin_width = 1000)
-KDM1A_results<-Show_Results(KDM1A_test, burnin=500)
+input_path = "/Users/user/Desktop/input.bed"
+input_test<-BayesIMTR(input_path,format = "bed", N = 1000, bin_width = 1000)
+input_results<-Show_Results(input_test, burnin=500)
 
-head(KDM1A_results[["Theta_ij"]],10)
-head(KDM1A_results[["Theta_i"]],10)
+head(input_results[["Theta_ij"]],10)
+head(input_results[["Theta_i"]],10)
 ```
 
 ## Example
