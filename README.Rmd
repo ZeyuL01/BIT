@@ -25,29 +25,61 @@ The goal of **BayesIMTR** is to identify the potential master transcriptional re
 
 You can install the development version of BayesIMTR from [GitHub](https://github.com/ZeyuL01/BayesIMTR) with:
 
-```{r}
+```{r,results='hide'}
 # install.packages("devtools")
-devtools::install_github("ZeyuL01/BayesIMTR")
+# devtools::install_github("ZeyuL01/BayesIMTR")
+library(BayesIMTR)
+```
+
+If you meet a compilation problem,
+
+for mac users please refer to: https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
+
+for windows users please refer to: https://cran.r-project.org/bin/windows/base/howto-R-devel.html
+
+or submit your questions, we are happy to answer them.
+
+## Load ChIP-seq data
+
+Pre-compiled ChIP-seq database can be accessed through: https://smu.box.com/s/mhpelp5zro7538pbfkfj65xf61842huo
+
+```{r}
+#Please download the chip-seq file and unzip it to a local directory.
+#For example: /Users/user/Desktop/data/ChIP-seq
+
+#The function below just need to run once to setup.
+#bin_width has to map with the loaded chip-seq file, we have three options: 100/500/1000.
+chip_path = "/Users/zeyulu/Dropbox/datasets/macs2_peak_inds"
+load_chip_data(chip_path, bin_width = 1000)
+```
+
+## How to run BayesIMTR.
+It is very simple to run **BayesIMTR** as long as you have the peak file derived from a common peak-calling algorithm, or any interested regions you have defined in advance. The input file should has format of bed/narrowPeak/broadPeak/bigNarrowPeak.
+
+```{r}
+#As an example, the user-input peak set file path is "/Users/user/Desktop/input.bed"
+input_path = "/Users/zeyulu/Dropbox/datasets/ATAC_seq/LSD1.bed"
+KDM1A_test<-BayesIMTR(input_path,format = "bed", N = 1000, bin_width = 1000)
+KDM1A_results<-Show_Results(KDM1A_test, burnin=500)
+
+head(KDM1A_results[["Theta_ij"]],10)
+head(KDM1A_results[["Theta_i"]],10)
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to get the Demo results used in **BayesIMTR** manuscript:
 
-```{r example}
+```{r}
 library(BayesIMTR)
 library(kableExtra)
 
-##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A")
+##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A").
 ##can take ~10 mins to finish for 1000 rounds.
 CTCF_Demo_mat <- Demo(1000,"CTCF")
-```
 
-Let's see the results of CTCF demo data.
-
-```{r CTCF}
 ##Show_Results can summarize the results from Gibbs sampler.
-##must specify the burnin
+##must specify the burnin.
 CTCF_Results <- Show_Results(CTCF_Demo_mat,burnin=500)
 CTCF_Theta_ij_db <- CTCF_Results[["Theta_ij"]]
 CTCF_Theta_i_db <- CTCF_Results[["Theta_i"]]
@@ -59,7 +91,7 @@ As we can see, CTCF is ranked into the top 10 TF in the final result.
 
 We may also check the higher level parameters that integrate information from individual ChIP-seq tracks to give one unique rank to each TF.
 
-```{r theta_i}
+```{r}
 head(CTCF_Theta_i_db,10)
 ```
 

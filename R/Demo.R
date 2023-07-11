@@ -15,16 +15,16 @@
 #' head(CTCF_Results[["Theta_i"]],10)
 Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
   if(dat=="CTCF"){
-    dat = CTCF_Demo
+    Demo_dat = CTCF_Demo
   }else if(dat=="ZBTB7A"){
-    dat = ZBTB7A_Demo
+    Demo_dat = ZBTB7A_Demo
   }else if(dat=="KDM1A"){
-    dat = KDM1A_Demo
+    Demo_dat = KDM1A_Demo
   }
 
-  tf_labs<-as.numeric(factor(dat$TF))
-  xct<-dat$GOOD
-  nct<-dat$TOTAL
+  tf_labs<-as.numeric(factor(Demo_dat$TF))
+  xct<-Demo_dat$GOOD
+  nct<-Demo_dat$TOTAL
 
   start_time <- Sys.time()
 
@@ -34,6 +34,7 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
   time_used<-difftime(end_time,start_time)
   print(paste0("Time used: ", round(time_used,2)," ",units(time_used)," for ",N," rounds."))
 
+  results[["TF_names"]]<-Demo_dat$TF
   return(results)
 }
 
@@ -51,7 +52,7 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
 #' head(CTCF_Results[["Theta_ij"]],10)
 #' head(CTCF_Results[["Theta_i"]],10)
 Show_Results<-function(dat,burnin){
-  TF_names=CTCF_Demo$TF
+  TF_names <- dat[["TF_names"]]
   theta_ij_mat<-dat$theta_ij
   theta_i_mat<-dat$theta_i
   tf_results_ij<-rowMeans(theta_ij_mat[,(dim(theta_ij_mat)[2]-burnin):dim(theta_ij_mat)[2]])

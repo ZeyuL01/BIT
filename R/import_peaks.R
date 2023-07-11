@@ -24,12 +24,19 @@ alignment_wrapper <- function(input_vec, bin_width){
   good_vec <- c()
   total_vec <- c()
 
+  pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                       max = nrow(chip_table), # Maximum value of the progress bar
+                       style = 1,    # Progress bar style (also available style = 1 and style = 2)
+                       width = 50,   # Progress bar width. Defaults to getOption("width")
+                       char = "=")   # Character used to create the bar
+
   for(i in 1:nrow(chip_table)){
     ref_vec <- data.table::fread(file_table$File_Path[i])[[1]]
     alignment_result<-Alignment(input_vec,ref_vec)
 
     good_vec <- c(good_vec, alignment_result$Xi)
     total_vec <- c(total_vec, alignment_result$Ni)
+    setTxtProgressBar(pb, i)
   }
 
   chip_table$GOOD <- good_vec

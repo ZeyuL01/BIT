@@ -29,7 +29,7 @@ load_chip_data <- function(data_path, bin_width){
       colnames(meta_table)<-c("TF","File_Path")
 
       meta_table$TF <- TF_labels
-      meta_table$File_Path <- paste0(data_path,ChIP_seq_files)
+      meta_table$File_Path <- paste0(data_path,"/",ChIP_seq_files)
 
       data_list[[paste0("meta_",bin_width)]] = meta_table
 
