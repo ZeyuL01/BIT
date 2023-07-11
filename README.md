@@ -46,6 +46,7 @@ Pre-compiled ChIP-seq database can be accessed through:
 
 #The function below just need to run once to setup.
 #bin_width has to map with the loaded chip-seq file, we have three options: 100/500/1000.
+
 chip_path = "/Users/user/Desktop/data/ChIP-seq"
 load_chip_data(chip_path, bin_width = 1000)
 #> Warning in load_chip_data(chip_path, bin_width = 1000): Overwriting previous
@@ -63,6 +64,7 @@ bed/narrowPeak/broadPeak/bigNarrowPeak.
 
 ``` r
 #As an example, the user-input peak set file path is "/Users/user/Desktop/input.bed"
+
 input_path = "/Users/user/Desktop/input.bed"
 input_test<-BayesIMTR(input_path,format = "bed", N = 1000, bin_width = 1000)
 #> [1] "Load and map peaks to bins..."
@@ -71,6 +73,7 @@ input_test<-BayesIMTR(input_path,format = "bed", N = 1000, bin_width = 1000)
 #> ==================================================[1] "Done."
 #> [1] "Start BayesIMTR core, rounds: 1000"
 #> [1] "Done."
+
 input_results<-Show_Results(input_test, burnin=500)
 
 head(input_results[["Theta_ij"]],10)
@@ -85,6 +88,7 @@ head(input_results[["Theta_ij"]],10)
 #> 8  EP400 -1.1657020       8
 #> 9  FOXM1 -1.1717745       9
 #> 10   MAX -1.1756919      10
+
 head(input_results[["Theta_i"]],10)
 #>         TF   Theta_i Rank_i
 #> 1     CTCF -2.132505      1
@@ -110,11 +114,13 @@ library(kableExtra)
 
 ##package has three demo knock-out experiment derived datasets c("CTCF","KDM1A","ZBTB7A").
 ##can take ~10 mins to finish for 1000 rounds.
+
 CTCF_Demo_mat <- Demo(1000,"CTCF")
 #> [1] "Time used: 3.57 mins for 1000 rounds."
 
 ##Show_Results can summarize the results from Gibbs sampler.
 ##must specify the burnin.
+
 CTCF_Results <- Show_Results(CTCF_Demo_mat,burnin=500)
 CTCF_Theta_ij_db <- CTCF_Results[["Theta_ij"]]
 CTCF_Theta_i_db <- CTCF_Results[["Theta_i"]]
