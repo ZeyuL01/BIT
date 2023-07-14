@@ -7,11 +7,11 @@
 #include "polyagamma_wrapper.h"
 #include <Rcpp.h>
 #include <mvnorm.h>
-#include <truncnorm.h>
 #include <RcppArmadilloExtensions/sample.h>
 #include "PolyaGammaApproxSP.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
+#include <ctime>
 
 
 using namespace Rcpp;
@@ -33,12 +33,12 @@ arma::mat label_mat(arma::vec tf_labels);
 double draw_tau0S(int I, double mu0, arma::vec theta_i, const double a0 = 0.01, const double b0 = 0.01);
 double draw_mu0(int I, double tau0S, arma::vec theta_i, double upperli, double lowerli);
 double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i,const double a1=0.01,const double b1=0.01);
-arma::vec draw_sigmaS(arma::rowvec Ji,arma::mat label_mat,arma::vec theta_ij,
+arma::vec draw_sigmaS(double tau1S, arma::rowvec Ji,arma::mat label_mat,arma::vec theta_ij,
                       arma::vec theta_i,const double a2 = 0.01,const double b2 = 0.01);
-arma::vec draw_theta_ij(arma::vec xct,arma::vec nct,arma::vec kappa_ij,arma::rowvec M_indicator,arma::rowvec Mc_indicator,
-                        arma::vec sigmaS,arma::vec tf_labels,double tau1S,arma::vec lambda_ij,arma::vec theta_i, arma::rowvec Ji_counts);
-arma::vec draw_theta_i(arma::vec theta_ij,arma::rowvec M_indicator,arma::rowvec Mc_indicator,
-                       double tau1S,arma::vec sigmaS,double mu0,double tau0S,arma::mat label_mat,arma::rowvec Ji_counts);
+arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tf_labels,
+                        double tau1S, arma::vec lambda_ij, arma::vec theta_i, arma::rowvec Ji_counts);
+arma::vec draw_theta_i(arma::vec theta_ij, double tau1S, arma::vec sigmaS, double mu0, double tau0S,
+                       arma::mat label_mat,arma::rowvec Ji_counts);
 arma::vec draw_lambda_ij(arma::vec nct, arma::vec theta_ij);
 
 //initialize parameters
@@ -90,21 +90,24 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
 
   for(i=0;i<N-1;i++){
     p.increment();
+
     mu0_vec(i+1) = draw_mu0(I, tau0S_vec(i), theta_i_mat.col(i), mu0_vec(0)-5, mu0_vec(0)+5);
 
     tau0S_vec(i+1) = draw_tau0S(I, mu0_vec(i+1), theta_i_mat.col(i));
 
     tau1S_vec(i+1) = draw_tau1S(Mc_indicator, theta_ij_mat.col(i), theta_i_mat.col(i));
 
-    theta_ij_mat.col(i+1) = draw_theta_ij(xct, nct, kappa_ij, M_indicator, Mc_indicator, sigmaS_mat.col(i), tf_labels,
+    sigmaS_mat.col(i+1) = draw_sigmaS(tau1S_vec(i+1), Ji_counts, label_mat, theta_ij_mat.col(i+1), theta_i_mat.col(i+1));
+
+    theta_ij_mat.col(i+1) = draw_theta_ij(xct, nct, kappa_ij, sigmaS_mat.col(i), tf_labels,
                      tau1S_vec(i+1), lambda_ij_mat.col(i), theta_i_mat.col(i),Ji_counts);
 
-    theta_i_mat.col(i+1) = draw_theta_i(theta_ij_mat.col(i+1), M_indicator, Mc_indicator, tau1S_vec(i+1), sigmaS_mat.col(i),
+    theta_i_mat.col(i+1) = draw_theta_i(theta_ij_mat.col(i+1), tau1S_vec(i+1), sigmaS_mat.col(i),
                     mu0_vec(i+1), tau0S_vec(i+1), label_mat, Ji_counts);
 
-    sigmaS_mat.col(i+1) = draw_sigmaS(Ji_counts, label_mat, theta_ij_mat.col(i+1), theta_i_mat.col(i+1));
-
     lambda_ij_mat.col(i+1) = draw_lambda_ij(nct, theta_ij_mat.col(i+1));
+
+
   }
 
   return(List::create(Rcpp::Named("mu0") = mu0_vec,
@@ -146,8 +149,11 @@ double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i
   return(1/tau1S_new);
 };
 
-arma::vec draw_sigmaS(arma::rowvec Ji, arma::mat label_mat, arma::vec theta_ij,
+arma::vec draw_sigmaS(double tau1S,arma::rowvec Ji, arma::mat label_mat, arma::vec theta_ij,
                       arma::vec theta_i, const double a2, const double b2){
+
+  double a2_new = 0;
+  double b2_new = 0;
   int i;
 
   arma::vec sigmaS_new(label_mat.n_rows,fill::zeros);
@@ -155,63 +161,49 @@ arma::vec draw_sigmaS(arma::rowvec Ji, arma::mat label_mat, arma::vec theta_ij,
 
   for(i=0;i<sigmaS_new.n_rows;i++){
     if(Ji(i)==1){
-      sigmaS_new(i) = 0;
+      sigmaS_new(i) = tau1S;
       continue;
     }
-    double a2_new = a2 + Ji(i) / 2;
-    double b2_new = b2 + sum(label_mat.row(i) % trans(part)) / 2;
+    a2_new = a2 + Ji(i) / 2;
+    b2_new = b2 + sum(label_mat.row(i) * part) / 2;
     sigmaS_new(i) = 1/(R::rgamma(a2_new,b2_new));
   }
 
   return(sigmaS_new);
 };
 
-arma::vec draw_theta_ij(arma::vec xct,arma::vec nct,arma::vec kappa_ij,arma::rowvec M_indicator,arma::rowvec Mc_indicator,
-                        arma::vec sigmaS,arma::vec tf_labels,double tau1S,arma::vec lambda_ij,arma::vec theta_i,arma::rowvec Ji_counts){
+arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tf_labels,
+                        double tau1S, arma::vec lambda_ij, arma::vec theta_i, arma::rowvec Ji_counts){
   int i;
   double V1 = 0;
   double m1 = 0;
-
-  double sigmaS_used = 0;
   arma::vec theta_ij_new(xct.n_rows);
 
   for(i=0;i<theta_ij_new.n_rows;i++){
-    if(Ji_counts(tf_labels(i)-1)==1){
-      V1 = 1 / (lambda_ij(i) + 1 / tau1S);
-      m1 = V1 * (kappa_ij(i) + theta_i(i)/tau1S);
-      theta_ij_new(i) = R::rnorm(m1,V1);
-    }else{
-      sigmaS_used = sigmaS(tf_labels(i)-1);
-      V1 = 1 / (lambda_ij(i) + 1 / sigmaS_used);
-      m1 = V1 * (kappa_ij(i) + theta_i(i)/sigmaS_used);
-      theta_ij_new(i) = R::rnorm(m1,V1);
-    }
+    V1 = 1 / (lambda_ij(i) + 1 / sigmaS(tf_labels(i)-1));
+    m1 = V1 * (kappa_ij(i) + theta_i(i)/sigmaS(tf_labels(i)-1));
+    theta_ij_new(i) = R::rnorm(m1,V1);
   }
 
   return(theta_ij_new);
 }
 
-arma::vec draw_theta_i(arma::vec theta_ij,arma::rowvec M_indicator,arma::rowvec Mc_indicator,
-                       double tau1S,arma::vec sigmaS,double mu0,double tau0S,arma::mat label_mat, arma::rowvec Ji_counts){
+arma::vec draw_theta_i(arma::vec theta_ij, double tau1S, arma::vec sigmaS, double mu0, double tau0S,
+                       arma::mat label_mat, arma::rowvec Ji_counts){
   int i;
-  arma::vec theta_i_new(theta_ij.n_rows,fill::zeros);
+  double mu_star;
+  double tau_star;
+  int Ji;
+  arma::rowvec theta_i_new(theta_ij.n_rows,fill::zeros);
 
   for(i=0;i<label_mat.n_rows;i++){
-    double mu_star;
-    double tau_star;
-
-    if(Ji_counts(i)==1){
-      mu_star = sum((mu0 * tau1S + label_mat.row(i) * theta_ij * tau0S) / (tau0S + tau1S));
-      tau_star = 1 / (1 / tau1S + 1 / tau0S);
-    }else{
-      mu_star = sum((mu0 * sigmaS(i) + sum(label_mat.row(i) * theta_ij * tau0S)) / (sigmaS(i) + Ji_counts(i) * tau0S));
-      tau_star = 1 / (1 / tau0S + Ji_counts(i) / sigmaS(i));
-    }
-
+    Ji = Ji_counts(i);
+    mu_star = sum((mu0 * sigmaS(i) + sum(label_mat.row(i) * theta_ij * tau0S)) / (sigmaS(i) + Ji * tau0S));
+    tau_star = 1 / (1 / tau0S + Ji / sigmaS(i));
     double theta_i_rd = R::rnorm(mu_star,tau_star);
-    theta_i_new = theta_i_new + trans(label_mat.row(i) * theta_i_rd);
+    theta_i_new = theta_i_new + label_mat.row(i) * theta_i_rd;
   }
-  return(theta_i_new);
+  return(trans(theta_i_new));
 };
 
 arma::vec draw_lambda_ij(arma::vec nct, arma::vec theta_ij){
@@ -361,8 +353,6 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct){
 
   return(lambda_ij_0);
 };
-
-
 
 
 

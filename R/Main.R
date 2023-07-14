@@ -1,6 +1,7 @@
 ##Main function
 
-#' Title
+#' BayesIMTR
+#' @description Main interface to run BayesIMTR method, user need to give the input file path, format, number of rounds and bin width.
 #'
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
@@ -30,5 +31,36 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
   gibbs_sampler_results <- Main_Sampling(N, xct, nct, tf_labels)
   gibbs_sampler_results[["TF_names"]] <- alignment_results$TF
   print("Done.")
+
   return(gibbs_sampler_results)
 }
+
+
+#' BayesIMTR_multi
+#' @description the multi-cores parallel version of BayesIMTR to acquire parallel MCMC chains for gelman-rubin diagnostic.
+#'
+#' @param file file path to the user-input.
+#' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
+#' @param N number of rounds for gibbs sampler, recommended for > 1000.
+#' @param bin_width desired width of bin, should be in 100/500/1000.
+#' @param numCores number of cores used in parallel computation.
+#'
+#' @return A list object of list objects that contains results of Gibbs sampler.
+#'
+#' @examples
+BayesIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 1000 ,bin_width = 1000, numCores){
+    local_cl <- parallel::makeCluster(numCores)
+    clusterExport(cl=local_cl, c("file","format","N","bin_width"),envir = environment())
+    multi_results <- parallel::clusterEvalQ(local_cl, {
+      library(BayesIMTR)
+      BayesIMTR(file = file,format = format,N = N, bin_width = bin_width)
+    })
+    parallel::stopCluster(local_cl)
+
+    return(multi_results)
+}
+
+
+
+
+

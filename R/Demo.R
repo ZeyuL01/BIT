@@ -75,3 +75,54 @@ Show_Results<-function(dat,burnin){
 }
 
 
+
+#' Title
+#'
+#' @param N
+#' @param dat
+#' @param nchains
+#'
+#' @return
+#' @export
+#'
+#' @examples
+gelman_rubin_Demo <- function(N = 1000 , dat=c("CTCF","ZBTB7A","KDM1A"), nchains = parallel::detectCores()){
+  if(nchains > parallel::detectCores()){
+    stop("number of chains computed should be less or equal to number of cores.")
+  }
+  local_cl <- parallel::makeCluster(nchains)
+  clusterExport(cl=local_cl, c("N","dat"),envir = environment())
+  results <- parallel::clusterEvalQ(local_cl, {
+    library(BayesIMTR)
+    Demo(N = N, dat = dat)
+  })
+  parallel::stopCluster(local_cl)
+
+  mu0_nchains_list <- mcmc_list_transformer(results,"mu0",nchains)
+  tau0S_nchains_list <- mcmc_list_transformer(results,"tau0S",nchains)
+  tau1S_nchains_list <- mcmc_list_transformer(results,"tau1S",nchains)
+  theta_ij_nchains_list <- mcmc_list_transformer(results,"theta_ij",nchains)
+  theta_i_nchains_list <- mcmc_list_transformer(results,"theta_i",nchains)
+  sigmaS_nchains_list <- mcmc_list_transformer(results,"sigmaS",nchains)
+
+  results_list<-list()
+  results_list[["mu0"]] <- coda::gelman.diag(mu0_nchains_list)
+  results_list[["tau0S"]] <- coda::gelman.diag(tau0S_nchains_list)
+  results_list[["tau1S"]] <- coda::gelman.diag(tau1S_nchains_list)
+  results_list[["theta_ij"]] <- list()
+  for(j in 1:length(theta_ij_nchains_list)){
+    results_list[["theta_ij"]][[j]] <- coda::gelman.diag(theta_ij_nchains_list[[j]])
+  }
+
+  results_list[["theta_i"]] <- list()
+  for(j in 1:length(theta_i_nchains_list)){
+    results_list[["theta_i"]][[j]] <- coda::gelman.diag(theta_i_nchains_list[[j]])
+  }
+
+  results_list[["sigmaS"]] <- list()
+  for(j in 1:length(sigmaS_nchains_list)){
+    results_list[["sigmaS"]][[j]] <- coda::gelman.diag(sigmaS_nchains_list[[j]])
+  }
+
+  return(results_list)
+}

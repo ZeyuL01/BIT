@@ -7,7 +7,7 @@ Author: Zeyu Lu, Xinlei Wang, Lin Xu, Yanfeng Zhang
 Maintainer: Zeyu Lu <zeyul@smu.edu>
 Description: A Bayesian approach for identifying the potential master transcriptional regulators given input of high accessibility regions.
 License: GPL (>= 3)
-Imports: Rcpp (>= 1.0.10), rtracklayer, GenomicRanges, data.table, R.utils
+Imports: Rcpp (>= 1.0.10), rtracklayer, GenomicRanges, data.table, R.utils, parallel, coda
 LinkingTo: Rcpp, RcppArmadillo, RcppDist, RcppProgress
 Encoding: UTF-8
 Suggests: 
