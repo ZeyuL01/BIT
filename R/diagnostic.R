@@ -14,8 +14,8 @@
 #' @export
 #'
 #' @examples
-gelman_rubin <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 1000 ,
-             bin_width = 1000, nchains = parallel::detectCores()){
+gelman_rubin <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,
+             bin_width = 1000, nchains = parallel::detectCores()-1){
   if(nchains > parallel::detectCores()){
     stop("number of chains computed should be less or equal to number of cores.")
   }

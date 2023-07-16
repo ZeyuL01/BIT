@@ -2,15 +2,15 @@
 
 #' Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.
 #'
-#' @param N number of rounds for gibbs sampler, recommended for > 1000.
+#' @param N number of rounds for gibbs sampler, recommended for > 2000.
 #' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
 #'
 #' @examples
-#' CTCF_Demo <- Demo(1000, "CTCF")
-#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
+#' CTCF_Demo <- Demo(2000, "CTCF")
+#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 1000)
 #' head(CTCF_Results[["Theta_ij"]],10)
 #' head(CTCF_Results[["Theta_i"]],10)
 Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
@@ -47,8 +47,8 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
 #' @export
 #'
 #' @examples
-#' CTCF_Demo <- Demo(1000, "CTCF")
-#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
+#' CTCF_Demo <- Demo(2000, "CTCF")
+#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 1000)
 #' head(CTCF_Results[["Theta_ij"]],10)
 #' head(CTCF_Results[["Theta_i"]],10)
 Show_Results<-function(dat,burnin){
@@ -76,17 +76,18 @@ Show_Results<-function(dat,burnin){
 
 
 
-#' Title
+#' gelman-rubin demo
 #'
-#' @param N
-#' @param dat
-#' @param nchains
+#' @description Gelman-Rubin convergence diagnostic for Demo dataset, recommend for N > 2000
+#' @param N number of rounds
+#' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
+#' @param nchains number of chains.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-gelman_rubin_Demo <- function(N = 1000 , dat=c("CTCF","ZBTB7A","KDM1A"), nchains = parallel::detectCores()){
+gelman_rubin_Demo <- function(N = 2000 , dat=c("CTCF","ZBTB7A","KDM1A"), nchains = parallel::detectCores()-1){
   if(nchains > parallel::detectCores()){
     stop("number of chains computed should be less or equal to number of cores.")
   }
