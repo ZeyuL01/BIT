@@ -11,7 +11,6 @@
 #include "PolyaGammaApproxSP.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
-#include <ctime>
 
 
 using namespace Rcpp;
@@ -279,11 +278,11 @@ arma::mat label_mat(arma::vec tf_labels){
 
 //functions to initialize parameters.
 double tau0S_0(arma::vec xct,arma::vec nct){
-  return(arma::var(log((xct+0.5)/(nct-xct+0.5))));
+  return(arma::var(log((xct+0.5)/(nct-xct+0.5))) + R::runif(0,1));
 };
 
 double mu0_0(arma::vec xct,arma::vec nct){
-  return(mean(log((xct+0.5)/(nct-xct+0.5))));
+  return(mean(log((xct+0.5)/(nct-xct+0.5))) + R::runif(-1,1));
 };
 
 double tau1S_0(arma::vec xct, arma::vec nct, arma::rowvec Mc_indicator){
@@ -296,7 +295,7 @@ double tau1S_0(arma::vec xct, arma::vec nct, arma::rowvec Mc_indicator){
   for(i=0;i<theta_i1_0.n_rows;i++){
     x = xct(theta_i1_indices(i));
     n = nct(theta_i1_indices(i));
-    theta_i1_0(i) = log((x+0.5)/(n-x+0.5));
+    theta_i1_0(i) = log((x+0.5)/(n-x+0.5)) + R::runif(0,1);
   }
 
   return(arma::var(theta_i1_0));
@@ -316,12 +315,12 @@ arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat){
     for(j=0;j<indices.n_rows;j++){
       x = xct(indices(j));
       n = nct(indices(j));
-      temp_vals(j) = log((x+0.5)/(n-x+0.5));
+      temp_vals(j) = log((x+0.5)/(n-x+0.5)) + R::runif(0,0.1);
     }
 
     sigmaS_0(i) = arma::var(temp_vals);
     if(sigmaS_0(i)==0){
-      sigmaS_0(i)=0.01;
+      sigmaS_0(i)=0.01 + R::runif(0,0.1);
     }
   }
 
@@ -329,7 +328,7 @@ arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat){
 };
 
 arma::vec theta_ij_0(arma::vec xct,arma::vec nct){
-  return(log((xct+0.5)/(nct-xct+0.5)));
+  return(log((xct+0.5)/(nct-xct+0.5))+R::runif(-1,1));
 };
 
 arma::vec theta_i_0(arma::vec theta_ij_0,arma::mat label_mat){
@@ -338,7 +337,7 @@ arma::vec theta_i_0(arma::vec theta_ij_0,arma::mat label_mat){
 
   for(i=0;i<label_mat.n_rows;i++){
     arma::mat theta_i_val = (label_mat.row(i) * theta_ij_0 ) / sum(label_mat.row(i));
-    theta_i_0 = theta_i_0 + trans(label_mat.row(i) * theta_i_val(0,0));
+    theta_i_0 = theta_i_0 + trans(label_mat.row(i) * theta_i_val(0,0) + R::runif(-1,1));
   }
   return(theta_i_0);
 };
