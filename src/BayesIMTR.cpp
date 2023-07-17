@@ -126,7 +126,7 @@ double draw_tau0S(int I, double mu0, arma::vec theta_i, arma::rowvec unique_thet
 
   double tau0S_new = R::rgamma(rate,scale);
 
-  return(1/tau0S_new);
+  return(1 / tau0S_new);
 };
 
 

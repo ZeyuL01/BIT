@@ -9,7 +9,8 @@ BayesIMTR(
   format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak"),
   N = 2000,
   bin_width = 1000,
-  version = c(1, 2)
+  version = c(1, 2),
+  centerized = FALSE
 )
 }
 \arguments{

@@ -10,7 +10,7 @@
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
-BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, version = c(1,2)){
+BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, version = c(1,2), centerized = FALSE){
   print("Load and map peaks to bins...")
   input_peak_inds <- import_peaks(file = file, format = format, bin_width = bin_width)
   print("Done.")
@@ -34,7 +34,9 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 
   gibbs_sampler_results[["TF_names"]] <- alignment_results$TF
   print("Done.")
-
+  if(centerized==TRUE){
+    gibbs_sampler_results <- centerized(gibbs_sampler_results, tf_labels)
+  }
   return(gibbs_sampler_results)
 }
 
