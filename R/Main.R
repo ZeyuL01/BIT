@@ -1,8 +1,8 @@
 ##Main function
 
 #' BayesIMTR
-#' @description Main interface to run BayesIMTR method, user need to give the input file path, format, number of rounds and bin width.
-#'
+#' @description Main interface to run BayesIMTR method, user need to give the input file path, input file format, number of rounds and bin width.
+#' users can also change default parameters used in Gibbs sampler.
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
 #' @param N number of rounds for gibbs sampler, recommended for > 2000.
@@ -41,7 +41,7 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 #'
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
-#' @param N number of rounds for gibbs sampler, recommended for > 1000.
+#' @param N number of rounds for gibbs sampler, recommended for > 2000.
 #' @param bin_width desired width of bin, should be in 100/500/1000.
 #' @param numCores number of cores used in parallel computation.
 #'

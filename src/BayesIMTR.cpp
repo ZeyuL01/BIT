@@ -29,8 +29,8 @@ arma::mat label_mat(arma::vec tf_labels);
 // the below snippet and results will be sent to the R console.
 
 //functions to draw parameters
-double draw_tau0S(int I, double mu0, arma::vec theta_i, const double a0 = 0.01, const double b0 = 0.01);
-double draw_mu0(int I, double tau0S, arma::vec theta_i, double upperli, double lowerli);
+double draw_tau0S(int I, double mu0, arma::vec theta_i, arma::rowvec unique_theta_i, const double a0 = 0.01, const double b0 = 0.01);
+double draw_mu0(int I, double tau0S, arma::vec theta_i, arma::rowvec unique_theta_i);
 double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i,const double a1=0.01,const double b1=0.01);
 arma::vec draw_sigmaS(double tau1S, arma::rowvec Ji,arma::mat label_mat,arma::vec theta_ij,
                       arma::vec theta_i,const double a2 = 0.01,const double b2 = 0.01);
@@ -62,7 +62,7 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
   arma::rowvec Mc_indicator = auxiliary_lists["Mc_indicator"];
   arma::rowvec Ji_counts = auxiliary_lists["Ji_counts"];
   arma::mat label_mat = auxiliary_lists["Label_mat"];
-
+  arma::rowvec unique_theta_i = auxiliary_lists["unique_theta_i"];
   //initialize parameters
   I = label_mat.n_rows;
 
@@ -90,9 +90,9 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
   for(i=0;i<N-1;i++){
     p.increment();
 
-    mu0_vec(i+1) = draw_mu0(I, tau0S_vec(i), theta_i_mat.col(i), mu0_vec(0)-5, mu0_vec(0)+5);
+    mu0_vec(i+1) = draw_mu0(I, tau0S_vec(i), theta_i_mat.col(i), unique_theta_i);
 
-    tau0S_vec(i+1) = draw_tau0S(I, mu0_vec(i+1), theta_i_mat.col(i));
+    tau0S_vec(i+1) = draw_tau0S(I, mu0_vec(i+1), theta_i_mat.col(i), unique_theta_i);
 
     tau1S_vec(i+1) = draw_tau1S(Mc_indicator, theta_ij_mat.col(i), theta_i_mat.col(i));
 
@@ -120,9 +120,9 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
 };
 
 //functions to update parameters
-double draw_tau0S(int I, double mu0, arma::vec theta_i, const double a0, const double b0){
+double draw_tau0S(int I, double mu0, arma::vec theta_i, arma::rowvec unique_theta_i, const double a0, const double b0){
   double rate = a0 + I / 2;
-  double scale = b0 + sum(pow((theta_i - mu0),2)) / 2;
+  double scale = b0 + sum(unique_theta_i * pow((theta_i - mu0),2)) / 2;
 
   double tau0S_new = R::rgamma(rate,scale);
 
@@ -130,16 +130,16 @@ double draw_tau0S(int I, double mu0, arma::vec theta_i, const double a0, const d
 };
 
 
-double draw_mu0(int I, double tau0S, arma::vec theta_i, double upperli, double lowerli){
+double draw_mu0(int I, double tau0S, arma::vec theta_i, arma::rowvec unique_theta_i){
 
-  double mean_new = mean(theta_i);
+  double mean_new = sum(unique_theta_i * theta_i) / I;
   double sd_new = sqrt(tau0S / I);
   double mu0_new = R::rnorm(mean_new,sd_new);
 
   return(mu0_new);
 };
 
-double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i,const double a1,const double b1){
+double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i, const double a1,const double b1){
   double rate = a1 + sum(Mc_indicator) / 2;
   double scale = b1 + sum(Mc_indicator * pow(theta_ij-theta_i,2)) / 2;
 
@@ -180,7 +180,7 @@ arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::
 
   for(i=0;i<theta_ij_new.n_rows;i++){
     V1 = 1 / (lambda_ij(i) + 1 / sigmaS(tf_labels(i)-1));
-    m1 = V1 * (kappa_ij(i) + theta_i(i)/sigmaS(tf_labels(i)-1));
+    m1 = V1 * (kappa_ij(i) + theta_i(i) / sigmaS(tf_labels(i)-1));
     theta_ij_new(i) = R::rnorm(m1,V1);
   }
 
@@ -225,6 +225,7 @@ arma::vec draw_lambda_ij(arma::vec nct, arma::vec theta_ij){
 List auxiliary_list_generator(arma::vec tf_labels){
   arma::rowvec M(tf_labels.n_rows,fill::zeros);
   arma::rowvec Mc(tf_labels.n_rows,fill::zeros);
+  arma::rowvec unique_theta_i(tf_labels.n_rows,fill::zeros);
 
   int i;
   std::map<int,int> label_counts;
@@ -232,6 +233,9 @@ List auxiliary_list_generator(arma::vec tf_labels){
 
   for(i=0;i<tf_labels.n_rows;i++){
     ++label_counts[tf_labels[i]];
+    if(label_counts[tf_labels[i]]==1){
+      unique_theta_i(i) = 1;
+    }
   }
 
   for(i=0;i<tf_labels.n_rows;i++){
@@ -252,7 +256,8 @@ List auxiliary_list_generator(arma::vec tf_labels){
   return(List::create(Rcpp::Named("M_indicator") = M,
                       Rcpp::Named("Mc_indicator") = Mc,
                       Rcpp::Named("Ji_counts") = Ji,
-                      Rcpp::Named("Label_mat") = label_m));
+                      Rcpp::Named("Label_mat") = label_m,
+                      Rcpp::Named("unique_theta_i") = unique_theta_i));
 };
 
 //function transform labels to a matrix of label indicator, for the ease of computation.
