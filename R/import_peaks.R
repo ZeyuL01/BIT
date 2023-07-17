@@ -16,12 +16,13 @@ alignment_wrapper <- function(input_vec, bin_width){
          You may follow the tutorial on: https://github.com/ZeyuL01/BayesIMTR")
   }
 
-  chip_table<-data.frame(matrix(ncol=3,nrow=nrow(file_table)))
-  colnames(chip_table) <- c("TF","GOOD","TOTAL")
+  chip_table<-data.frame(matrix(ncol=4,nrow=nrow(file_table)))
+  colnames(chip_table) <- c("TF","GOOD","BAD","TOTAL")
 
   chip_table$TF <- file_table$TF
 
   good_vec <- c()
+  bad_vec <- c()
   total_vec <- c()
 
   pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
@@ -34,12 +35,14 @@ alignment_wrapper <- function(input_vec, bin_width){
     ref_vec <- data.table::fread(file_table$File_Path[i])[[1]]
     alignment_result<-Alignment(input_vec,ref_vec)
 
-    good_vec <- c(good_vec, alignment_result$Xi)
-    total_vec <- c(total_vec, alignment_result$Ni)
+    good_vec <- c(good_vec, alignment_result$Xi_GOOD)
+    bad_vec <- c(bad_vec, alignment_result$Xi_BAD)
+    total_vec <- c(total_vec, alignment_result$Ni_TOTAL)
     setTxtProgressBar(pb, i)
   }
 
   chip_table$GOOD <- good_vec
+  chip_table$BAD <- bad_vec
   chip_table$TOTAL <- total_vec
 
   return(chip_table)

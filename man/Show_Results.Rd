@@ -17,9 +17,3 @@ a list object contains two data.frame. one by ranking the theta_ij, the other on
 \description{
 To show the ranking table by inspecting the results of Gibbs sampler.
 }
-\examples{
-CTCF_Demo <- Demo(1000, "CTCF")
-CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
-head(CTCF_Results[["Theta_ij"]],10)
-head(CTCF_Results[["Theta_i"]],10)
-}

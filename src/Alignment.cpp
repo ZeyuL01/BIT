@@ -12,14 +12,15 @@ List Alignment(NumericVector input_vec, NumericVector ref_vec){
   int j = 0;
   int m = 0;
 
-  int Xi = 0;
-  int Ni = 0;
+  int Xi_GOOD = 0;
+  int Ni_TOTAL = 0;
+  int Xi_BAD;
 
   while(i<input_vec.length() & j<ref_vec.length()){
     if(m==0){
       if(ref_vec[j]==input_vec[i]){
-        ++Xi;
-      }else if(ref_vec[j]>input_vec[i]){
+        ++Xi_GOOD;
+      }else if(ref_vec[j] > input_vec[i]){
         m = 1;
         ++i;
         continue;
@@ -29,8 +30,8 @@ List Alignment(NumericVector input_vec, NumericVector ref_vec){
 
     if(m==1){
       if(input_vec[i]==ref_vec[j]){
-        ++Xi;
-      }else if(input_vec[i]>ref_vec[j]){
+        ++Xi_GOOD;
+      }else if(input_vec[i] > ref_vec[j]){
         m = 0;
         ++j;
         continue;
@@ -39,8 +40,10 @@ List Alignment(NumericVector input_vec, NumericVector ref_vec){
     }
   }
 
-  Ni = input_vec.length() + ref_vec.length() - Xi;
+  Ni_TOTAL = input_vec.length() + ref_vec.length() - Xi_GOOD;
+  Xi_BAD = input_vec.length() - Xi_GOOD;
 
-  return(List::create(Rcpp::Named("Xi") = Xi,
-                      Rcpp::Named("Ni") = Ni));
+  return(List::create(Rcpp::Named("Xi_GOOD") = Xi_GOOD,
+                      Rcpp::Named("Xi_BAD") = Xi_BAD,
+                      Rcpp::Named("Ni_TOTAL") = Ni_TOTAL));
 }

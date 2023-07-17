@@ -10,10 +10,8 @@
 #' @param bin_width desired width of bin, should be in 100/500/1000.
 #' @param nchains number of chains used in diagnostic.
 #'
-#' @return
+#' @return A list object contains multiple mcmc chains.
 #' @export
-#'
-#' @examples
 gelman_rubin <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,
              bin_width = 1000, nchains = parallel::detectCores()-1){
   if(nchains > parallel::detectCores()){
@@ -58,9 +56,7 @@ gelman_rubin <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarro
 #' @param label label of TFs.
 #' @param nchains number of chains.
 #'
-#' @return
-#'
-#' @examples
+#' @return A list object contains multiple mcmc chains.
 mcmc_list_transformer<-function(dat, label, nchains){
   dat_dims <- dim(dat[[1]][[label]])
   mcmc_trans_list <- list()

@@ -7,7 +7,7 @@
 Demo(N, dat = c("CTCF", "ZBTB7A", "KDM1A"))
 }
 \arguments{
-\item{N}{number of rounds for gibbs sampler, recommended for > 1000.}
+\item{N}{number of rounds for gibbs sampler, recommended for > 2000.}
 
 \item{dat}{pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.}
 }
@@ -16,10 +16,4 @@ A list object contains results of Gibbs sampler.
 }
 \description{
 Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.
-}
-\examples{
-CTCF_Demo <- Demo(1000, "CTCF")
-CTCF_Results <- Show_Results(CTCF_Demo, burnin = 500)
-head(CTCF_Results[["Theta_ij"]],10)
-head(CTCF_Results[["Theta_i"]],10)
 }

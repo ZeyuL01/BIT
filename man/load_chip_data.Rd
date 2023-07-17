@@ -14,6 +14,3 @@ load_chip_data(data_path, bin_width)
 \description{
 load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BayesIMTR.
 }
-\examples{
-load_chip_data("data_path",bin_width = 1000)
-}

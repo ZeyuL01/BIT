@@ -7,9 +7,6 @@
 #' @param bin_width width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.
 #'
 #' @export
-#'
-#' @examples
-#' load_chip_data("data_path",bin_width = 1000)
 load_chip_data <- function(data_path, bin_width){
   data_path = R.utils::getAbsolutePath(data_path)
 

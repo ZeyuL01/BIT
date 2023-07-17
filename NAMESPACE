@@ -1,4 +1,5 @@
 useDynLib(BayesIMTR, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
 exportPattern("^[[:alpha:]]+")
 

@@ -10,11 +10,7 @@
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
-#'
-#' @examples
-#' input_peak <- "./CTCF.bed"
-#' gibbs_results <- BayesIMTR(input_peak, format = "bed", N = 2000, bin_width = 1000)
-BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000){
+BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, version = c(1,2)){
   print("Load and map peaks to bins...")
   input_peak_inds <- import_peaks(file = file, format = format, bin_width = bin_width)
   print("Done.")
@@ -24,11 +20,18 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
   print("Done.")
 
   xct <- alignment_results$GOOD
+  zct <- alignment_results$BAD
   nct <- alignment_results$TOTAL
   tf_labels <- as.numeric(factor(alignment_results$TF))
 
   print(paste0("Start BayesIMTR core, rounds: ",N))
-  gibbs_sampler_results <- Main_Sampling(N, xct, nct, tf_labels)
+  if(version == 1){
+    gibbs_sampler_results <- Main_Sampling(N, xct, nct, tf_labels)
+  }else{
+    n2ct <- xct + zct
+    gibbs_sampler_results <- Main_Sampling(N, xct, n2ct, tf_labels)
+  }
+
   gibbs_sampler_results[["TF_names"]] <- alignment_results$TF
   print("Done.")
 
@@ -46,11 +49,9 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 #' @param numCores number of cores used in parallel computation.
 #'
 #' @return A list object of list objects that contains results of Gibbs sampler.
-#'
-#' @examples
 BayesIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, numCores){
     local_cl <- parallel::makeCluster(numCores)
-    clusterExport(cl=local_cl, c("file","format","N","bin_width"),envir = environment())
+    parallel::clusterExport(cl=local_cl, c("file","format","N","bin_width"),envir = environment())
     multi_results <- parallel::clusterEvalQ(local_cl, {
       library(BayesIMTR)
       BayesIMTR(file = file,format = format,N = N, bin_width = bin_width)
@@ -59,6 +60,7 @@ BayesIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNa
 
     return(multi_results)
 }
+
 
 
 

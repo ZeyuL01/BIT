@@ -7,12 +7,6 @@
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
-#'
-#' @examples
-#' CTCF_Demo <- Demo(2000, "CTCF")
-#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 1000)
-#' head(CTCF_Results[["Theta_ij"]],10)
-#' head(CTCF_Results[["Theta_i"]],10)
 Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
   if(dat=="CTCF"){
     Demo_dat = CTCF_Demo
@@ -45,12 +39,6 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
 #'
 #' @return a list object contains two data.frame. one by ranking the theta_ij, the other one by ranking theta_i.
 #' @export
-#'
-#' @examples
-#' CTCF_Demo <- Demo(2000, "CTCF")
-#' CTCF_Results <- Show_Results(CTCF_Demo, burnin = 1000)
-#' head(CTCF_Results[["Theta_ij"]],10)
-#' head(CTCF_Results[["Theta_i"]],10)
 Show_Results<-function(dat,burnin){
   TF_names <- dat[["TF_names"]]
   theta_ij_mat<-dat$theta_ij
@@ -83,16 +71,14 @@ Show_Results<-function(dat,burnin){
 #' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
 #' @param nchains number of chains.
 #'
-#' @return
+#' @return A list object contains gelman-rubin diagnostic results.
 #' @export
-#'
-#' @examples
 gelman_rubin_Demo <- function(N = 2000 , dat=c("CTCF","ZBTB7A","KDM1A"), nchains = parallel::detectCores()-1){
   if(nchains > parallel::detectCores()){
     stop("number of chains computed should be less or equal to number of cores.")
   }
   local_cl <- parallel::makeCluster(nchains)
-  clusterExport(cl=local_cl, c("N","dat"),envir = environment())
+  parallel::clusterExport(cl=local_cl, c("N","dat"),envir = environment())
   results <- parallel::clusterEvalQ(local_cl, {
     library(BayesIMTR)
     Demo(N = N, dat = dat)
