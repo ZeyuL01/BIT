@@ -108,7 +108,7 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
     inds <- inds[!duplicated(inds)]
     bin_inds <- c(bin_inds,(chr_windows_cs[i]+inds))
   }
-  return(bin_inds)
+  return(sort(bin_inds))
 }
 
 

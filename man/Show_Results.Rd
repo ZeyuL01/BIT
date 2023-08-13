@@ -4,7 +4,7 @@
 \alias{Show_Results}
 \title{To show the ranking table by inspecting the results of Gibbs sampler.}
 \usage{
-Show_Results(dat, burnin)
+Show_Results(dat, burnin, centerized = FALSE)
 }
 \arguments{
 \item{dat}{results from Main_sampling.}

@@ -51,12 +51,12 @@ BayesIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 #' @param numCores number of cores used in parallel computation.
 #'
 #' @return A list object of list objects that contains results of Gibbs sampler.
-BayesIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, numCores){
+BayesIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 2000 ,bin_width = 1000, version = c(1,2), numCores){
     local_cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl=local_cl, c("file","format","N","bin_width"),envir = environment())
+    parallel::clusterExport(cl=local_cl, c("file","format","N","bin_width","version"),envir = environment())
     multi_results <- parallel::clusterEvalQ(local_cl, {
       library(BayesIMTR)
-      BayesIMTR(file = file,format = format,N = N, bin_width = bin_width)
+      BayesIMTR(file = file,format = format,N = N, bin_width = bin_width, version = version)
     })
     parallel::stopCluster(local_cl)
 
