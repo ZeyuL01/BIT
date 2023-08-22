@@ -25,7 +25,7 @@ BIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak",
 
   tf_labels <- as.numeric(factor(alignment_results$TF))
 
-  print(paste0("Start BIMTR core, rounds: ",N))
+  print(paste0("Start BIMTR Gibbs sampler, iterations: ",N))
 
   gibbs_sampler_results <- Main_Sampling(N, xct, nct, tf_labels)
 
