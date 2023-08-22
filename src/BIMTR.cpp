@@ -24,7 +24,6 @@ arma::vec nct(int N);
 //functions to assign M/Mc/Ji/label indicators
 List auxiliary_list_generator(arma::vec tf_labels);
 arma::mat label_mat(arma::vec tf_labels);
-
 // After compile, this function will be immediately called using
 // the below snippet and results will be sent to the R console.
 
@@ -107,7 +106,6 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
 
     lambda_ij_mat.col(i+1) = draw_lambda_ij(nct, theta_ij_mat.col(i+1));
 
-
   }
 
   return(List::create(Rcpp::Named("mu0") = mu0_vec,
@@ -117,8 +115,7 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
                       Rcpp::Named("theta_i") = theta_i_mat,
                       Rcpp::Named("sigmaS") = sigmaS_mat,
                       Rcpp::Named("lambda_ij") = lambda_ij_mat,
-                      Rcpp::Named("label_mat") = label_mat,
-                      Rcpp::Named("unique_theta_i") = unique_theta_i));
+                      Rcpp::Named("label_mat") = label_mat));
 };
 
 //functions to update parameters
@@ -359,7 +356,6 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct){
 
   return(lambda_ij_0);
 };
-
 
 
 

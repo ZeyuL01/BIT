@@ -12,5 +12,5 @@ load_chip_data(data_path, bin_width)
 \item{bin_width}{width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.}
 }
 \description{
-load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BayesIMTR.
+load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIMTR.
 }

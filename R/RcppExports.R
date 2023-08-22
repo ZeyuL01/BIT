@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 Alignment <- function(input_vec, ref_vec) {
-    .Call(`_BayesIMTR_Alignment`, input_vec, ref_vec)
+    .Call(`_BIMTR_Alignment`, input_vec, ref_vec)
 }
 
 Main_Sampling <- function(N, xct, nct, tf_labels, display_progress = TRUE) {
-    .Call(`_BayesIMTR_Main_Sampling`, N, xct, nct, tf_labels, display_progress)
+    .Call(`_BIMTR_Main_Sampling`, N, xct, nct, tf_labels, display_progress)
 }
 

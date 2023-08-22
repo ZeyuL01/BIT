@@ -21,8 +21,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE173416
 ZBTB7A_Demo
 }
 \description{
-A transformed demo data set used for testing the efficiency of BayesIMTR
-and showing the workflow.
+A transformed demo data set used for showing the workflow of BIMTR.
 }
 \details{
 King AJ, Songdej D, Downes DJ, Beagrie RA, Liu S, Buckley M, Hua P, Suciu MC, Marieke Oudelaar A, Hanssen LLP, Jeziorska D,

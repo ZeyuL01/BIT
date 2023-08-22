@@ -6,7 +6,7 @@
 \usage{
 import_peaks(
   file,
-  format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak"),
+  format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak", "csv"),
   bin_width = 1000
 )
 }

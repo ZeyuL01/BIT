@@ -5,15 +5,15 @@
 \title{gelman-rubin demo}
 \usage{
 gelman_rubin_Demo(
-  N = 2000,
-  dat = c("CTCF", "ZBTB7A", "KDM1A"),
+  N = 5000,
+  dat = c("CTCF", "ZBTB7A"),
   nchains = parallel::detectCores() - 1
 )
 }
 \arguments{
 \item{N}{number of rounds}
 
-\item{dat}{pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.}
+\item{dat}{pre-processed Demo data, including CTCF, ZBTB7A. For details please check the manual for the data.}
 
 \item{nchains}{number of chains.}
 }
@@ -21,5 +21,5 @@ gelman_rubin_Demo(
 A list object contains gelman-rubin diagnostic results.
 }
 \description{
-Gelman-Rubin convergence diagnostic for Demo dataset, recommend for N > 2000
+Gelman-Rubin convergence diagnostic for Demo dataset, recommend for N >= 5000
 }

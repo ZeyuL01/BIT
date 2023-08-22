@@ -7,13 +7,13 @@
 #'
 #' @return a data frame has three columns, TF labels, number of 'good' windows, number of 'total' informative cases.
 alignment_wrapper <- function(input_vec, bin_width){
-  meta_table <- readRDS(paste0(system.file(package = "BayesIMTR"),"/meta_table.rds"))
+  meta_table <- readRDS(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
 
   file_table <- meta_table[[paste0("meta_",bin_width)]]
 
   if(is.null(file_table)){
     stop("ChIP-seq files not found, please download and load the ChIP-seq data first.
-         You may follow the tutorial on: https://github.com/ZeyuL01/BayesIMTR")
+         You may follow the tutorial on: https://github.com/ZeyuL01/BIMTR")
   }
 
   chip_table<-data.frame(matrix(ncol=4,nrow=nrow(file_table)))
@@ -57,7 +57,7 @@ alignment_wrapper <- function(input_vec, bin_width){
 #'
 #' @return A numeric vector contains the index of peaks with pre-specified number of bins in each chromosome.
 #' @export
-import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), bin_width = 1000){
+import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPeak","csv"), bin_width = 1000){
   bin_inds<-c()
 
   if(format=="bed"){
@@ -75,6 +75,8 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
                                     extraCols = extraCols_broadPeak)
   }else if(format=="bigNarrowPeak"){
     peak_dat <- rtracklayer::import(file)
+  }else if(format=="csv"){
+    peak_dat <- read.csv(file)
   }
 
   #Fixed window numbers with 3031030 windows in total.
@@ -102,6 +104,10 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
       inds <- peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$peak %/% bin_width + 1
     }else if(format=="bigNarrowPeak"){
       inds <- peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$abs_summit %/% bin_width + 1
+    }else if(format=="csv"){
+      start <- peak_dat$Start[which(peak_dat$Chrom==chr_lab)]
+      end <- peak_dat$End[which(peak_dat$Chrom==chr_lab)]
+      inds <- (end + start) %/% (2 * bin_width) + 1
     }
 
     inds <- inds[inds<=chr_windows[i+1]]
@@ -116,7 +122,7 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 ##just need to run once.
 
 #' load the pre-compiled chip-seq data.
-#' @description load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BayesIMTR.
+#' @description load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIMTR.
 #' @param data_path path to the ChIP-seq data folder.
 #' @param bin_width width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.
 #'
@@ -125,7 +131,7 @@ load_chip_data <- function(data_path, bin_width){
   data_path = R.utils::getAbsolutePath(data_path)
 
   if(dir.exists(data_path)){
-    if(!file.exists(paste0(system.file(package = "BayesIMTR"),"/meta_table.rds"))){
+    if(!file.exists(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))){
 
       data_list<-list()
       data_list[["path"]]=data_path
@@ -144,10 +150,10 @@ load_chip_data <- function(data_path, bin_width){
 
       data_list[[paste0("meta_",bin_width)]] = meta_table
 
-      saveRDS(data_list,paste0(system.file(package = "BayesIMTR"),"/meta_table.rds"))
+      saveRDS(data_list,paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
 
     }else{
-      data_list <- readRDS(paste0(system.file(package = "BayesIMTR"),"/meta_table.rds"))
+      data_list <- readRDS(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
       if(!is.null(data_list[[paste0("meta_",bin_width)]])){
         warning("Overwriting previous loaded meta-table for bin width of ", bin_width)
       }
@@ -161,14 +167,14 @@ load_chip_data <- function(data_path, bin_width){
 
       data_list[[paste0("meta_",bin_width)]] = meta_table
 
-      saveRDS(data_list,paste0(system.file(package = "BayesIMTR"),"/meta_table.rds"))
+      saveRDS(data_list,paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
     }
   }else{
 
     stop("ChIP-seq data directory does not exist.")
 
   }
-  print("ChIP-seq data successfully loaded, please run BayesIMTR with input to check!")
+  print("ChIP-seq data successfully loaded, please run BIMTR with input to check!")
   return()
 }
 

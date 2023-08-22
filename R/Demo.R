@@ -1,19 +1,17 @@
 #Show the demo
 
-#' Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.
+#' Demo to show BIMTR, which can be used without loading the ChIP-seq data.
 #'
-#' @param N number of rounds for gibbs sampler, recommended for > 2000.
-#' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
+#' @param N number of iterations for gibbs sampler, recommended for >= 5000.
+#' @param dat pre-processed Demo data, including CTCF, ZBTB7A. For details please check the manual for the data.
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
-Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
+Demo = function(N,dat=c("CTCF","ZBTB7A")){
   if(dat=="CTCF"){
     Demo_dat = CTCF_Demo
   }else if(dat=="ZBTB7A"){
     Demo_dat = ZBTB7A_Demo
-  }else if(dat=="KDM1A"){
-    Demo_dat = KDM1A_Demo
   }
 
   tf_labs <- as.numeric(factor(Demo_dat$TF))
@@ -37,21 +35,21 @@ Demo = function(N,dat=c("CTCF","ZBTB7A","KDM1A")){
 
 #' gelman-rubin demo
 #'
-#' @description Gelman-Rubin convergence diagnostic for Demo dataset, recommend for N > 2000
+#' @description Gelman-Rubin convergence diagnostic for Demo dataset, recommend for N >= 5000
 #' @param N number of rounds
-#' @param dat pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.
+#' @param dat pre-processed Demo data, including CTCF, ZBTB7A. For details please check the manual for the data.
 #' @param nchains number of chains.
 #'
 #' @return A list object contains gelman-rubin diagnostic results.
 #' @export
-gelman_rubin_Demo <- function(N = 2000 , dat=c("CTCF","ZBTB7A","KDM1A"), nchains = parallel::detectCores()-1){
+gelman_rubin_Demo <- function(N = 5000 , dat=c("CTCF","ZBTB7A"), nchains = parallel::detectCores()-1){
   if(nchains > parallel::detectCores()){
     stop("number of chains computed should be less or equal to number of cores.")
   }
   local_cl <- parallel::makeCluster(nchains)
   parallel::clusterExport(cl=local_cl, c("N","dat"),envir = environment())
   results <- parallel::clusterEvalQ(local_cl, {
-    library(BayesIMTR)
+    library(BIMTR)
     Demo(N = N, dat = dat)
   })
   parallel::stopCluster(local_cl)

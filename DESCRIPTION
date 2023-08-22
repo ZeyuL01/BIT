@@ -1,4 +1,4 @@
-Package: BayesIMTR
+Package: BIMTR
 Type: Package
 Title: Bayesian Identification of Master Transcriptional Regulators
 Version: 1.0

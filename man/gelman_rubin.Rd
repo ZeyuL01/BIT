@@ -17,7 +17,7 @@ gelman_rubin(
 
 \item{format}{format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.}
 
-\item{N}{number of rounds for gibbs sampler, recommended for > 1000.}
+\item{N}{number of iterations for gibbs sampler, recommended for > 5000.}
 
 \item{bin_width}{desired width of bin, should be in 100/500/1000.}
 

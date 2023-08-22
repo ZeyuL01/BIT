@@ -21,8 +21,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE153237
 CTCF_Demo
 }
 \description{
-A transformed demo data set used for testing the efficiency of BayesIMTR
-and showing the workflow.
+A transformed demo data set used for showing the workflow of BIMTR.
 }
 \details{
 Xu B, Wang H, Wright S, Hyle J, Zhang Y, Shao Y, Niu M, Fan Y, Rosikiewicz W, Djekidel MN, Peng J, Lu R, Li C.

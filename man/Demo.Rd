@@ -2,18 +2,18 @@
 % Please edit documentation in R/Demo.R
 \name{Demo}
 \alias{Demo}
-\title{Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.}
+\title{Demo to show BIMTR, which can be used without loading the ChIP-seq data.}
 \usage{
-Demo(N, dat = c("CTCF", "ZBTB7A", "KDM1A"))
+Demo(N, dat = c("CTCF", "ZBTB7A"))
 }
 \arguments{
-\item{N}{number of rounds for gibbs sampler, recommended for > 2000.}
+\item{N}{number of iterations for gibbs sampler, recommended for >= 5000.}
 
-\item{dat}{pre-processed Demo data, including CTCF, ZBTB7A and KDM1A. For details please check the manual for the data.}
+\item{dat}{pre-processed Demo data, including CTCF, ZBTB7A. For details please check the manual for the data.}
 }
 \value{
 A list object contains results of Gibbs sampler.
 }
 \description{
-Demo to show BayesIMTR, which can be used without loading the ChIP-seq data.
+Demo to show BIMTR, which can be used without loading the ChIP-seq data.
 }

@@ -6,7 +6,7 @@
 #' @description gelman-rubin convergence diagnostic based on parallel computation, used chains can be varied but must less or equal to the usable cores.
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
-#' @param N number of rounds for gibbs sampler, recommended for > 1000.
+#' @param N number of iterations for gibbs sampler, recommended for > 5000.
 #' @param bin_width desired width of bin, should be in 100/500/1000.
 #' @param nchains number of chains used in diagnostic.
 #'
@@ -17,7 +17,7 @@ gelman_rubin <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarro
   if(nchains > parallel::detectCores()){
     stop("number of chains computed should be less or equal to number of cores.")
   }
-  results <- BayesIMTR_multi(file, format, N, bin_width, numCores = nchains)
+  results <- BIMTR_multi(file, format, N, bin_width, numCores = nchains)
 
   mu0_nchains_list <- mcmc_list_transformer(results,"mu0",nchains)
   tau0S_nchains_list <- mcmc_list_transformer(results,"tau0S",nchains)
