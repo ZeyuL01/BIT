@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# BayesIMTR
+# BIMTR
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of **BayesIMTR** is to identify the potential master
+The goal of **BIMTR** is to identify the potential master
 transcriptional regulators with the input derived from chromatin
 accessibility profiling methods(e.g. ATAC-seq, DNase-seq, MNase-seq),
 the input can be either a file that stores the information of “peaks”
