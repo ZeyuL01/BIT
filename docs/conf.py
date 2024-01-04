@@ -35,8 +35,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx.ext.intersphinx',
-    "sphinx_git"
+    'sphinx.ext.intersphinx'
 ]
 
 intersphinx_mapping = {
