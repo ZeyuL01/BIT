@@ -5,8 +5,8 @@
 #' @param input_vec A input vector contains index of peaks transformed by applying import_peaks.
 #' @param bin_width width of bin, should be in 100/500/1000.
 #'
-#' @return a data frame has three columns, TF labels, number of 'good' windows, number of 'total' informative cases.
-alignment_wrapper <- function(input_vec, bin_width){
+#' @return a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
+alignment_wrapper <- function(input_vec, bin_width, option){
   meta_table <- readRDS(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
 
   file_table <- meta_table[[paste0("meta_",bin_width)]]
@@ -33,7 +33,10 @@ alignment_wrapper <- function(input_vec, bin_width){
 
   for(i in 1:nrow(chip_table)){
     ref_vec <- data.table::fread(file_table$File_Path[i])[[1]]
-    alignment_result<-Alignment(input_vec,ref_vec)
+
+    filtered_ref_vec <- filter_peaks(ref_vec,option=option,bin_width=bin_width)
+
+    alignment_result<-Alignment(input_vec,filtered_ref_vec)
 
     good_vec <- c(good_vec, alignment_result$Xi_GOOD)
     bad_vec <- c(bad_vec, alignment_result$Xi_BAD)
@@ -178,3 +181,26 @@ load_chip_data <- function(data_path, bin_width){
   return()
 }
 
+
+#' filter peaks based on CREs, Promoter, Enhancer
+#'
+#' @param input_vec input vector that contains indices from import_peaks
+#' @param option option, ALL: Non-filtering, CREs: All cis-regulatory elements, PLS: Promoters, ELS: Enhancers.
+#' @param bin_width bin width
+#'
+#' @return a vector contains filtered bin indices.
+filter_peaks <- function(input_vec,option=c("ALL","CREs","CLS","ELS"),bin_width=c(100,500,1000)){
+  if(option == "ALL"){
+    return_vec<-input_vec
+  }else if(option == "CREs"){
+    filter_vec <- CREs_list[[paste0(option,"_",bin_width)]]
+    return_vec<-intersect(input_vec,filter_vec)
+  }else if(option == "CLS"){
+    filter_vec <- PLS_list[[paste0(option,"_",bin_width)]]
+    return_vec<-intersect(input_vec,filter_vec)
+  }else if(option == "ELS"){
+    filter_vec <- ELS_list[[paste0(option,"_",bin_width)]]
+    return_vec<-intersect(input_vec,filter_vec)
+  }
+  return(return_vec)
+}

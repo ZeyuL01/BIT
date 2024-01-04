@@ -8,7 +8,8 @@ BIMTR(
   file,
   format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak", "csv"),
   N = 5000,
-  bin_width = 1000
+  bin_width = c(100, 500, 1000),
+  option = c("ALL", "CREs", "PLS", "ELS")
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ BIMTR(
 \item{N}{number of iterations for gibbs sampler, recommended for >= 5000.}
 
 \item{bin_width}{desired width of bin, should be in 100/500/1000.}
+
+\item{option}{option to filter peaks with candidate cis-regulatory elements from ENCODE.}
 }
 \value{
 A list object contains results of Gibbs sampler.

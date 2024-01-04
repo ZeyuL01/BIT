@@ -4,7 +4,7 @@
 \alias{alignment_wrapper}
 \title{Count the 'good' and 'total' informative cases between input peak set with reference database.}
 \usage{
-alignment_wrapper(input_vec, bin_width)
+alignment_wrapper(input_vec, bin_width, option)
 }
 \arguments{
 \item{input_vec}{A input vector contains index of peaks transformed by applying import_peaks.}

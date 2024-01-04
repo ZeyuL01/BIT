@@ -69,12 +69,3 @@ simu_data_constructor<-function(rdata){
 }
 
 
-a<-c(1,2,3,4,5)
-b<-c(2,3,4,5,6)
-c<-c(1)
-d<-c(2)
-
-mean(c(a,b,c,d))
-
-mean(c(mean(a),mean(b),mean(c),mean(d)))
-

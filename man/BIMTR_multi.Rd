@@ -7,8 +7,9 @@
 BIMTR_multi(
   file,
   format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak"),
-  N = 2000,
-  bin_width = 1000,
+  N = 5000,
+  bin_width = c(100, 500, 1000),
+  option = c("ALL", "CREs", "PLS", "ELS"),
   numCores
 )
 }
@@ -20,6 +21,8 @@ BIMTR_multi(
 \item{N}{number of iterations for gibbs sampler, recommended for > 5000.}
 
 \item{bin_width}{desired width of bin, should be in 100/500/1000.}
+
+\item{option}{option to filter peaks with candidate cis-regulatory elements from ENCODE.}
 
 \item{numCores}{number of cores used in parallel computation.}
 }

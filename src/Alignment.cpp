@@ -14,7 +14,6 @@ List Alignment(NumericVector input_vec, NumericVector ref_vec){
 
   int Xi_GOOD = 0;
   int Ni_TOTAL = 0;
-  int Xi_BAD;
 
   while(i<input_vec.length() & j<ref_vec.length()){
     if(m==0){
@@ -41,9 +40,7 @@ List Alignment(NumericVector input_vec, NumericVector ref_vec){
   }
 
   Ni_TOTAL = input_vec.length() + ref_vec.length() - Xi_GOOD;
-  Xi_BAD = input_vec.length() - Xi_GOOD;
 
   return(List::create(Rcpp::Named("Xi_GOOD") = Xi_GOOD,
-                      Rcpp::Named("Xi_BAD") = Xi_BAD,
                       Rcpp::Named("Ni_TOTAL") = Ni_TOTAL));
 }
