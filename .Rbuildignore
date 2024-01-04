@@ -3,3 +3,5 @@
 ^LICENSE\.md$
 ^Makefile$
 ^README\.Rmd$
+.readthedocs.yaml
+^docs/
