@@ -1,25 +1,22 @@
 #' To show the ranking table by inspecting the results of Gibbs sampler.
 #'
 #' @param dat results from Main_sampling.
-#' @param burnin number of samples used for burn-in.
+#' @param burnin number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.
 #'
-#' @return a list object contains two data.frame. one by ranking the theta_ij, the other one by ranking theta_i.
+#' @return a data.frame object contains TR names, BIT scores and 95 CI for each TR.
 #' @export
-Show_Results<-function(dat, burnin){
-  TF_names <- dat[["TF_names"]]
-  theta_ij_mat<-dat$theta_ij
+display_tables<-function(dat, burnin=NULL){
+  TR_names <- dat[["TR_names"]]
   theta_i_mat<-dat$theta_i
 
-  tf_results_ij<-rowMeans(theta_ij_mat[,(dim(theta_ij_mat)[2]-burnin):dim(theta_ij_mat)[2]])
-  tf_results_i<-rowMeans(theta_i_mat[,(dim(theta_i_mat)[2]-burnin):dim(theta_i_mat)[2]])
+  if(is.null(burnin)){
+    burnin=dim(theta_i_mat)[2]%/%2
+  }
 
-  results_theta_ij=data.frame(TF=TF_names,Theta_ij=tf_results_ij,Rank_ij=rank(-tf_results_ij))
-  results_theta_ij=results_theta_ij[order(-results_theta_ij$Theta_ij),]
-  results_theta_ij=results_theta_ij[!duplicated(results_theta_ij$TF),]
-  row.names(results_theta_ij) <- NULL
+  tr_results_i<-rowMeans(theta_i_mat[,(dim(theta_i_mat)[2]-burnin):dim(theta_i_mat)[2]])
 
-  results_theta_i=data.frame(TF=TF_names,Theta_i=tf_results_i)
-  results_theta_i=results_theta_i[!duplicated(results_theta_i$TF),]
+  results_theta_i=data.frame(TR=TR_names,Theta_i=tr_results_i)
+  results_theta_i=results_theta_i[!duplicated(results_theta_i$TR),]
   results_theta_i=results_theta_i[order(-results_theta_i$Theta_i),]
   results_theta_i$Rank_i=rank(-results_theta_i$Theta_i)
   row.names(results_theta_i) <- NULL

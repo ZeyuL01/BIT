@@ -22,8 +22,8 @@ arma::vec pct(int N);
 arma::vec nct(int N);
 
 //functions to assign M/Mc/Ji/label indicators
-List auxiliary_list_generator(arma::vec tf_labels);
-arma::mat label_mat(arma::vec tf_labels);
+List auxiliary_list_generator(arma::vec tr_labels);
+arma::mat label_mat(arma::vec tr_labels);
 // After compile, this function will be immediately called using
 // the below snippet and results will be sent to the R console.
 
@@ -33,7 +33,7 @@ double draw_mu0(int I, double tau0S, arma::vec theta_i, arma::rowvec unique_thet
 double draw_tau1S(arma::rowvec Mc_indicator,arma::vec theta_ij,arma::vec theta_i,const double a1=0.01,const double b1=0.01);
 arma::vec draw_sigmaS(double tau1S, arma::rowvec Ji,arma::mat label_mat,arma::vec theta_ij,
                       arma::vec theta_i,const double a2 = 0.01,const double b2 = 0.01);
-arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tf_labels,
+arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tr_labels,
                         double tau1S, arma::vec lambda_ij, arma::vec theta_i, arma::rowvec Ji_counts);
 arma::vec draw_theta_i(arma::vec theta_ij, double tau1S, arma::vec sigmaS, double mu0, double tau0S,
                        arma::mat label_mat,arma::rowvec Ji_counts);
@@ -49,14 +49,14 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct);
 arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat);
 
 // [[Rcpp::export]]
-List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool display_progress=true){
+List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tr_labels, bool display_progress=true){
   int i;
   int I;
   arma::vec kappa_ij = xct - nct / 2;
   Progress p(N, display_progress);
 
   //generate auxiliary lists for the ease of computation.
-  List auxiliary_lists = auxiliary_list_generator(tf_labels);
+  List auxiliary_lists = auxiliary_list_generator(tr_labels);
   arma::rowvec M_indicator = auxiliary_lists["M_indicator"];
   arma::rowvec Mc_indicator = auxiliary_lists["Mc_indicator"];
   arma::rowvec Ji_counts = auxiliary_lists["Ji_counts"];
@@ -98,7 +98,7 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tf_labels, bool d
 
     sigmaS_mat.col(i+1) = draw_sigmaS(tau1S_vec(i+1), Ji_counts, label_mat, theta_ij_mat.col(i+1), theta_i_mat.col(i+1));
 
-    theta_ij_mat.col(i+1) = draw_theta_ij(xct, nct, kappa_ij, sigmaS_mat.col(i), tf_labels,
+    theta_ij_mat.col(i+1) = draw_theta_ij(xct, nct, kappa_ij, sigmaS_mat.col(i), tr_labels,
                      tau1S_vec(i+1), lambda_ij_mat.col(i), theta_i_mat.col(i),Ji_counts);
 
     theta_i_mat.col(i+1) = draw_theta_i(theta_ij_mat.col(i+1), tau1S_vec(i+1), sigmaS_mat.col(i),
@@ -169,7 +169,7 @@ arma::vec draw_sigmaS(double tau1S,arma::rowvec Ji, arma::mat label_mat, arma::v
   return(sigmaS_new);
 };
 
-arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tf_labels,
+arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::vec sigmaS, arma::vec tr_labels,
                         double tau1S, arma::vec lambda_ij, arma::vec theta_i, arma::rowvec Ji_counts){
   int i;
   double V1 = 0;
@@ -177,8 +177,8 @@ arma::vec draw_theta_ij(arma::vec xct, arma::vec nct, arma::vec kappa_ij, arma::
   arma::vec theta_ij_new(xct.n_rows);
 
   for(i=0;i<theta_ij_new.n_rows;i++){
-    V1 = 1 / (lambda_ij(i) + 1 / sigmaS(tf_labels(i)-1));
-    m1 = V1 * (kappa_ij(i) + theta_i(i) / sigmaS(tf_labels(i)-1));
+    V1 = 1 / (lambda_ij(i) + 1 / sigmaS(tr_labels(i)-1));
+    m1 = V1 * (kappa_ij(i) + theta_i(i) / sigmaS(tr_labels(i)-1));
     theta_ij_new(i) = R::rnorm(m1,sqrt(V1));
   }
 
@@ -216,28 +216,28 @@ arma::vec draw_lambda_ij(arma::vec nct, arma::vec theta_ij){
   return(lambda_ij_new);
 };
 
-//function to indicate whether the TF has repeated ChIP-seq datasets.
-//also counts the occurrence time of ChIP-seq datasets of same TF.
+//function to indicate whether the TR has repeated ChIP-seq datasets.
+//also counts the occurrence time of ChIP-seq datasets of same TR.
 //generate a label mat for the ease of computation later.
 
-List auxiliary_list_generator(arma::vec tf_labels){
-  arma::rowvec M(tf_labels.n_rows,fill::zeros);
-  arma::rowvec Mc(tf_labels.n_rows,fill::zeros);
-  arma::rowvec unique_theta_i(tf_labels.n_rows,fill::zeros);
+List auxiliary_list_generator(arma::vec tr_labels){
+  arma::rowvec M(tr_labels.n_rows,fill::zeros);
+  arma::rowvec Mc(tr_labels.n_rows,fill::zeros);
+  arma::rowvec unique_theta_i(tr_labels.n_rows,fill::zeros);
 
   int i;
   std::map<int,int> label_counts;
   std::map<int,int>::iterator iter;
 
-  for(i=0;i<tf_labels.n_rows;i++){
-    ++label_counts[tf_labels[i]];
-    if(label_counts[tf_labels[i]]==1){
+  for(i=0;i<tr_labels.n_rows;i++){
+    ++label_counts[tr_labels[i]];
+    if(label_counts[tr_labels[i]]==1){
       unique_theta_i(i) = 1;
     }
   }
 
-  for(i=0;i<tf_labels.n_rows;i++){
-    if(label_counts[tf_labels(i)]>1){
+  for(i=0;i<tr_labels.n_rows;i++){
+    if(label_counts[tr_labels(i)]>1){
       M(i) = 1;
     }else{
       Mc(i) = 1;
@@ -249,7 +249,7 @@ List auxiliary_list_generator(arma::vec tf_labels){
     Ji((iter -> first) - 1) = iter -> second;
   }
 
-  arma::mat label_m = label_mat(tf_labels);
+  arma::mat label_m = label_mat(tr_labels);
 
   return(List::create(Rcpp::Named("M_indicator") = M,
                       Rcpp::Named("Mc_indicator") = Mc,
@@ -259,21 +259,21 @@ List auxiliary_list_generator(arma::vec tf_labels){
 };
 
 //function transform labels to a matrix of label indicator, for the ease of computation.
-//with index of row corresponds to TF.
+//with index of row corresponds to TR.
 //and column index corresponds to chip-seq dataset.
-arma::mat label_mat(arma::vec tf_labels){
+arma::mat label_mat(arma::vec tr_labels){
   int i;
   std::map<int,int> label_counts;
   std::map<int,int>::iterator iter;
 
-  for(i=0;i<tf_labels.n_rows;i++){
-    ++label_counts[tf_labels[i]];
+  for(i=0;i<tr_labels.n_rows;i++){
+    ++label_counts[tr_labels[i]];
   }
 
-  arma::mat label_mat(label_counts.size(),tf_labels.n_rows,fill::zeros);
+  arma::mat label_mat(label_counts.size(),tr_labels.n_rows,fill::zeros);
 
-  for(i=0;i<tf_labels.n_rows;i++){
-    label_mat(tf_labels(i)-1,i)=1;
+  for(i=0;i<tr_labels.n_rows;i++){
+    label_mat(tr_labels(i)-1,i)=1;
   }
 
   return(label_mat);

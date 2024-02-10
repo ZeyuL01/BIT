@@ -7,19 +7,19 @@
 #'
 #' @return a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
 alignment_wrapper <- function(input_vec, bin_width, option){
-  meta_table <- readRDS(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
+  meta_table <- readRDS(paste0(system.file(package = "BIT"),"/meta_table.rds"))
 
   file_table <- meta_table[[paste0("meta_",bin_width)]]
 
   if(is.null(file_table)){
     stop("ChIP-seq files not found, please download and load the ChIP-seq data first.
-         You may follow the tutorial on: https://github.com/ZeyuL01/BIMTR")
+         You may follow the tutorial on: https://github.com/ZeyuL01/BIT")
   }
 
   chip_table<-data.frame(matrix(ncol=4,nrow=nrow(file_table)))
-  colnames(chip_table) <- c("TF","GOOD","BAD","TOTAL")
+  colnames(chip_table) <- c("TR","GOOD","BAD","TOTAL")
 
-  chip_table$TF <- file_table$TF
+  chip_table$TR <- file_table$TR
 
   good_vec <- c()
   bad_vec <- c()
@@ -39,13 +39,11 @@ alignment_wrapper <- function(input_vec, bin_width, option){
     alignment_result<-Alignment(input_vec,filtered_ref_vec)
 
     good_vec <- c(good_vec, alignment_result$Xi_GOOD)
-    bad_vec <- c(bad_vec, alignment_result$Xi_BAD)
     total_vec <- c(total_vec, alignment_result$Ni_TOTAL)
     setTxtProgressBar(pb, i)
   }
 
   chip_table$GOOD <- good_vec
-  chip_table$BAD <- bad_vec
   chip_table$TOTAL <- total_vec
 
   return(chip_table)
@@ -60,9 +58,26 @@ alignment_wrapper <- function(input_vec, bin_width, option){
 #'
 #' @return A numeric vector contains the index of peaks with pre-specified number of bins in each chromosome.
 #' @export
-import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPeak","csv"), bin_width = 1000){
-  bin_inds<-c()
+import_input_regions<-function(file,format=NULL,bin_width = 1000){
+  if(is.null(format)){
+    extensions<-strsplit(file,".",fixed=TRUE)
+    extensions<-extensions[[1]][length(extensions[[1]])]
 
+    if(extensions=="bed"){
+      format<-"bed"
+    }else if(extensions=="bb"){
+      format<-"bigNarrowPeak"
+    }else if(extensions=="narrowPeak"){
+      format<-"narrowPeak"
+    }else if(extensions=="broadPeak"){
+      format<-"broadPeak"
+    }else if(extensions==".csv"){
+      format<-"csv"
+    }else{
+      stop("File type not in (bed, bigNarrowPeak, narrowPeak, broadPeak, csv), please check the file type.")
+    }
+  }
+  bin_inds<-c()
   if(format=="bed"){
     peak_dat<-rtracklayer::import(file,format="BED")
   }else if(format=="narrowPeak"){
@@ -70,7 +85,6 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
                               qValue = "numeric", peak = "integer")
     peak_dat <- rtracklayer::import(file, format = "BED",
                                     extraCols = extraCols_narrowPeak)
-
   }else if(format=="broadPeak"){
     extraCols_broadPeak <- c(singnalValue = "numeric", pValue = "numeric",
                              qValue = "numeric", peak = "integer")
@@ -125,8 +139,8 @@ import_peaks<-function(file,format=c("bed","narrowPeak","broadPeak","bigNarrowPe
 ##just need to run once.
 
 #' load the pre-compiled chip-seq data.
-#' @description load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIMTR.
-#' @param data_path path to the ChIP-seq data folder.
+#' @description load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIT.
+#' @param data_path path to the ChIP-seq data folder, can be absolute or relative path.
 #' @param bin_width width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.
 #'
 #' @export
@@ -134,7 +148,7 @@ load_chip_data <- function(data_path, bin_width){
   data_path = R.utils::getAbsolutePath(data_path)
 
   if(dir.exists(data_path)){
-    if(!file.exists(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))){
+    if(!file.exists(paste0(system.file(package = "BIT"),"/meta_table.rds"))){
 
       data_list<-list()
       data_list[["path"]]=data_path
@@ -144,40 +158,40 @@ load_chip_data <- function(data_path, bin_width){
       }
 
       ChIP_seq_files<-list.files(data_path)
-      TF_labels<-sapply(strsplit(ChIP_seq_files,"_",fixed=TRUE),function(x){return(x[[1]])})
+      TR_labels<-sapply(strsplit(ChIP_seq_files,"_",fixed=TRUE),function(x){return(x[[1]])})
       meta_table<-data.frame(matrix(ncol=2,nrow=length(ChIP_seq_files)))
-      colnames(meta_table)<-c("TF","File_Path")
+      colnames(meta_table)<-c("TR","File_Path")
 
-      meta_table$TF <- TF_labels
+      meta_table$TR <- TR_labels
       meta_table$File_Path <- paste0(data_path,"/",ChIP_seq_files)
 
       data_list[[paste0("meta_",bin_width)]] = meta_table
 
-      saveRDS(data_list,paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
+      saveRDS(data_list,paste0(system.file(package = "BIT"),"/meta_table.rds"))
 
     }else{
-      data_list <- readRDS(paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
+      data_list <- readRDS(paste0(system.file(package = "BIT"),"/meta_table.rds"))
       if(!is.null(data_list[[paste0("meta_",bin_width)]])){
         warning("Overwriting previous loaded meta-table for bin width of ", bin_width)
       }
       ChIP_seq_files<-list.files(data_path)
-      TF_labels<-sapply(strsplit(ChIP_seq_files,"_",fixed=TRUE),function(x){return(x[[1]])})
+      TR_labels<-sapply(strsplit(ChIP_seq_files,"_",fixed=TRUE),function(x){return(x[[1]])})
       meta_table<-data.frame(matrix(ncol=2,nrow=length(ChIP_seq_files)))
-      colnames(meta_table)<-c("TF","File_Path")
+      colnames(meta_table)<-c("TR","File_Path")
 
-      meta_table$TF <- TF_labels
+      meta_table$TR <- TR_labels
       meta_table$File_Path <- paste0(data_path,"/",ChIP_seq_files)
 
       data_list[[paste0("meta_",bin_width)]] = meta_table
 
-      saveRDS(data_list,paste0(system.file(package = "BIMTR"),"/meta_table.rds"))
+      saveRDS(data_list,paste0(system.file(package = "BIT"),"/meta_table.rds"))
     }
   }else{
 
     stop("ChIP-seq data directory does not exist.")
 
   }
-  print("ChIP-seq data successfully loaded, please run BIMTR with input to check!")
+  print("ChIP-seq data successfully loaded, please run BIT with input to check!")
   return()
 }
 

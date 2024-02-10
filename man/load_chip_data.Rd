@@ -7,10 +7,10 @@
 load_chip_data(data_path, bin_width)
 }
 \arguments{
-\item{data_path}{path to the ChIP-seq data folder.}
+\item{data_path}{path to the ChIP-seq data folder, can be absolute or relative path.}
 
 \item{bin_width}{width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.}
 }
 \description{
-load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIMTR.
+load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIT.
 }
