@@ -12,7 +12,7 @@ alignment_wrapper(input_vec, bin_width, option)
 \item{bin_width}{width of bin, should be in 100/500/1000.}
 }
 \value{
-a data frame has three columns, TF labels, number of 'good' windows, number of 'total' informative cases.
+a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
 }
 \description{
 Count the 'good' and 'total' informative cases between input peak set with reference database.

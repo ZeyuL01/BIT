@@ -1,7 +1,7 @@
 ##Main function
 
-#' BIMTR
-#' @description Main interface to run BIMTR method, please set the input file path, input file format, number of iterations and bin width.
+#' BIT
+#' @description Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width.
 #' users can also change default parameters used in Gibbs sampler.
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
@@ -11,7 +11,7 @@
 #'
 #' @return A list object contains results of Gibbs sampler.
 #' @export
-BIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak","csv"), N = 5000 ,bin_width = c(100,500,1000), option=c("ALL","CREs","PLS","ELS")){
+BIT <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak","csv"), N = 5000 ,bin_width = c(100,500,1000), option=c("ALL","CREs","PLS","ELS")){
   print("Load and map peaks to bins...")
   input_peak_inds <- import_peaks(file = file, format = format, bin_width = bin_width)
   filtered_peak_inds <- filter_peaks(input_peak_inds,option = option, bin_width = bin_width)
@@ -37,30 +37,6 @@ BIMTR <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak",
 
   return(gibbs_sampler_results)
 
-}
-
-
-#' BIMTR parallel computation.
-#' @description the multi-cores parallel version of BIMTR to acquire parallel MCMC chains for gelman-rubin diagnostic.
-#'
-#' @param file file path to the user-input.
-#' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
-#' @param N number of iterations for gibbs sampler, recommended for > 5000.
-#' @param bin_width desired width of bin, should be in 100/500/1000.
-#' @param option option to filter peaks with candidate cis-regulatory elements from ENCODE.
-#' @param numCores number of cores used in parallel computation.
-#'
-#' @return A list object of list objects that contains results of Gibbs sampler.
-BIMTR_multi <- function(file, format=c("bed","narrowPeak","broadPeak","bigNarrowPeak"), N = 5000 ,bin_width = c(100, 500, 1000), option=c("ALL","CREs","PLS","ELS"), numCores){
-    local_cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl=local_cl, c("file","format","N","bin_width","option"),envir = environment())
-    multi_results <- parallel::clusterEvalQ(local_cl, {
-      library(BIMTR)
-      BIMTR(file = file,format = format,N = N, bin_width = bin_width, option = option)
-    })
-    parallel::stopCluster(local_cl)
-
-    return(multi_results)
 }
 
 

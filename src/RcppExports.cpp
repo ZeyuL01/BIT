@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // Alignment
 List Alignment(NumericVector input_vec, NumericVector ref_vec);
-RcppExport SEXP _BIMTR_Alignment(SEXP input_vecSEXP, SEXP ref_vecSEXP) {
+RcppExport SEXP _BIT_Alignment(SEXP input_vecSEXP, SEXP ref_vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,7 +25,7 @@ END_RCPP
 }
 // Main_Sampling
 List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tf_labels, bool display_progress);
-RcppExport SEXP _BIMTR_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP, SEXP display_progressSEXP) {
+RcppExport SEXP _BIT_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tf_labelsSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,12 +40,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BIMTR_Alignment", (DL_FUNC) &_BIMTR_Alignment, 2},
-    {"_BIMTR_Main_Sampling", (DL_FUNC) &_BIMTR_Main_Sampling, 5},
+    {"_BIT_Alignment", (DL_FUNC) &_BIT_Alignment, 2},
+    {"_BIT_Main_Sampling", (DL_FUNC) &_BIT_Main_Sampling, 5},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_BIMTR(DllInfo *dll) {
+RcppExport void R_init_BIT(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
