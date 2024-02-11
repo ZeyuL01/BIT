@@ -50,7 +50,7 @@ BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 50
   }
 
   if(plot.bar==TRUE){
-    rank_plot(file_path_dat = file_name, output_path = output_path, burnin = burnin)
+    rank_plot(file_path = file_name, output_path = output_path, burnin = burnin)
   }
 
   return()
