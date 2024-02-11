@@ -20,7 +20,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions" href="Functions.html" />
+    <link rel="prev" title="Quick Start" href="QuickStart.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,11 +44,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Examples</a></li>
+              <p class="caption" role="heading"><span class="caption-text">BIT</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="InstallationGuide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">Quick Start</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Functions.html">Functions</a></li>
 </ul>
-</div>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="References.html">References</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -73,13 +82,88 @@
              
   <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
-<p>This is the page for examples of using BIT!</p>
+<p>The following examples show how to generate several more plots.</p>
+<section id="plot-the-bit-scores">
+<h2>Plot the BIT scores<a class="headerlink" href="#plot-the-bit-scores" title="Permalink to this heading"></a></h2>
+<p>To plot BIT score, once we have the output, rank_plot() function can be used to generate a barplot for the top 10 TRs with the 95 CI.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rank_plot</span><span class="p">(</span><span class="s2">&quot;file_path/file_name&quot;</span><span class="p">,</span><span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;output_path&quot;</span><span class="p">)</span>
+<span class="n">NULL</span>
+</pre></div>
+</div>
+<img alt="_images/file_name_rank_table.png" src="_images/file_name_rank_table.png" />
+</section>
+<section id="compare-trs-derived-from-two-region-sets">
+<h2>Compare TRs derived from two region sets<a class="headerlink" href="#compare-trs-derived-from-two-region-sets" title="Permalink to this heading"></a></h2>
+<p>Imagine you’re working with two sets of regions obtained from distinct sources, and your objective is to determine which transcriptional regulators exhibit a higher significance within each set. The BIT package offers a specialized function for this purpose, BIT_compare. This function takes two sets of input regions, computes the BIT score for each, and generates a scatter plot to visually represent the differences between them.</p>
+<p>The following example includes two sets of input regions that originate from an acute depletion experiment targeting CTCF in a MLL-rearranged human B cell lymphoblastic leukemia (B-ALL) cell line. To compare these sets and uncover the significant TRs within each, you would use the BIT_compare function. Let’s assume your input files are located at file_path/file1_name and file_path/file2_name, and you intend to store the output in output_path. Here’s how you proceed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">BIT_compare</span><span class="p">(</span><span class="s2">&quot;file_path/file1_name&quot;</span><span class="p">,</span><span class="s2">&quot;file_path/file2_name&quot;</span><span class="p">,</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Load and map peaks to bins...&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps&quot;</span>
+<span class="o">====================================================================================================</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Start BIT Gibbs sampler for file 1, iterations: 5000&quot;</span>
+<span class="mi">0</span><span class="o">%</span>   <span class="mi">10</span>   <span class="mi">20</span>   <span class="mi">30</span>   <span class="mi">40</span>   <span class="mi">50</span>   <span class="mi">60</span>   <span class="mi">70</span>   <span class="mi">80</span>   <span class="mi">90</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="p">[</span><span class="o">----|----|----|----|----|----|----|----|----|----|</span>
+<span class="o">**************************************************|</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;file1 saved as output_path/file1_name.rds&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Start BIT Gibbs sampler for file 2, iterations: 5000&quot;</span>
+<span class="mi">0</span><span class="o">%</span>   <span class="mi">10</span>   <span class="mi">20</span>   <span class="mi">30</span>   <span class="mi">40</span>   <span class="mi">50</span>   <span class="mi">60</span>   <span class="mi">70</span>   <span class="mi">80</span>   <span class="mi">90</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="p">[</span><span class="o">----|----|----|----|----|----|----|----|----|----|</span>
+<span class="o">**************************************************|</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;file2 saved as output_path/file2_name.rds&quot;</span>
+</pre></div>
+</div>
+<p>The same parameters used in BIT can also be changed here. We can check the generated rank table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">file1_table</span><span class="o">&lt;-</span><span class="n">display_tables</span><span class="p">(</span><span class="s2">&quot;/Users/zeyulu/Dropbox/datasets/DiffBind_new/CTCF_up.rds&quot;</span><span class="p">,</span><span class="s2">&quot;/Users/zeyulu/Dropbox/datasets/DiffBind_new/&quot;</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">file1_table</span>
+         <span class="n">TR</span>   <span class="n">Theta_i</span>     <span class="n">lower</span>     <span class="n">upper</span>  <span class="n">BIT_score</span> <span class="n">BIT_score_lower</span> <span class="n">BIT_score_upper</span> <span class="n">Rank</span>
+<span class="mi">1</span>      <span class="n">PHF2</span> <span class="o">-</span><span class="mf">1.639907</span> <span class="o">-</span><span class="mf">2.054012</span> <span class="o">-</span><span class="mf">1.403301</span> <span class="mf">0.16247765</span>      <span class="mf">0.11364764</span>      <span class="mf">0.19729287</span>    <span class="mi">1</span>
+<span class="mi">2</span>    <span class="n">NELFCD</span> <span class="o">-</span><span class="mf">1.667038</span> <span class="o">-</span><span class="mf">1.772569</span> <span class="o">-</span><span class="mf">1.570301</span> <span class="mf">0.15881952</span>      <span class="mf">0.14522317</span>      <span class="mf">0.17217349</span>    <span class="mi">2</span>
+<span class="mi">3</span>     <span class="n">GMEB2</span> <span class="o">-</span><span class="mf">1.677724</span> <span class="o">-</span><span class="mf">2.177140</span> <span class="o">-</span><span class="mf">1.421863</span> <span class="mf">0.15739711</span>      <span class="mf">0.10182216</span>      <span class="mf">0.19436974</span>    <span class="mi">3</span>
+<span class="mi">4</span>     <span class="n">NELFE</span> <span class="o">-</span><span class="mf">1.685149</span> <span class="o">-</span><span class="mf">1.696899</span> <span class="o">-</span><span class="mf">1.673411</span> <span class="mf">0.15641490</span>      <span class="mf">0.15487072</span>      <span class="mf">0.15796993</span>    <span class="mi">4</span>
+<span class="mi">5</span>      <span class="n">NFYC</span> <span class="o">-</span><span class="mf">1.710305</span> <span class="o">-</span><span class="mf">2.128452</span> <span class="o">-</span><span class="mf">1.473101</span> <span class="mf">0.15312420</span>      <span class="mf">0.10636206</span>      <span class="mf">0.18647172</span>    <span class="mi">5</span>
+<span class="mi">6</span>      <span class="n">MXI1</span> <span class="o">-</span><span class="mf">1.712181</span> <span class="o">-</span><span class="mf">1.892991</span> <span class="o">-</span><span class="mf">1.577314</span> <span class="mf">0.15288103</span>      <span class="mf">0.13090382</span>      <span class="mf">0.17117628</span>    <span class="mi">6</span>
+<span class="mi">7</span>   <span class="n">TP53BP1</span> <span class="o">-</span><span class="mf">1.764038</span> <span class="o">-</span><span class="mf">1.842045</span> <span class="o">-</span><span class="mf">1.699313</span> <span class="mf">0.14628531</span>      <span class="mf">0.13680959</span>      <span class="mf">0.15455504</span>    <span class="mi">7</span>
+<span class="mi">8</span>     <span class="n">NELFA</span> <span class="o">-</span><span class="mf">1.766545</span> <span class="o">-</span><span class="mf">1.831723</span> <span class="o">-</span><span class="mf">1.708190</span> <span class="mf">0.14597249</span>      <span class="mf">0.13803317</span>      <span class="mf">0.15339865</span>    <span class="mi">8</span>
+<span class="mi">9</span>      <span class="n">NFYA</span> <span class="o">-</span><span class="mf">1.782675</span> <span class="o">-</span><span class="mf">1.825434</span> <span class="o">-</span><span class="mf">1.738634</span> <span class="mf">0.14397317</span>      <span class="mf">0.13878308</span>      <span class="mf">0.14948653</span>    <span class="mi">9</span>
+<span class="mi">10</span>    <span class="n">TBL1X</span> <span class="o">-</span><span class="mf">1.793725</span> <span class="o">-</span><span class="mf">1.897890</span> <span class="o">-</span><span class="mf">1.695351</span> <span class="mf">0.14261669</span>      <span class="mf">0.13034745</span>      <span class="mf">0.15507339</span>   <span class="mi">10</span>
+<span class="o">......</span>
+<span class="o">&gt;</span> <span class="n">file2_table</span><span class="o">&lt;-</span><span class="n">display_tables</span><span class="p">(</span><span class="s2">&quot;/Users/zeyulu/Dropbox/datasets/DiffBind_new/CTCF_down.rds&quot;</span><span class="p">,</span><span class="s2">&quot;/Users/zeyulu/Dropbox/datasets/DiffBind_new/&quot;</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">file2_table</span>
+         <span class="n">TR</span>   <span class="n">Theta_i</span>     <span class="n">lower</span>     <span class="n">upper</span>   <span class="n">BIT_score</span> <span class="n">BIT_score_lower</span> <span class="n">BIT_score_upper</span> <span class="n">Rank</span>
+<span class="mi">1</span>     <span class="n">RAD21</span> <span class="o">-</span><span class="mf">2.068449</span> <span class="o">-</span><span class="mf">2.071377</span> <span class="o">-</span><span class="mf">2.065660</span> <span class="mf">0.112201479</span>     <span class="mf">0.111910061</span>     <span class="mf">0.112479571</span>    <span class="mi">1</span>
+<span class="mi">2</span>      <span class="n">CTCF</span> <span class="o">-</span><span class="mf">2.100346</span> <span class="o">-</span><span class="mf">2.101384</span> <span class="o">-</span><span class="mf">2.099273</span> <span class="mf">0.109063166</span>     <span class="mf">0.108962422</span>     <span class="mf">0.109167457</span>    <span class="mi">2</span>
+<span class="mi">3</span>      <span class="n">SMC3</span> <span class="o">-</span><span class="mf">2.110619</span> <span class="o">-</span><span class="mf">2.120554</span> <span class="o">-</span><span class="mf">2.101877</span> <span class="mf">0.108068962</span>     <span class="mf">0.107115052</span>     <span class="mf">0.108914473</span>    <span class="mi">3</span>
+<span class="mi">4</span>     <span class="n">SMC1A</span> <span class="o">-</span><span class="mf">2.225243</span> <span class="o">-</span><span class="mf">2.236839</span> <span class="o">-</span><span class="mf">2.214513</span> <span class="mf">0.097506464</span>     <span class="mf">0.096490742</span>     <span class="mf">0.098454801</span>    <span class="mi">4</span>
+<span class="mi">5</span>   <span class="n">SMARCA1</span> <span class="o">-</span><span class="mf">2.383749</span> <span class="o">-</span><span class="mf">2.913175</span> <span class="o">-</span><span class="mf">2.168685</span> <span class="mf">0.084420369</span>     <span class="mf">0.051506129</span>     <span class="mf">0.102598051</span>    <span class="mi">5</span>
+<span class="mi">6</span>     <span class="n">H2AFZ</span> <span class="o">-</span><span class="mf">3.088567</span> <span class="o">-</span><span class="mf">3.754663</span> <span class="o">-</span><span class="mf">2.848781</span> <span class="mf">0.043581322</span>     <span class="mf">0.022872913</span>     <span class="mf">0.054744379</span>    <span class="mi">6</span>
+<span class="mi">7</span>     <span class="n">ZBTB2</span> <span class="o">-</span><span class="mf">3.250662</span> <span class="o">-</span><span class="mf">3.411804</span> <span class="o">-</span><span class="mf">3.106963</span> <span class="mf">0.037303111</span>     <span class="mf">0.031928588</span>     <span class="mf">0.042820946</span>    <span class="mi">7</span>
+<span class="mi">8</span>     <span class="n">KDM3B</span> <span class="o">-</span><span class="mf">3.282236</span> <span class="o">-</span><span class="mf">3.824898</span> <span class="o">-</span><span class="mf">3.051519</span> <span class="mf">0.036185664</span>     <span class="mf">0.021354682</span>     <span class="mf">0.045151926</span>    <span class="mi">8</span>
+<span class="mi">9</span>     <span class="n">CTCFL</span> <span class="o">-</span><span class="mf">3.350775</span> <span class="o">-</span><span class="mf">3.378092</span> <span class="o">-</span><span class="mf">3.324845</span> <span class="mf">0.033869786</span>     <span class="mf">0.032987201</span>     <span class="mf">0.034728615</span>    <span class="mi">9</span>
+<span class="mi">10</span>      <span class="n">SRF</span> <span class="o">-</span><span class="mf">3.444633</span> <span class="o">-</span><span class="mf">3.498132</span> <span class="o">-</span><span class="mf">3.394713</span> <span class="mf">0.030929325</span>     <span class="mf">0.029365417</span>     <span class="mf">0.032461110</span>   <span class="mi">10</span>
+</pre></div>
+</div>
+<p>It is clearly noted the perturbed TR and other cohesion complex components are more significant in the input region set 2. We can further draw a scatterplot to show the whole-picture.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">compare_scatter_plot</span><span class="p">(</span><span class="s2">&quot;file_path/file1_name.rds&quot;</span><span class="p">,</span><span class="s2">&quot;file_path/file2_name.rds&quot;</span><span class="p">,</span><span class="n">output_path</span><span class="p">)</span>
+<span class="n">pdf</span>
+        <span class="mi">2</span>
+</pre></div>
+</div>
+<p>The output picture will be saved as “file1_name_file2_name_compare.pdf”</p>
+<img alt="_images/file1_name_file2_name_compare.png" src="_images/file1_name_file2_name_compare.png" />
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QuickStart.html" class="btn btn-neutral float-left" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Functions.html" class="btn btn-neutral float-right" title="Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

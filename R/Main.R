@@ -32,7 +32,7 @@ BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 50
 
   tr_labels <- as.numeric(factor(alignment_results$TR))
 
-  print(paste0("Start BIMTR Gibbs sampler, iterations: ",N))
+  print(paste0("Start BIT Gibbs sampler, iterations: ",N))
 
   gibbs_sampler_results <- Main_Sampling(N, xct, nct, tr_labels)
 
@@ -97,7 +97,7 @@ BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE,
   tr_labels_file1 <- as.numeric(factor(alignment_results_file1$TR))
   tr_labels_file2 <- as.numeric(factor(alignment_results_file2$TR))
 
-  print(paste0("Start BIMTR Gibbs sampler for file 1, iterations: ",N))
+  print(paste0("Start BIT Gibbs sampler for file 1, iterations: ",N))
 
   gibbs_sampler_results_file1 <- Main_Sampling(N, xct_file1, nct_file1, tr_labels_file1)
   gibbs_sampler_results_file1[["TR_names"]] <- alignment_results_file1$TR
@@ -107,7 +107,7 @@ BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE,
   print("Done.")
   print(paste0("file1 saved as ",file1_name))
 
-  print(paste0("Start BIMTR Gibbs sampler for file 2, iterations: ",N))
+  print(paste0("Start BIT Gibbs sampler for file 2, iterations: ",N))
 
   gibbs_sampler_results_file2 <- Main_Sampling(N, xct_file2, nct_file2, tr_labels_file2)
   gibbs_sampler_results_file2[["TR_names"]] <- alignment_results_file2$TR

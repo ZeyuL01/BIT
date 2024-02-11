@@ -13,7 +13,7 @@ Assuming your input file is located at "file_path/file_name (acceptable formats:
 	[1] "Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps"
 	==================================================
 	[1] "Done."
-	[1] "Start BIMTR Gibbs sampler for file 1, iterations: 5000"
+	[1] "Start BIT Gibbs sampler for file 1, iterations: 5000"
 	0%   10   20   30   40   50   60   70   80   90   100%
 	[----|----|----|----|----|----|----|----|----|----|
 	**************************************************|

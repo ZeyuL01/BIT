@@ -82,15 +82,15 @@
              
   <section id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h1>
-<p>Once you successfully installed BIT, and set up the reference ChIP-seq database, you can now start to use BIT! It is very simple as long as you have any .bed / .narrowPeak / .broadPeak / .bigNarrowPeak(.bb) / .csv file that indicates the chromosome, start, and end positions of your input epigenomic regions. You can simply run BIT as:</p>
-<p>Suppose your input file path is: file_path/file_name(.bed / .bb, etc..), and the directory you want to save the output data is: output_path. The following command will automatically compare your input regions with all ChIP-seq reference datasets and start to run the BIT model with the Gibbs sampler. The data in each iteration will be saved as a “file_name.rds” R data object.</p>
+<p>After successfully installing BIT and configuring the reference ChIP-seq database, you’re ready to use BIT for your analyses. The process is straightforward if you have any of the following file types indicating the chromosomal start and end positions of your epigenomic regions: .bed, .narrowPeak, .broadPeak, .bigNarrowPeak (.bb), or .csv.</p>
+<p>Assuming your input file is located at “file_path/file_name (acceptable formats: .bed, .bb, etc.)”, and you aim to store the output in “output_path”, the command below will first start a comprehensive comparison of your input regions against all available ChIP-seq reference datasets. Next it initiates the BIT model using the Gibbs sampler to give the Bayesian inference of TR level BIT score, the output data from each iteration will be saved in a R data object named “file_name.rds”.</p>
 <div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="nf">BIT</span><span class="p">(</span><span class="s">&quot;file_path/file_name(.bed / .bb, etc..)&quot;</span><span class="p">,</span><span class="s">&quot;output_path&quot;</span><span class="p">)</span>
 <span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Load and map peaks to bins...&quot;</span>
 <span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Done.&quot;</span>
 <span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps&quot;</span>
 <span class="o">==================================================</span>
 <span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Done.&quot;</span>
-<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Start BIMTR Gibbs sampler for file 1, iterations: 5000&quot;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Start BIT Gibbs sampler for file 1, iterations: 5000&quot;</span>
 <span class="m">0</span><span class="o">%   10   20   30   40   50   60   70   80   90   100%</span>
 <span class="p">[</span><span class="o">----|----|----|----|----|----|----|----|----|----|</span>
 <span class="o">**************************************************|</span>
@@ -109,7 +109,7 @@
 <p>option = c(“ALL”, “PLS”, “ELS”), Whether to filter the input regions with ENCODE defined cis-regulatory elements, default: “ALL” to use all input regions.</p>
 <p>burnin = NULL / integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.</p>
 </div>
-<p>If you set show as FALSE and later want to generate the rank table, you can use the following command:</p>
+<p>If you set show = FALSE and later want to generate the rank table, you can use the following command:</p>
 <div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="n">Results_Table</span><span class="o">&lt;-</span><span class="nf">display_tables</span><span class="p">(</span><span class="s">&quot;file_path/file_name.rds&quot;</span><span class="p">,</span><span class="s">&quot;output_path&quot;</span><span class="p">)</span>
 <span class="o">&gt;</span><span class="w"> </span><span class="n">Results_Table</span>
 <span class="w">         </span><span class="n">TR</span><span class="w">   </span><span class="n">Theta_i</span><span class="w">     </span><span class="n">lower</span><span class="w">     </span><span class="n">upper</span><span class="w">  </span><span class="n">BIT_score</span><span class="w"> </span><span class="n">BIT_score_lower</span><span class="w"> </span><span class="n">BIT_score_upper</span><span class="w"> </span><span class="n">Rank</span>
