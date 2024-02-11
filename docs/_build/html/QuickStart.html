@@ -20,7 +20,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="Examples.html" />
+    <link rel="prev" title="Installation Guide" href="InstallationGuide.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,11 +44,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Quick Start</a></li>
+              <p class="caption" role="heading"><span class="caption-text">BIT</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="InstallationGuide.html">Installation Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Functions.html">Functions</a></li>
 </ul>
-</div>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="References.html">References</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -73,13 +82,58 @@
              
   <section id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h1>
-<p>This is page for quick start of BIT!</p>
+<p>Once you successfully installed BIT, and set up the reference ChIP-seq database, you can now start to use BIT! It is very simple as long as you have any .bed / .narrowPeak / .broadPeak / .bigNarrowPeak(.bb) / .csv file that indicates the chromosome, start, and end positions of your input epigenomic regions. You can simply run BIT as:</p>
+<p>Suppose your input file path is: file_path/file_name(.bed / .bb, etc..), and the directory you want to save the output data is: output_path. The following command will automatically compare your input regions with all ChIP-seq reference datasets and start to run the BIT model with the Gibbs sampler. The data in each iteration will be saved as a “file_name.rds” R data object.</p>
+<div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="nf">BIT</span><span class="p">(</span><span class="s">&quot;file_path/file_name(.bed / .bb, etc..)&quot;</span><span class="p">,</span><span class="s">&quot;output_path&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Load and map peaks to bins...&quot;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps&quot;</span>
+<span class="o">==================================================</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Start BIMTR Gibbs sampler for file 1, iterations: 5000&quot;</span>
+<span class="m">0</span><span class="o">%   10   20   30   40   50   60   70   80   90   100%</span>
+<span class="p">[</span><span class="o">----|----|----|----|----|----|----|----|----|----|</span>
+<span class="o">**************************************************|</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Done.&quot;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;Output data saved as output_path/file_name.rds&quot;</span>
+</pre></div>
+</div>
+<p>There are several default parameters you can change:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>show = TRUE / FALSE, whether to show the ranking table, default: TRUE.</p>
+<p>plot.bar = TRUE / FALSE, whether to plot the top 10 TRs BIT score in a horizontal barplot, default TRUE.</p>
+<p>format = c(“bed”, “narrowPeak”, “broadPeak”, “bigNarrowPeak”, “csv”, NULL), to specify the format of input file, default: NULL. When setting as NULL, BIT will automatically judge the file format by its extension.</p>
+<p>N = 5000 , number of iterations in Gibbs sampler.</p>
+<p>bin_width = c(100, 500, 1000), width of bin used to separate the chromatin into non-overlapping bins, default: 1000.</p>
+<p>option = c(“ALL”, “PLS”, “ELS”), Whether to filter the input regions with ENCODE defined cis-regulatory elements, default: “ALL” to use all input regions.</p>
+<p>burnin = NULL / integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.</p>
+</div>
+<p>If you set show as FALSE and later want to generate the rank table, you can use the following command:</p>
+<div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="n">Results_Table</span><span class="o">&lt;-</span><span class="nf">display_tables</span><span class="p">(</span><span class="s">&quot;file_path/file_name.rds&quot;</span><span class="p">,</span><span class="s">&quot;output_path&quot;</span><span class="p">)</span>
+<span class="o">&gt;</span><span class="w"> </span><span class="n">Results_Table</span>
+<span class="w">         </span><span class="n">TR</span><span class="w">   </span><span class="n">Theta_i</span><span class="w">     </span><span class="n">lower</span><span class="w">     </span><span class="n">upper</span><span class="w">  </span><span class="n">BIT_score</span><span class="w"> </span><span class="n">BIT_score_lower</span><span class="w"> </span><span class="n">BIT_score_upper</span><span class="w"> </span><span class="n">Rank</span>
+<span class="m">1</span><span class="w">      </span><span class="n">CTCF</span><span class="w"> </span><span class="m">-2.010571</span><span class="w"> </span><span class="m">-2.011593</span><span class="w"> </span><span class="m">-2.009676</span><span class="w"> </span><span class="m">0.11809745</span><span class="w">      </span><span class="m">0.11799114</span><span class="w">      </span><span class="m">0.11819079</span><span class="w">    </span><span class="m">1</span>
+<span class="m">2</span><span class="w">     </span><span class="n">RAD21</span><span class="w"> </span><span class="m">-2.028610</span><span class="w"> </span><span class="m">-2.031747</span><span class="w"> </span><span class="m">-2.025619</span><span class="w"> </span><span class="m">0.11623164</span><span class="w">      </span><span class="m">0.11590978</span><span class="w">      </span><span class="m">0.11653925</span><span class="w">    </span><span class="m">2</span>
+<span class="m">3</span><span class="w">      </span><span class="n">SMC3</span><span class="w"> </span><span class="m">-2.110100</span><span class="w"> </span><span class="m">-2.120542</span><span class="w"> </span><span class="m">-2.100907</span><span class="w"> </span><span class="m">0.10811898</span><span class="w">      </span><span class="m">0.10711622</span><span class="w">      </span><span class="m">0.10900866</span><span class="w">    </span><span class="m">3</span>
+<span class="m">4</span><span class="w">     </span><span class="n">SMC1A</span><span class="w"> </span><span class="m">-2.181305</span><span class="w"> </span><span class="m">-2.193447</span><span class="w"> </span><span class="m">-2.170246</span><span class="w"> </span><span class="m">0.10144192</span><span class="w">      </span><span class="m">0.10034048</span><span class="w">      </span><span class="m">0.10245443</span><span class="w">    </span><span class="m">4</span>
+<span class="m">5</span><span class="w">      </span><span class="n">PHF2</span><span class="w"> </span><span class="m">-2.222166</span><span class="w"> </span><span class="m">-2.633869</span><span class="w"> </span><span class="m">-1.990377</span><span class="w"> </span><span class="m">0.09777755</span><span class="w">      </span><span class="m">0.06699025</span><span class="w">      </span><span class="m">0.12021697</span><span class="w">    </span><span class="m">5</span>
+<span class="m">6</span><span class="w">    </span><span class="n">GABPB1</span><span class="w"> </span><span class="m">-2.301673</span><span class="w"> </span><span class="m">-2.689461</span><span class="w"> </span><span class="m">-2.062208</span><span class="w"> </span><span class="m">0.09098450</span><span class="w">      </span><span class="m">0.06359813</span><span class="w">      </span><span class="m">0.11282466</span><span class="w">    </span><span class="m">6</span>
+<span class="m">7</span><span class="w">      </span><span class="n">CHD2</span><span class="w"> </span><span class="m">-2.317842</span><span class="w"> </span><span class="m">-2.370804</span><span class="w"> </span><span class="m">-2.270597</span><span class="w"> </span><span class="m">0.08965600</span><span class="w">      </span><span class="m">0.08542628</span><span class="w">      </span><span class="m">0.09358759</span><span class="w">    </span><span class="m">7</span>
+<span class="m">8</span><span class="w">      </span><span class="n">NFYA</span><span class="w"> </span><span class="m">-2.353494</span><span class="w"> </span><span class="m">-2.396030</span><span class="w"> </span><span class="m">-2.313238</span><span class="w"> </span><span class="m">0.08678843</span><span class="w">      </span><span class="m">0.08347594</span><span class="w">      </span><span class="m">0.09003250</span><span class="w">    </span><span class="m">8</span>
+<span class="m">9</span><span class="w">    </span><span class="n">NELFCD</span><span class="w"> </span><span class="m">-2.371794</span><span class="w"> </span><span class="m">-2.476460</span><span class="w"> </span><span class="m">-2.276018</span><span class="w"> </span><span class="m">0.08534898</span><span class="w">      </span><span class="m">0.07752502</span><span class="w">      </span><span class="m">0.09312872</span><span class="w">    </span><span class="m">9</span>
+<span class="m">10</span><span class="w">     </span><span class="n">NFYC</span><span class="w"> </span><span class="m">-2.373795</span><span class="w"> </span><span class="m">-2.767204</span><span class="w"> </span><span class="m">-2.122314</span><span class="w"> </span><span class="m">0.08519290</span><span class="w">      </span><span class="m">0.05912233</span><span class="w">      </span><span class="m">0.10694685</span><span class="w">   </span><span class="m">10</span>
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="InstallationGuide.html" class="btn btn-neutral float-left" title="Installation Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

@@ -3,7 +3,7 @@
 #' BIT
 #' @description Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width.
 #' @param file file path to the user-input.
-#' @param output_dir absoluate or relative directory to store the Gibbs sampler data
+#' @param output_path absoluate or relative directory to store the Gibbs sampler data
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, should be in 100/500/1000, default: 1000.
@@ -12,16 +12,16 @@
 #'
 #' @return NULL
 #' @export
-BIT <- function(file, output_dir, show=TRUE, format=NULL, N = 5000 ,bin_width = 1000, option="ALL"){
+BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, option="ALL",burnin=NULL){
   print("Load and map peaks to bins...")
 
-  output_path = R.utils::getAbsolutePath(output_dir)
+  output_path = R.utils::getAbsolutePath(output_path)
 
   input_peak_inds <- import_input_regions(file = file, format = format, bin_width = bin_width)
   filtered_peak_inds <- filter_peaks(input_peak_inds, option = option, bin_width = bin_width)
 
   print("Done.")
-  print(paste0("Align the loaded input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
+  print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
 
   alignment_results <- alignment_wrapper(filtered_peak_inds, bin_width = bin_width, option = option)
 
@@ -43,7 +43,15 @@ BIT <- function(file, output_dir, show=TRUE, format=NULL, N = 5000 ,bin_width = 
   file_name<-paste0(output_path,"/",tools::file_path_sans_ext(basename(file)),".rds")
   saveRDS(gibbs_sampler_results,file_name)
 
-  print(paste0("file save as ",file_name))
+  print(paste0("Output data saved as ",file_name))
+
+  if(show==TRUE){
+    display_tables(file_path = file_name, output_path = output_path, burnin = burnin)
+  }
+
+  if(plot.bar==TRUE){
+    rank_plot(file_path_dat = file_name, output_path = output_path, burnin = burnin)
+  }
 
   return()
 }
@@ -52,7 +60,7 @@ BIT <- function(file, output_dir, show=TRUE, format=NULL, N = 5000 ,bin_width = 
 #' @description compare two input epigenomic region sets.
 #' @param file1 file path to the user-input file 1.
 #' @param file2 file path to the user-input file 2.
-#' @param output_dir absoluate or relative directory to store the Gibbs sampler data.
+#' @param output_path absoluate or relative directory to store the Gibbs sampler data.
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension, default: NULL.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, should be in 100/500/1000, default: 1000.
@@ -61,10 +69,10 @@ BIT <- function(file, output_dir, show=TRUE, format=NULL, N = 5000 ,bin_width = 
 #'
 #' @return NULL
 #' @export
-BIT_compare <- function(file1, file2, output_dir, show=TRUE, format=c(NULL,NULL), N = 5000, bin_width = 1000, option="ALL"){
+BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE, format=c(NULL,NULL), N = 5000, bin_width = 1000, option="ALL", burnin=NULL){
   print("Load and map peaks to bins...")
 
-  output_path = R.utils::getAbsolutePath(data_path)
+  output_path = R.utils::getAbsolutePath(output_path)
 
   input_peak_inds_file1 <- import_input_regions(file = file1, format = format[1], bin_width = bin_width)
   input_peak_inds_file2 <- import_input_regions(file = file2, format = format[2], bin_width = bin_width)
@@ -73,7 +81,7 @@ BIT_compare <- function(file1, file2, output_dir, show=TRUE, format=c(NULL,NULL)
   filtered_peak_inds_file2 <- filter_peaks(input_peak_inds_file2, option = option, bin_width = bin_width)
 
   print("Done.")
-  print(paste0("Align the loaded peaks with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
+  print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
 
   alignment_results_file1 <- alignment_wrapper(filtered_peak_inds_file1, bin_width = bin_width, option = option)
   alignment_results_file2 <- alignment_wrapper(filtered_peak_inds_file2, bin_width = bin_width, option = option)
@@ -97,7 +105,7 @@ BIT_compare <- function(file1, file2, output_dir, show=TRUE, format=c(NULL,NULL)
   saveRDS(gibbs_sampler_results_file1,file1_name)
 
   print("Done.")
-  print(paste0("file1 save as ",file1_name))
+  print(paste0("file1 saved as ",file1_name))
 
   print(paste0("Start BIMTR Gibbs sampler for file 2, iterations: ",N))
 
@@ -107,9 +115,16 @@ BIT_compare <- function(file1, file2, output_dir, show=TRUE, format=c(NULL,NULL)
   saveRDS(gibbs_sampler_results_file2,file2_name)
 
   print("Done.")
-  print(paste0("file2 save as ",file2_name))
+  print(paste0("file2 saved as ",file2_name))
 
-  saveRDS()
+  if(show==TRUE){
+    display_tables(file_path = file1_name, output_path = output_path, burnin = burnin)
+    display_tables(file_path = file2_name, output_path = output_path, burnin = burnin)
+  }
+
+  if(plot.scatter==TRUE){
+    compare_scatter_plot(file1_name,file2_name)
+  }
 
   return()
 }
