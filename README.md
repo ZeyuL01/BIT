@@ -87,3 +87,11 @@ Results_Table<-display_tables("file_path/file_name.rds","output_path")
 #9    NELFCD -2.371794 -2.476460 -2.276018 0.08534898      0.07752502      0.09312872    9
 #10     NFYC -2.373795 -2.767204 -2.122314 0.08519290      0.05912233      0.10694685   10
 ```
+
+## Appendix
+If you use BIT in your work, please cite us!
+
+[Dr. Xinlei (Sherry) Wang](https://www.uta.edu/academics/faculty/profile?username=wangx9)
+[Dr. Lin Xu](https://qbrc.swmed.edu/labs/xulab/)
+
+
