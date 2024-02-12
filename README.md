@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-![BIMTR](inst/BIMTR.png)
+![BIT](inst/BIT.png)
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -44,7 +44,7 @@ Pre-compiled ChIP-seq database can be accessed through:
 chip_path = "/.../Desktop/data/ChIP-seq/macs2_peaks_inds_1000/"
 load_chip_data(chip_path, bin_width = 1000)
 
-#> [1] "ChIP-seq data successfully loaded, please run BIMTR with input to check!"
+#> [1] "ChIP-seq data successfully loaded, please run BIT with input to check!"
 #> NULL
 ```
 
