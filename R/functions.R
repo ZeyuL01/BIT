@@ -96,8 +96,15 @@ rank_plot<-function(file_path=NULL, output_path, burnin=NULL, n=10, colors="NPG"
   return()
 }
 
-
-compare_scatter_plot<-function(file1_path,file2_path, output_path, burnin=NULL){
+#' rank_plot
+#' @description To draw a barplot for the top n TRs.
+#' @param file1_path path to the saved BIT Gibbs sampling results of input 1.
+#' @param file2_path path to the saved BIT Gibbs sampling results of input 2.
+#' @param output_path path to save the barplot.
+#' @param burnin number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.
+#' @return NULL
+#' @export
+compare_scatter_plot<-function(file1_path, file2_path, output_path, burnin=NULL){
   dat1<-readRDS(file1_path)
   dat2<-readRDS(file2_path)
 
@@ -168,6 +175,7 @@ compare_scatter_plot<-function(file1_path,file2_path, output_path, burnin=NULL){
   box()
   dev.off()
 
+  return()
 }
 
 logistic <- function(x) {

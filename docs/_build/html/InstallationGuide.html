@@ -49,11 +49,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="QuickStart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Functions.html">API References</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.biorxiv.org/content/10.1101/2024.02.01.578316v1">BIT's paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="References.html">References</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.uta.edu/academics/faculty/profile?username=wangx9">Dr. Xinlei (Sherry) Wang</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://qbrc.swmed.edu/labs/xulab/">Dr. Lin Xu</a></li>
 </ul>
 
         </div>
@@ -85,17 +88,37 @@
 <p>BIT is built by Rcpp to achieve fast computation. The following packages are required for the usage of BIT, please check the installation before running BIT.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Rcpp</p>
-<p>RcppArmadillo</p>
-<p>RcppDist</p>
-<p>RcppProgress</p>
-<p>rtracklayer</p>
-<p>data.table</p>
-<p>R.utils</p>
-<p>ggsci</p>
-<p>basicPlotteR</p>
+<p>Rcpp, RcppArmadillo, RcppDist, RcppProgress, rtracklayer, data.table, R.utils, ggsci, basicPlotteR</p>
 </div>
-<p>You can directly install from github by typing following command in your R terminal:</p>
+<p>You can directly install BIT from github by typing following command in the R terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import(devtools)
+devtools::install_github(&quot;ZeyuL01/BIT&quot;)
+Downloading GitHub repo ZeyuL01/BIT@HEAD
+── R CMD build ──────────────────────────────────────────────────────────────────────────────────────────
+✔  checking for file ‘/private/var/folders/cm/9xs2krg94ygcyk5m9xsr31qc0000gn/T/Rtmp0KrI6F/remotes3c8c5b5ed5f3/ZeyuL01-BIT-2e57689/DESCRIPTION’ ...
+─  preparing ‘BIT’:
+✔  checking DESCRIPTION meta-information ...
+...
+...
+...
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (BIT)
+</pre></div>
+</div>
+<p>Next you have to run load_chip_data() function to connect BIT to the reference database. You can download the data from <a class="reference external" href="https://smu.box.com/s/dswrvsz4chh7ygkjpwdq3lex2gvrz2gi">Box folder</a>, assume the location of the reference 1000 bps database folder is /../chip_seq_data_1000/. Just type the following code in the R terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">load_chip_data</span><span class="p">(</span><span class="s2">&quot;/../chip_seq_data_1000/&quot;</span><span class="p">,</span> <span class="n">bin_width</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">&quot;ChIP-seq data successfully loaded, please run BIT with input to check!&quot;</span>
+<span class="n">NULL</span>
+</pre></div>
+</div>
+<p>You can reconnect the updated or modified database anytime later.</p>
+<p>If you have compilation problem, please refer to the following posts.</p>
+<p>windows: <a class="reference external" href="https://cran.r-project.org/bin/windows/base/howto-R-devel.html">https://cran.r-project.org/bin/windows/base/howto-R-devel.html</a></p>
+<p>macos: <a class="reference external" href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/">https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/</a></p>
+<p>Or you can <a class="reference external" href="https://github.com/ZeyuL01/BIT/issues">submit</a> the issue on GitHub.</p>
 </section>
 
 

@@ -22,7 +22,7 @@ The goal of BIT is to identify the transcriptional regulators that govern user d
 If you use BIT in your work, please cite us: 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: BIT
    :name: BIT
 
@@ -32,8 +32,11 @@ If you use BIT in your work, please cite us:
    Functions
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Appendix
    :name: Appendix
 
+   BIT's paper <https://www.biorxiv.org/content/10.1101/2024.02.01.578316v1>
    References
+   Dr. Xinlei (Sherry) Wang <https://www.uta.edu/academics/faculty/profile?username=wangx9>
+   Dr. Lin Xu <https://qbrc.swmed.edu/labs/xulab/>

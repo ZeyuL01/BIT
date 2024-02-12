@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Functions &mdash; BIT 0.0.1 documentation</title>
+  <title>API References &mdash; BIT 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
@@ -20,7 +20,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="References.html" />
+    <link rel="prev" title="Examples" href="Examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,11 +44,21 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Functions</a></li>
+              <p class="caption" role="heading"><span class="caption-text">BIT</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="InstallationGuide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a></li>
 </ul>
-</div>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.biorxiv.org/content/10.1101/2024.02.01.578316v1">BIT's paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="References.html">References</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.uta.edu/academics/faculty/profile?username=wangx9">Dr. Xinlei (Sherry) Wang</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://qbrc.swmed.edu/labs/xulab/">Dr. Lin Xu</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -61,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Functions</li>
+      <li class="breadcrumb-item active">API References</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Functions.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -71,15 +83,89 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="functions">
-<h1>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h1>
-<p>This is the page for functions explanation!</p>
+  <section id="api-references">
+<h1>API References<a class="headerlink" href="#api-references" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="BIT">
+<span class="sig-name descname"><span class="pre">BIT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show=TRUE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot.bar=TRUE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=NULL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_width</span> <span class="pre">=</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option=&quot;ALL&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin=NULL</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BIT" title="Permalink to this definition"></a></dt>
+<dd><p><em>Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width</em>.</p>
+<p><strong>file</strong>: file path to the user-input.</p>
+<p><strong>output_path</strong>: absoluate or relative directory to store the Gibbs sampler data.</p>
+<p><strong>format</strong>: if specify as NULL, BIT will automatically read and judge the file type based on extension.</p>
+<p><strong>N</strong>: number of iterations for gibbs sampler, recommended for &gt;= 5000, default: 5000.</p>
+<p><strong>bin_width</strong>: desired width of bin, should be in 100/500/1000, default: 1000.</p>
+<p><strong>option</strong>: option to filter peaks with candidate cis-regulatory elements from ENCODE, default use “ALL”, can be “PLS” for all promoters, “ELS” for all enhancers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BIT_compare">
+<span class="sig-name descname"><span class="pre">BIT_compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show=TRUE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot.scatter=TRUE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=c(NULL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NULL)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_width</span> <span class="pre">=</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option=&quot;ALL&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin=NULL</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BIT_compare" title="Permalink to this definition"></a></dt>
+<dd><p><em>compare BIT identifid TRs for two user input epigenomic region sets</em>.</p>
+<p><strong>file1</strong>: file path to the user-input file 1.</p>
+<p><strong>file2</strong>: file path to the user-input file 2.</p>
+<p><strong>output_path</strong>: absoluate or relative directory to store the Gibbs sampler data.</p>
+<p><strong>format</strong>: if specify as NULL, BIT will automatically read and judge the file type based on extension, default: NULL.</p>
+<p><strong>N</strong>: number of iterations for gibbs sampler, recommended for &gt;= 5000, default: 5000.</p>
+<p><strong>bin_width</strong>: desired width of bin, should be in 100/500/1000, default: 1000.</p>
+<p><strong>option</strong>: option to filter peaks with candidate cis-regulatory elements from ENCODE, default use “ALL”, can be “PLS” for all promoters, “ELS” for all enhancers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="display_tables">
+<span class="sig-name descname"><span class="pre">display_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NULL</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#display_tables" title="Permalink to this definition"></a></dt>
+<dd><p><em>To show the ranking table by inspecting the results of Gibbs sampler</em>.</p>
+<p><strong>file_path</strong>: path to the saved BIT Gibbs sampling results.</p>
+<p><strong>output_path</strong>: path to save the rank table.</p>
+<p><strong>burnin</strong>: number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rank_plot">
+<span class="sig-name descname"><span class="pre">rank_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path=NULL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin=NULL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors=&quot;NPG&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main=NULL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlab=&quot;BIT</span> <span class="pre">score&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylab=&quot;TR</span> <span class="pre">symbols&quot;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rank_plot" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p><em>To draw a barplot for the top n TRs</em>.</p>
+</div></blockquote>
+<p><strong>file_path</strong>: path to the saved BIT Gibbs sampling results.</p>
+<p><strong>output_path</strong>: path to save the barplot.</p>
+<p><strong>burnin</strong>: number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.</p>
+<p><strong>n</strong>: top n TRs will show in the barplot, default: 10.</p>
+<p><strong>colors</strong>: colors for each bar, default “NPG” for n&lt;=10, has to be manually specified if n&gt;10.</p>
+<p><strong>main</strong>: main title for the barplot, default: NULL.</p>
+<p><strong>xlab</strong>: x axis label, default: BIT score.</p>
+<p><strong>ylab</strong>: y axis label, default: TR symbols.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compare_scatter_plot">
+<span class="sig-name descname"><span class="pre">compare_scatter_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file1_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file2_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NULL</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#compare_scatter_plot" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p><em>To draw a scatterplot for the comparison bewteen two input region sets</em>.</p>
+</div></blockquote>
+<p><strong>file1_path</strong>: path to the saved BIT Gibbs sampling results of input 1.</p>
+<p><strong>file2_path</strong>: path to the saved BIT Gibbs sampling results of input 2.</p>
+<p><strong>output_path</strong>: path to save the barplot.</p>
+<p><strong>burnin</strong>: number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="load_chip_data">
+<span class="sig-name descname"><span class="pre">load_chip_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#load_chip_data" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p><em>load the pre-compiled chip-seq data</em>.</p>
+</div></blockquote>
+<p><strong>data_path</strong>: path to the ChIP-seq data folder, can be absolute or relative path.</p>
+<p><strong>bin_width</strong> width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.</p>
+</dd></dl>
+
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="References.html" class="btn btn-neutral float-right" title="References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

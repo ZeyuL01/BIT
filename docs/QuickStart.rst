@@ -36,7 +36,7 @@ There are several default parameters you can change:
 
 	option = c("ALL", "PLS", "ELS"), Whether to filter the input regions with ENCODE defined cis-regulatory elements, default: "ALL" to use all input regions.
 
-	burnin = NULL / integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.
+	burnin = NULL or integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.
 
 
 If you set show = FALSE and later want to generate the rank table, you can use the following command:

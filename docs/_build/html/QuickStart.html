@@ -49,11 +49,14 @@
 <li class="toctree-l1"><a class="reference internal" href="InstallationGuide.html">Installation Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Functions.html">API References</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.biorxiv.org/content/10.1101/2024.02.01.578316v1">BIT's paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="References.html">References</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.uta.edu/academics/faculty/profile?username=wangx9">Dr. Xinlei (Sherry) Wang</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://qbrc.swmed.edu/labs/xulab/">Dr. Lin Xu</a></li>
 </ul>
 
         </div>
@@ -107,7 +110,7 @@
 <p>N = 5000 , number of iterations in Gibbs sampler.</p>
 <p>bin_width = c(100, 500, 1000), width of bin used to separate the chromatin into non-overlapping bins, default: 1000.</p>
 <p>option = c(“ALL”, “PLS”, “ELS”), Whether to filter the input regions with ENCODE defined cis-regulatory elements, default: “ALL” to use all input regions.</p>
-<p>burnin = NULL / integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.</p>
+<p>burnin = NULL or integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.</p>
 </div>
 <p>If you set show = FALSE and later want to generate the rank table, you can use the following command:</p>
 <div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="n">Results_Table</span><span class="o">&lt;-</span><span class="nf">display_tables</span><span class="p">(</span><span class="s">&quot;file_path/file_name.rds&quot;</span><span class="p">,</span><span class="s">&quot;output_path&quot;</span><span class="p">)</span>

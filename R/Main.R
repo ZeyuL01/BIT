@@ -57,7 +57,7 @@ BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 50
 }
 
 #' BIT_compare
-#' @description compare two input epigenomic region sets.
+#' @description compare BIT identifid TRs for two user input epigenomic region sets.
 #' @param file1 file path to the user-input file 1.
 #' @param file2 file path to the user-input file 2.
 #' @param output_path absoluate or relative directory to store the Gibbs sampler data.
