@@ -128,3 +128,11 @@ BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE,
 
   return()
 }
+
+
+
+BIT_parallel <- function(files_paths, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, option="ALL",burnin=NULL){
+  mclapply(files_paths, function(files_paths) BIT(files_paths, output_path=output_path, show=show, plot.bar=plot.bar, format=format,N=N,bin_width=bin_width,option=option, burnin=burnin),
+           mc.cores = detectCores() - 1)
+}
+

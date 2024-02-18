@@ -5,7 +5,7 @@ Version: 1.0
 Date: 2024-01-03
 Description: A Bayesian approach for identifying the potential master transcriptional regulators given input of high accessibility regions.
 License: GPL (>= 3)
-Imports: Rcpp (>= 1.0.10), rtracklayer, GenomicRanges, data.table, R.utils, ggsci, basicPlotteR
+Imports: Rcpp (>= 1.0.10), rtracklayer, GenomicRanges, data.table, R.utils, ggsci, parallel
 LinkingTo: Rcpp, RcppArmadillo, RcppDist, RcppProgress
 Encoding: UTF-8
 Suggests: 

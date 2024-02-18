@@ -79,7 +79,7 @@ The same parameters used in BIT can also be changed here. We can check the gener
 	10      SRF -3.444633 -3.498132 -3.394713 0.030929325     0.029365417     0.032461110   10
 
 
-It is clearly noted the perturbed TR and other cohesion complex components are more significant in the input region set 2. We can further draw a scatterplot to show the whole-picture.
+It is clearly noted that the perturbed TR and other cohesion complex components are more significant in the input region set 2. We can further draw a scatterplot to show the whole-picture.
 
 
 .. code-block::
