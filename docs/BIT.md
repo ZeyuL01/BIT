@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-![BIMTR](inst/BIMTR.png)
+![BIMTR](docs/images/BIT model.png)
 
 <!-- badges: start -->
 <!-- badges: end -->
