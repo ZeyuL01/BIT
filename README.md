@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-![BIT](docs/images/BIT model.png)
+![BIT](inst/BIT_model.png)
 
 <!-- badges: start -->
 <!-- badges: end -->
