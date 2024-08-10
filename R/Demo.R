@@ -22,8 +22,6 @@ Demo = function(N,dat=c("CTCF","ZBTB7A")){
 
   results <- Main_Sampling(N,xct, nct, tf_labs)
 
-  results <- centerized(results, tf_labs)
-
   end_time <- Sys.time()
   time_used <- difftime(end_time,start_time)
   print(paste0("Time used: ", round(time_used,2)," ", units(time_used)," for ", N," rounds."))

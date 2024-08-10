@@ -12,18 +12,18 @@
 #'
 #' @return NULL
 #' @export
-BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, option="ALL",burnin=NULL){
+BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, burnin=NULL,genome=c("hg38","mm10")){
   print("Load and map peaks to bins...")
 
   output_path = R.utils::getAbsolutePath(output_path)
 
-  input_peak_inds <- import_input_regions(file = file, format = format, bin_width = bin_width)
-  filtered_peak_inds <- filter_peaks(input_peak_inds, option = option, bin_width = bin_width)
+  input_peak_inds <- import_input_regions(file = file, format = format, bin_width = bin_width, genome=genome)
+
 
   print("Done.")
   print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
 
-  alignment_results <- alignment_wrapper(filtered_peak_inds, bin_width = bin_width, option = option)
+  alignment_results <- alignment_wrapper(input_peak_inds, bin_width = bin_width, genome = genome)
 
   print("Done.")
 
@@ -69,22 +69,19 @@ BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 50
 #'
 #' @return NULL
 #' @export
-BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE, format=c(NULL,NULL), N = 5000, bin_width = 1000, option="ALL", burnin=NULL){
+BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE, format=c(NULL,NULL), N = 5000, bin_width = 1000, burnin=NULL, genome=c("hg38","mm10")){
   print("Load and map peaks to bins...")
 
   output_path = R.utils::getAbsolutePath(output_path)
 
-  input_peak_inds_file1 <- import_input_regions(file = file1, format = format[1], bin_width = bin_width)
-  input_peak_inds_file2 <- import_input_regions(file = file2, format = format[2], bin_width = bin_width)
-
-  filtered_peak_inds_file1 <- filter_peaks(input_peak_inds_file1, option = option, bin_width = bin_width)
-  filtered_peak_inds_file2 <- filter_peaks(input_peak_inds_file2, option = option, bin_width = bin_width)
+  input_peak_inds_file1 <- import_input_regions(file = file1, format = format[1], bin_width = bin_width, genome = genome)
+  input_peak_inds_file2 <- import_input_regions(file = file2, format = format[2], bin_width = bin_width, genome = genome)
 
   print("Done.")
   print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
 
-  alignment_results_file1 <- alignment_wrapper(filtered_peak_inds_file1, bin_width = bin_width, option = option)
-  alignment_results_file2 <- alignment_wrapper(filtered_peak_inds_file2, bin_width = bin_width, option = option)
+  alignment_results_file1 <- alignment_wrapper(input_peak_inds_file1, bin_width = bin_width, genome = genome)
+  alignment_results_file2 <- alignment_wrapper(input_peak_inds_file2, bin_width = bin_width, genome = genome)
 
   print("Done.")
 
@@ -135,4 +132,10 @@ BIT_parallel <- function(files_paths, output_path, show=TRUE, plot.bar=TRUE, for
   mclapply(files_paths, function(files_paths) BIT(files_paths, output_path=output_path, show=show, plot.bar=plot.bar, format=format,N=N,bin_width=bin_width,option=option, burnin=burnin),
            mc.cores = detectCores() - 1)
 }
+
+
+
+
+
+
 
