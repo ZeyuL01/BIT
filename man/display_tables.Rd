@@ -2,17 +2,19 @@
 % Please edit documentation in R/functions.R
 \name{display_tables}
 \alias{display_tables}
-\title{To show the ranking table by inspecting the results of Gibbs sampler.}
+\title{display_tables}
 \usage{
-display_tables(dat, burnin = NULL)
+display_tables(file_path, output_path, burnin = NULL)
 }
 \arguments{
-\item{dat}{results from Main_sampling.}
+\item{file_path}{path to the saved BIT Gibbs sampling results.}
+
+\item{output_path}{path to save the rank table.}
 
 \item{burnin}{number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.}
 }
 \value{
-a data.frame object contains TR names, BIT scores and 95 CI for each TR.
+a data.frame object contains TR names, theta_i, BIT scores and 95 CIs for each TR.
 }
 \description{
 To show the ranking table by inspecting the results of Gibbs sampler.

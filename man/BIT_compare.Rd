@@ -7,12 +7,14 @@
 BIT_compare(
   file1,
   file2,
-  output_dir,
+  output_path,
   show = TRUE,
+  plot_scatter = TRUE,
   format = c(NULL, NULL),
   N = 5000,
   bin_width = 1000,
-  option = "ALL"
+  burnin = NULL,
+  genome = c("hg38", "mm10")
 )
 }
 \arguments{
@@ -20,7 +22,7 @@ BIT_compare(
 
 \item{file2}{file path to the user-input file 2.}
 
-\item{output_dir}{absoluate or relative directory to store the Gibbs sampler data.}
+\item{output_path}{absoluate or relative directory to store the Gibbs sampler data.}
 
 \item{format}{if specify as NULL, BIT will automatically read and judge the file type based on extension, default: NULL.}
 
@@ -32,5 +34,5 @@ BIT_compare(
 default use "ALL", can be "PLS" for all promoters, "ELS" for all enhancers.}
 }
 \description{
-compare two input epigenomic region sets.
+compare BIT identifid TRs for two user input epigenomic region sets.
 }

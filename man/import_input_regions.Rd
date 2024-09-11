@@ -4,7 +4,12 @@
 \alias{import_input_regions}
 \title{Transform the input file to vector}
 \usage{
-import_input_regions(file, format = NULL, bin_width = 1000)
+import_input_regions(
+  file,
+  format = NULL,
+  bin_width = 1000,
+  genome = c("hg38", "mm10")
+)
 }
 \arguments{
 \item{file}{file path to the user-input.}

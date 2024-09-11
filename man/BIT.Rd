@@ -6,18 +6,20 @@
 \usage{
 BIT(
   file,
-  output_dir,
+  output_path,
   show = TRUE,
+  plot_bar = TRUE,
   format = NULL,
   N = 5000,
   bin_width = 1000,
-  option = "ALL"
+  burnin = NULL,
+  genome = c("hg38", "mm10")
 )
 }
 \arguments{
 \item{file}{file path to the user-input.}
 
-\item{output_dir}{absoluate or relative directory to store the Gibbs sampler data}
+\item{output_path}{absoluate or relative directory to store the Gibbs sampler data}
 
 \item{format}{if specify as NULL, BIT will automatically read and judge the file type based on extension.}
 
