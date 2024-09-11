@@ -6,41 +6,59 @@
 #' @param bin_width width of bin, should be in 100/500/1000.
 #'
 #' @return a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
-alignment_wrapper <- function(input_vec, bin_width, genome=c("hg38","mm10")){
-  meta_table <- readRDS(paste0(system.file(package = "BIT"),"/meta_table.rds"))
+alignment_wrapper <- function(input_vec, bin_width, genome=c("hg38", "mm10")) {
 
-  file_table <- meta_table[[paste0("meta_",genome,"_",bin_width)]]
+  # Validate genome input
+  genome <- match.arg(genome)
 
-  if(is.null(file_table)){
-    stop("ChIP-seq files not found, please download and load the ChIP-seq data first.
-         You may follow the tutorial on: https://github.com/ZeyuL01/BIT")
+  # Load the meta table
+  cat("Loading meta table...\n")
+  meta_table_path <- system.file("meta_table.rds", package = "BIT")
+
+  if (!file.exists(meta_table_path)) {
+    stop("Meta table not found in package directory. Please ensure the package is installed correctly.")
   }
 
-  chip_table<-data.frame(matrix(ncol=4,nrow=nrow(file_table)))
-  colnames(chip_table) <- c("TR","GOOD","BAD","TOTAL")
+  meta_table <- readRDS(meta_table_path)
 
-  chip_table$TR <- file_table$TR
+  # Get the appropriate ChIP-seq reference data
+  file_table <- meta_table[[paste0("meta_", genome, "_", bin_width)]]
 
-  good_vec <- c()
-  bad_vec <- c()
-  total_vec <- c()
+  if (is.null(file_table)) {
+    stop("ChIP-seq files not found. Please download and load the ChIP-seq data first.\n",
+         "You may follow the tutorial on: https://github.com/ZeyuL01/BIT")
+  }
 
-  pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
-                       max = nrow(chip_table), # Maximum value of the progress bar
-                       style = 1,    # Progress bar style (also available style = 1 and style = 2)
-                       width = 50,   # Progress bar width. Defaults to getOption("width")
-                       char = "=")   # Character used to create the bar
+  # Initialize the results table
+  chip_table <- data.frame(TR = file_table$TR, GOOD = numeric(nrow(file_table)), TOTAL = numeric(nrow(file_table)))
 
-  for(i in 1:nrow(chip_table)){
+  # Progress bar setup
+  cat("Starting alignment process...\n")
+  pb <- txtProgressBar(min = 0, max = nrow(chip_table), style = 3, width = 50, char = "=")
+
+  # Preallocate vectors for storing results
+  good_vec <- numeric(nrow(chip_table))
+  total_vec <- numeric(nrow(chip_table))
+
+  # Loop over each ChIP-seq file and perform alignment
+  for (i in seq_len(nrow(chip_table))) {
     ref_vec <- data.table::fread(file_table$File_Path[i])[[1]]
 
-    alignment_result<-Alignment(input_vec,ref_vec)
+    # Perform alignment
+    alignment_result <- Alignment(input_vec, ref_vec)
 
-    good_vec <- c(good_vec, alignment_result$Xi_GOOD)
-    total_vec <- c(total_vec, alignment_result$Ni_TOTAL)
+    # Store results in pre-allocated vectors
+    good_vec[i] <- alignment_result$Xi_GOOD
+    total_vec[i] <- alignment_result$Ni_TOTAL
+
+    # Update progress bar
     setTxtProgressBar(pb, i)
   }
 
+  # Close the progress bar
+  close(pb)
+
+  # Update chip_table with results
   chip_table$GOOD <- good_vec
   chip_table$TOTAL <- total_vec
 

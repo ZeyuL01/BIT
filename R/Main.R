@@ -12,49 +12,73 @@
 #'
 #' @return NULL
 #' @export
-BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, burnin=NULL,genome=c("hg38","mm10")){
-  print("Load and map peaks to bins...")
+BIT <- function(file,
+                output_path,
+                show=TRUE,
+                plot_bar=TRUE,
+                format=NULL,
+                N=5000,
+                bin_width=1000,
+                burnin=NULL,
+                genome=c("hg38", "mm10")) {
 
-  output_path = R.utils::getAbsolutePath(output_path)
+  # Validate inputs
+  if (!file.exists(file)) stop("Input file does not exist.")
+  if (!dir.exists(output_path)) stop("Output path does not exist.")
+  if (!genome %in% c("hg38", "mm10")) stop("Invalid genome specified.")
 
-  input_peak_inds <- import_input_regions(file = file, format = format, bin_width = bin_width, genome=genome)
+  # Standardize genome input
+  genome <- match.arg(genome)
 
+  cat("Loading and mapping peaks to bins...\n")
 
-  print("Done.")
-  print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
+  # Resolve output path to an absolute path
+  output_path <- R.utils::getAbsolutePath(output_path)
 
+  # Import and map peaks
+  input_peak_inds <- import_input_regions(file = file, format = format, bin_width = bin_width, genome = genome)
+
+  cat("Done loading.\n")
+  cat(paste0("Comparing the input regions with the pre-compiled reference ChIP-seq data, using a bin width of ",
+             bin_width, " bps...\n"))
+
+  # Perform alignment
   alignment_results <- alignment_wrapper(input_peak_inds, bin_width = bin_width, genome = genome)
 
-  print("Done.")
+  cat("Alignment complete.\n")
 
+  # Extract relevant information for the Gibbs sampler
   xct <- alignment_results$GOOD
   nct <- alignment_results$TOTAL
-
   tr_labels <- as.numeric(factor(alignment_results$TR))
 
-  print(paste0("Start BIT Gibbs sampler, iterations: ",N))
+  cat(paste0("Starting BIT Gibbs sampler with ", N, " iterations...\n"))
 
+  # Run Gibbs sampling
   gibbs_sampler_results <- Main_Sampling(N, xct, nct, tr_labels)
-
   gibbs_sampler_results[["TR_names"]] <- alignment_results$TR
 
-  print("Done.")
+  cat("Gibbs sampling completed.\n")
 
-  file_name<-paste0(output_path,"/",tools::file_path_sans_ext(basename(file)),".rds")
-  saveRDS(gibbs_sampler_results,file_name)
+  # Save results to an RDS file
+  file_name <- file.path(output_path, paste0(tools::file_path_sans_ext(basename(file)), ".rds"))
+  saveRDS(gibbs_sampler_results, file_name)
 
-  print(paste0("Output data saved as ",file_name))
+  cat(paste0("Output data saved as ", file_name, "\n"))
 
-  if(show==TRUE){
+  # Optionally display tables
+  if (show) {
     display_tables(file_path = file_name, output_path = output_path, burnin = burnin)
   }
 
-  if(plot.bar==TRUE){
+  # Optionally plot bar chart
+  if (plot_bar) {
     rank_plot(file_path = file_name, output_path = output_path, burnin = burnin)
   }
 
-  return()
+  cat("BIT process completed.\n")
 }
+
 
 #' BIT_compare
 #' @description compare BIT identifid TRs for two user input epigenomic region sets.
@@ -69,68 +93,89 @@ BIT <- function(file, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 50
 #'
 #' @return NULL
 #' @export
-BIT_compare <- function(file1, file2, output_path, show=TRUE, plot.scatter=TRUE, format=c(NULL,NULL), N = 5000, bin_width = 1000, burnin=NULL, genome=c("hg38","mm10")){
-  print("Load and map peaks to bins...")
+BIT_compare <- function(file1,
+                        file2,
+                        output_path,
+                        show=TRUE,
+                        plot_scatter=TRUE,
+                        format=c(NULL, NULL),
+                        N=5000,
+                        bin_width=1000,
+                        burnin=NULL,
+                        genome=c("hg38", "mm10")) {
 
-  output_path = R.utils::getAbsolutePath(output_path)
+  # Validate inputs
+  if (!file.exists(file1)) stop("Input file1 does not exist.")
+  if (!file.exists(file2)) stop("Input file2 does not exist.")
+  if (!dir.exists(output_path)) stop("Output path does not exist.")
+  if (!genome %in% c("hg38", "mm10")) stop("Invalid genome specified.")
 
+  # Standardize genome input
+  genome <- match.arg(genome)
+
+  cat("Loading and mapping peaks to bins for both files...\n")
+
+  # Resolve output path to an absolute path
+  output_path <- R.utils::getAbsolutePath(output_path)
+
+  # Import and map peaks for both files
   input_peak_inds_file1 <- import_input_regions(file = file1, format = format[1], bin_width = bin_width, genome = genome)
   input_peak_inds_file2 <- import_input_regions(file = file2, format = format[2], bin_width = bin_width, genome = genome)
 
-  print("Done.")
-  print(paste0("compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: ",bin_width," bps"))
+  cat("Done loading.\n")
+  cat(paste0("Comparing input regions with pre-compiled reference ChIP-seq data, bin width: ", bin_width, " bps...\n"))
 
+  # Perform alignment for both files
   alignment_results_file1 <- alignment_wrapper(input_peak_inds_file1, bin_width = bin_width, genome = genome)
   alignment_results_file2 <- alignment_wrapper(input_peak_inds_file2, bin_width = bin_width, genome = genome)
 
-  print("Done.")
+  cat("Alignment complete for both files.\n")
 
+  # Extract relevant information for the Gibbs sampler for both files
   xct_file1 <- alignment_results_file1$GOOD
   nct_file1 <- alignment_results_file1$TOTAL
-
   xct_file2 <- alignment_results_file2$GOOD
   nct_file2 <- alignment_results_file2$TOTAL
 
   tr_labels_file1 <- as.numeric(factor(alignment_results_file1$TR))
   tr_labels_file2 <- as.numeric(factor(alignment_results_file2$TR))
 
-  print(paste0("Start BIT Gibbs sampler for file 1, iterations: ",N))
+  # Gibbs Sampling for file 1
+  cat(paste0("Starting BIT Gibbs sampler for file 1, iterations: ", N, "...\n"))
 
   gibbs_sampler_results_file1 <- Main_Sampling(N, xct_file1, nct_file1, tr_labels_file1)
   gibbs_sampler_results_file1[["TR_names"]] <- alignment_results_file1$TR
-  file1_name<-paste0(output_path,"/",tools::file_path_sans_ext(basename(file1)),".rds")
-  saveRDS(gibbs_sampler_results_file1,file1_name)
 
-  print("Done.")
-  print(paste0("file1 saved as ",file1_name))
+  # Save file 1 results
+  file1_name <- file.path(output_path, paste0(tools::file_path_sans_ext(basename(file1)), ".rds"))
+  saveRDS(gibbs_sampler_results_file1, file1_name)
 
-  print(paste0("Start BIT Gibbs sampler for file 2, iterations: ",N))
+  cat(paste0("File 1 results saved as ", file1_name, "\n"))
+
+  # Gibbs Sampling for file 2
+  cat(paste0("Starting BIT Gibbs sampler for file 2, iterations: ", N, "...\n"))
 
   gibbs_sampler_results_file2 <- Main_Sampling(N, xct_file2, nct_file2, tr_labels_file2)
   gibbs_sampler_results_file2[["TR_names"]] <- alignment_results_file2$TR
-  file2_name<-paste0(output_path,"/",tools::file_path_sans_ext(basename(file2)),".rds")
-  saveRDS(gibbs_sampler_results_file2,file2_name)
 
-  print("Done.")
-  print(paste0("file2 saved as ",file2_name))
+  # Save file 2 results
+  file2_name <- file.path(output_path, paste0(tools::file_path_sans_ext(basename(file2)), ".rds"))
+  saveRDS(gibbs_sampler_results_file2, file2_name)
 
-  if(show==TRUE){
+  cat(paste0("File 2 results saved as ", file2_name, "\n"))
+
+  # Optionally display tables
+  if (show) {
     display_tables(file_path = file1_name, output_path = output_path, burnin = burnin)
     display_tables(file_path = file2_name, output_path = output_path, burnin = burnin)
   }
 
-  if(plot.scatter==TRUE){
-    compare_scatter_plot(file1_name,file2_name)
+  # Optionally plot scatter comparison
+  if (plot_scatter) {
+    compare_scatter_plot(file1_name, file2_name, output_path = output_path, burnin = burnin)
   }
 
-  return()
-}
-
-
-
-BIT_parallel <- function(files_paths, output_path, show=TRUE, plot.bar=TRUE, format=NULL, N = 5000 ,bin_width = 1000, option="ALL",burnin=NULL){
-  mclapply(files_paths, function(files_paths) BIT(files_paths, output_path=output_path, show=show, plot.bar=plot.bar, format=format,N=N,bin_width=bin_width,option=option, burnin=burnin),
-           mc.cores = detectCores() - 1)
+  cat("BIT comparison process completed.\n")
 }
 
 

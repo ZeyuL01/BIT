@@ -5,32 +5,66 @@
 #' @param burnin number of samples used for burn-in. If not specify, BIT will use the half of the iterations as burn in.
 #' @return a data.frame object contains TR names, theta_i, BIT scores and 95 CIs for each TR.
 #' @export
-display_tables<-function(file_path, output_path, burnin=NULL){
-  dat<-readRDS(file_path)
+display_tables <- function(file_path, output_path, burnin = NULL) {
+
+  # Validate inputs
+  if (!file.exists(file_path)) stop("The specified file path does not exist.")
+  if (!dir.exists(output_path)) stop("The specified output path does not exist.")
+
+  # Load data
+  cat("Loading data from file...\n")
+  dat <- readRDS(file_path)
 
   TR_names <- dat[["TR_names"]]
-  theta_i_mat<-dat$theta_i
+  theta_i_mat <- dat$theta_i
 
-  if(is.null(burnin)){
-    burnin=dim(theta_i_mat)[2]%/%2
+  # Determine burnin, defaulting to half of the columns if not provided
+  if (is.null(burnin)) {
+    burnin <- floor(dim(theta_i_mat)[2] / 2)
   }
 
-  theta_i_mat<-theta_i_mat[!duplicated(TR_names),(dim(theta_i_mat)[2]-burnin):dim(theta_i_mat)[2]]
-  TR_names<-TR_names[!duplicated(TR_names)]
-  tr_results_i<-rowMeans(theta_i_mat)
-  BIT_score<-logistic(tr_results_i)
-  CI_intervals<-t(apply(theta_i_mat, 1, function(x) quantile(x, probs = c(0.025, 0.975))))
-  results_theta_i=data.frame(TR=TR_names,Theta_i=tr_results_i,lower=CI_intervals[,1],upper=CI_intervals[,2],
-                             BIT_score=BIT_score,BIT_score_lower=logistic(CI_intervals[,1]),BIT_score_upper=logistic(CI_intervals[,2]))
-  results_theta_i=results_theta_i[order(-results_theta_i$Theta_i),]
-  results_theta_i$Rank=rank(-results_theta_i$Theta_i)
+  # Remove duplicates and apply burnin
+  cat("Processing theta matrix and TR names...\n")
+  theta_i_mat <- theta_i_mat[!duplicated(TR_names), (dim(theta_i_mat)[2] - burnin):dim(theta_i_mat)[2]]
+  TR_names <- TR_names[!duplicated(TR_names)]
+
+  # Calculate row means and BIT scores
+  tr_results_i <- rowMeans(theta_i_mat)
+  BIT_score <- logistic(tr_results_i)
+
+  # Calculate confidence intervals
+  CI_intervals <- t(apply(theta_i_mat, 1, function(x) quantile(x, probs = c(0.025, 0.975))))
+
+  # Create results dataframe
+  cat("Compiling results...\n")
+  results_theta_i <- data.frame(
+    TR = TR_names,
+    Theta_i = tr_results_i,
+    lower = CI_intervals[, 1],
+    upper = CI_intervals[, 2],
+    BIT_score = BIT_score,
+    BIT_score_lower = logistic(CI_intervals[, 1]),
+    BIT_score_upper = logistic(CI_intervals[, 2])
+  )
+
+  # Sort by Theta_i and assign rank
+  results_theta_i <- results_theta_i[order(-results_theta_i$Theta_i), ]
+  results_theta_i$Rank <- rank(-results_theta_i$Theta_i)
+
+  # Remove row names
   row.names(results_theta_i) <- NULL
 
-  write.csv(results_theta_i,paste0(tools::file_path_as_absolute(output_path),"/",
-                                   tools::file_path_sans_ext(basename(file_path)),"_rank_table.csv"))
+  # Write results to CSV
+  output_file <- file.path(tools::file_path_as_absolute(output_path),
+                           paste0(tools::file_path_sans_ext(basename(file_path)), "_rank_table.csv"))
+  write.csv(results_theta_i, output_file, row.names = FALSE)
 
+  cat(paste0("Results saved to ", output_file, "\n"))
+
+  # Return the results
   return(results_theta_i)
 }
+
 
 #' rank_plot
 #' @description To draw a barplot for the top n TRs.
@@ -44,58 +78,97 @@ display_tables<-function(file_path, output_path, burnin=NULL){
 #' @param ylab y axis label, default: TR symbols.
 #' @return a data.frame object contains TR names, theta_i, BIT scores and 95 CIs for each TR.
 #' @export
-rank_plot<-function(file_path=NULL, output_path, burnin=NULL, n=10, colors="NPG", main=NULL, xlab="BIT score", ylab="TR symbols"){
-  dat<-readRDS(file_path)
+rank_plot <- function(file_path = NULL, output_path = NULL, burnin = NULL, n = 10,
+                      colors = "NPG", main = NULL, xlab = "BIT score", ylab = "TR symbols") {
+
+  # Load the dataset from the file path
+  dat <- readRDS(file_path)
 
   TR_names <- dat[["TR_names"]]
-  theta_i_mat<-dat$theta_i
+  theta_i_mat <- dat$theta_i
 
-  if(is.null(burnin)){
-    burnin=dim(theta_i_mat)[2]%/%2
+  # Set default burn-in period if not provided (half the number of columns)
+  if (is.null(burnin)) {
+    burnin <- dim(theta_i_mat)[2] %/% 2
   }
 
-  theta_i_mat<-theta_i_mat[!duplicated(TR_names),(dim(theta_i_mat)[2]-burnin):dim(theta_i_mat)[2]]
-  TR_names<-TR_names[!duplicated(TR_names)]
-  tr_results_i<-rowMeans(theta_i_mat)
-  BIT_score<-logistic(tr_results_i)
-  CI_intervals<-t(apply(theta_i_mat, 1, function(x) quantile(x, probs = c(0.025, 0.975))))
+  # Remove duplicate TR names and apply burn-in to theta_i_mat
+  theta_i_mat <- theta_i_mat[!duplicated(TR_names), (dim(theta_i_mat)[2] - burnin):dim(theta_i_mat)[2]]
+  TR_names <- TR_names[!duplicated(TR_names)]
 
-  results_theta_i=data.frame(TR=TR_names,Theta_i=tr_results_i,lower=CI_intervals[,1],upper=CI_intervals[,2],
-                             BIT_score=BIT_score,BIT_score_lower=logistic(CI_intervals[,1]),BIT_score_upper=logistic(CI_intervals[,2]))
-  results_theta_i=results_theta_i[order(-results_theta_i$Theta_i),]
-  results_theta_i$Rank=rank(-results_theta_i$Theta_i)
+  # Calculate row means (average theta values) after burn-in
+  tr_results_i <- rowMeans(theta_i_mat)
+  BIT_score <- logistic(tr_results_i)
+
+  # Calculate confidence intervals (2.5% and 97.5% quantiles)
+  CI_intervals <- t(apply(theta_i_mat, 1, function(x) quantile(x, probs = c(0.025, 0.975))))
+
+  # Create a data frame of results, including confidence intervals and BIT scores
+  results_theta_i <- data.frame(
+    TR = TR_names,
+    Theta_i = tr_results_i,
+    lower = CI_intervals[, 1],
+    upper = CI_intervals[, 2],
+    BIT_score = BIT_score,
+    BIT_score_lower = logistic(CI_intervals[, 1]),
+    BIT_score_upper = logistic(CI_intervals[, 2])
+  )
+
+  # Order results by Theta_i (descending)
+  results_theta_i <- results_theta_i[order(-results_theta_i$Theta_i), ]
+  results_theta_i$Rank <- rank(-results_theta_i$Theta_i)
   row.names(results_theta_i) <- NULL
 
-  output_file_path_complete<-paste0(tools::file_path_as_absolute(output_path),"/",
-                                      tools::file_path_sans_ext(basename(file_path)),".pdf")
+  # Set output file path for the PDF
+  output_file_path_complete <- paste0(
+    tools::file_path_as_absolute(output_path), "/",
+    tools::file_path_sans_ext(basename(file_path)), ".pdf"
+  )
 
-  TR_names_used<-results_theta_i[n:1,"TR"]
-  BIT_score_used<-results_theta_i[n:1,"BIT_score"]
-  BIT_score_lower_used<-results_theta_i[n:1,"BIT_score_lower"]
-  BIT_score_upper_used<-results_theta_i[n:1,"BIT_score_upper"]
+  # Select the top n TR names and their corresponding BIT scores
+  TR_names_used <- results_theta_i[n:1, "TR"]
+  BIT_score_used <- results_theta_i[n:1, "BIT_score"]
+  BIT_score_lower_used <- results_theta_i[n:1, "BIT_score_lower"]
+  BIT_score_upper_used <- results_theta_i[n:1, "BIT_score_upper"]
 
-  if(colors=="NPG"){
-    colors=ggsci::pal_npg()(n)
+  # Set colors based on the provided color palette
+  if (colors == "NPG") {
+    colors <- ggsci::pal_npg()(n)
   }
 
+  # Generate the bar plot and save it to the PDF
   pdf(output_file_path_complete)
-  par(mfrow=c(1,1),oma = c(1,1,1,1) + 0.1,mar = c(4,6.5,2,1) + 0.1,mgp=c(3, 0.5, 0),font.axis=2)
-  bp<-barplot(BIT_score_used,horiz=TRUE,yaxt="n",xlim=c(0,max(BIT_score_upper_used)*1.05),cex.axis=1.5,col=colors,tcl=-0.2,main=main,cex.main=1.3,font.axis=1)
-  text(BIT_score_used-max(BIT_score_used)/10,bp,round(BIT_score_used,3),font=1,cex=1.2)
-  points(BIT_score_used,bp,pch=16)
-  segments(BIT_score_used,bp,BIT_score_upper_used,bp,lwd=2)
-  segwidth<-(bp[2]-bp[1])/4
-  segments(BIT_score_upper_used,bp+(bp[2]-bp[1])/4,BIT_score_upper_used,bp-(bp[2]-bp[1])/4,lwd=2)
+  par(mfrow = c(1, 1), oma = c(1, 1, 1, 1) + 0.1, mar = c(4, 6.5, 2, 1) + 0.1, mgp = c(3, 0.5, 0), font.axis = 2)
 
-  axis(side=2, las=1, at=bp, labels=TR_names_used,tcl=-0.2,cex.axis=1.2,font.axis=1)
-  title(xlab=xlab,line = 3, cex.lab=1.4,font.lab=2)
-  title(ylab=ylab,line = 5.5, cex.lab=1.4,font.lab=2)
-  title(main=main,cex.main=1.4,font.main=2)
+  bp <- barplot(BIT_score_used, horiz = TRUE, yaxt = "n",
+                xlim = c(0, max(BIT_score_upper_used) * 1.05),
+                cex.axis = 1.5, col = colors, tcl = -0.2,
+                main = main, cex.main = 1.3, font.axis = 1)
+
+  # Add text labels and points to the bar plot
+  text(BIT_score_used - max(BIT_score_used) / 10, bp, round(BIT_score_used, 3), font = 1, cex = 1.2)
+  points(BIT_score_used, bp, pch = 16)
+
+  # Draw error bars for the confidence intervals
+  segments(BIT_score_used, bp, BIT_score_upper_used, bp, lwd = 2)
+  segwidth <- (bp[2] - bp[1]) / 4
+  segments(BIT_score_upper_used, bp + segwidth, BIT_score_upper_used, bp - segwidth, lwd = 2)
+
+  # Customize y-axis labels (TR names)
+  axis(side = 2, las = 1, at = bp, labels = TR_names_used, tcl = -0.2, cex.axis = 1.2, font.axis = 1)
+
+  # Add axis titles and box
+  title(xlab = xlab, line = 3, cex.lab = 1.4, font.lab = 2)
+  title(ylab = ylab, line = 5.5, cex.lab = 1.4, font.lab = 2)
+  title(main = main, cex.main = 1.4, font.main = 2)
   box()
+
+  # Close the PDF device
   dev.off()
 
   return()
 }
+
 
 #' compare_scatter_plot
 #' @description To draw a barplot for the top n TRs.

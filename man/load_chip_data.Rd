@@ -4,7 +4,7 @@
 \alias{load_chip_data}
 \title{load the pre-compiled chip-seq data.}
 \usage{
-load_chip_data(data_path, bin_width)
+load_chip_data(data_path, bin_width, genome = c("hg38", "mm10"))
 }
 \arguments{
 \item{data_path}{path to the ChIP-seq data folder, can be absolute or relative path.}
