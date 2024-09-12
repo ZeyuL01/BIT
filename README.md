@@ -45,11 +45,11 @@ Pre-compiled ChIP-seq database can be accessed through:
 
 ``` r
 #Please download the chip-seq file and unzip it to a local directory.
-#For example: /.../Desktop/data/ChIP-seq/macs2_peaks_inds_1000/
+#For example: /.../Desktop/data/ChIP-seq/hg38/
 
 #The function below needs to run once to set up.
 
-chip_path = "/.../Desktop/data/ChIP-seq/macs2_peaks_inds_1000/"
+chip_path = "/.../Desktop/data/ChIP-seq/hg38/"
 
 #Set genome="hg38" for hg38.zip and "mm10" for mm10.zip
 load_chip_data(chip_path, bin_width = 1000, genome="hg38")
