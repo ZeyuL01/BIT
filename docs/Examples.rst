@@ -7,44 +7,27 @@ The following examples show how to generate several more plots.
 Plot the BIT scores
 -------------------
 
-To plot BIT score, once we have the output, rank_plot() function can be used to generate a barplot for the top 10 TRs with the 95 CI.
+To plot the BIT scores, use the ``rank_plot()`` function to generate a bar plot for the top 10 transcriptional regulators (TRs) along with their 95% confidence intervals.
 
-.. code-block::
-	
-	rank_plot("file_path/file_name",output_path="output_path")
-	NULL
+.. code-block:: r
+
+   rank_plot(output_data, show = TRUE, plot.bar = TRUE)
+
 
 
 .. image:: ./images/file_name_rank_table.png
 
 
-Compare TRs derived from two region sets
-----------------------------------------
+Compare Transcriptional Regulators (TRs) from Two Region Sets
+-------------------------------------------------------------
 
-Imagine you're working with two sets of regions obtained from distinct sources, and your objective is to determine which transcriptional regulators exhibit a higher significance within each set. The BIT package offers a specialized function for this purpose, BIT_compare. This function takes two sets of input regions, computes the BIT score for each, and generates a scatter plot to visually represent the differences between them. 
+Imagine you have two sets of regions obtained from distinct sources, and your goal is to identify which transcriptional regulators (TRs) are more significant in each set. The **BIT** package provides a specialized function for this purpose: ``BIT_compare``. This function takes two sets of input regions, computes the BIT scores for each, and generates a scatter plot to visually represent the differences between them.
 
-The following example includes two sets of input regions that originate from an acute depletion experiment targeting CTCF in a MLL-rearranged human B cell lymphoblastic leukemia (B-ALL) cell line. To compare these sets and uncover the significant TRs within each, you would use the BIT_compare function. Let's assume your input files are located at file_path/file1_name and file_path/file2_name, and you intend to store the output in output_path. Here's how you proceed:
+In the following example, we use two sets of input regions derived from an acute depletion experiment targeting CTCF in a MLL-rearranged human B-cell lymphoblastic leukemia (B-ALL) cell line. To compare these sets and identify the significant TRs within each, you can use the ``BIT_compare`` function. Assuming your input files are located at `"file_path/file1_name"` and `"file_path/file2_name"`, and you want to store the output in `"output_path"`, proceed as follows:
 
 .. code-block::
-	
-	> BIT_compare("file_path/file1_name","file_path/file2_name",output_path=output_path)
-	[1] "Load and map peaks to bins..."
-	[1] "Done."
-	[1] "Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps"
-	====================================================================================================
-	[1] "Done."
-	[1] "Start BIT Gibbs sampler for file 1, iterations: 5000"
-	0%   10   20   30   40   50   60   70   80   90   100%
-	[----|----|----|----|----|----|----|----|----|----|
-	**************************************************|
-	[1] "Done."
-	[1] "file1 saved as output_path/file1_name.rds"
-	[1] "Start BIT Gibbs sampler for file 2, iterations: 5000"
-	0%   10   20   30   40   50   60   70   80   90   100%
-	[----|----|----|----|----|----|----|----|----|----|
-	**************************************************|
-	[1] "Done."
-	[1] "file2 saved as output_path/file2_name.rds"
+
+	> BIT_compare("file_path/file1_name","file_path/file2_name",output_path=output_path, N = 5000, genome = "hg38")
 
 The same parameters used in BIT can also be changed here. We can check the generated rank table:
 
@@ -85,8 +68,8 @@ It is clearly noted that the perturbed TR and other cohesion complex components 
 .. code-block::
 
 	> compare_scatter_plot("file_path/file1_name.rds","file_path/file2_name.rds",output_path)
-	pdf 
-  		2 
+	pdf
+  		2
 
 The output picture will be saved as "file1_name_file2_name_compare.pdf"
 

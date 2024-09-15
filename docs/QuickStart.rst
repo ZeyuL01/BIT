@@ -1,50 +1,57 @@
 Quick Start
 ===========
 
-After successfully installing BIT and configuring the reference ChIP-seq database, you're ready to use BIT for your analyses. The process is straightforward if you have any of the following file types indicating the chromosomal start and end positions of your epigenomic regions: .bed, .narrowPeak, .broadPeak, .bigNarrowPeak (.bb), or .csv. 
+After successfully installing **BIT** and configuring the reference ChIP-seq database, you are ready to use **BIT** for your analyses. The process is straightforward if you have any of the following file types indicating the chromosomal start and end positions of your epigenomic regions: `.bed`, `.narrowPeak`, `.broadPeak`, `.bigNarrowPeak` (`.bb`), or `.csv`.
 
-Assuming your input file is located at "file_path/file_name (acceptable formats: .bed, .bb, etc.)", and you aim to store the output in "output_path", the command below will first start a comprehensive comparison of your input regions against all available ChIP-seq reference datasets. Next it initiates the BIT model using the Gibbs sampler to give the Bayesian inference of TR level BIT score, the output data from each iteration will be saved in a R data object named "file_name.rds".
+Assuming your input file is located at `"file_path/file_name"` (acceptable formats: `.bed`, `.bb`, etc.), and you want to store the output in `"output_path"`, the command below will start a comprehensive comparison of your input regions against all available ChIP-seq reference datasets. It then initiates the **BIT** model using the Gibbs sampler to provide the Bayesian inference of the TR-level BIT score. The output data from each iteration will be saved as an R data object named `"file_name.rds"`.
 
 .. code-block:: R
 
-	> BIT("file_path/file_name(.bed / .bb, etc..)","output_path")
-	[1] "Load and map peaks to bins..."
-	[1] "Done."
-	[1] "Compare the input regions with the pre-compiled reference ChIP-seq data, bin width used: 1000 bps"
-	==================================================
-	[1] "Done."
-	[1] "Start BIT Gibbs sampler for file 1, iterations: 5000"
-	0%   10   20   30   40   50   60   70   80   90   100%
-	[----|----|----|----|----|----|----|----|----|----|
-	**************************************************|
-	[1] "Done."
-	[1] "Output data saved as output_path/file_name.rds"
+  > BIT(, "file_path/file_name.bed", "output_path/", show = TRUE, plot_bar = TRUE, N = 5000, bin_width = 1000, genome = "hg38")
+  Loading and mapping peaks to bins...
+  Done loading.
+  Comparing the input regions with the pre-compiled reference ChIP-seq data, using a bin width of 1000 bps...
+  Loading meta table...
+  Starting alignment process...
+    |==================================================| 100%
+  Alignment complete.
+  Starting BIT Gibbs sampler with 5000 iterations...
+  0%   10   20   30   40   50   60   70   80   90   100%
+  [----|----|----|----|----|----|----|----|----|----|
+  **************************************************|
+  Gibbs sampling completed.
+  Output data saved as output_path/file_name.rds
+  Loading data from file...
+  Processing theta matrix and TR names...
+  Compiling results...
+  Results saved to output_path/file_name_rank_table.csv
+  BIT process completed.
+
 
 There are several default parameters you can change:
 
 .. note::
 
-	show = TRUE / FALSE, whether to show the ranking table, default: TRUE.
+   - **show**: `TRUE` / `FALSE`. Whether to display the ranking table. Default: `TRUE`.
 
-	plot.bar = TRUE / FALSE, whether to plot the top 10 TRs BIT score in a horizontal barplot, default TRUE. 
+   - **plot.bar**: `TRUE` / `FALSE`. Whether to plot the top 10 TRs BIT scores in a horizontal bar plot. Default: `TRUE`.
 
-	format = c("bed", "narrowPeak", "broadPeak", "bigNarrowPeak", "csv", NULL), to specify the format of input file, default: NULL. When setting as NULL, BIT will automatically judge the file format by its extension.
+   - **format**: One of `"bed"`, `"narrowPeak"`, `"broadPeak"`, `"bigNarrowPeak"`, `"csv"`, or `NULL`. Specifies the format of the input file. Default: `NULL`. If set to `NULL`, **BIT** will automatically determine the file format based on its extension.
 
-	N = 5000 , number of iterations in Gibbs sampler.
+   - **N**: Integer. The number of iterations in the Gibbs sampler. Default: `5000`.
 
-	bin_width = c(100, 500, 1000), width of bin used to separate the chromatin into non-overlapping bins, default: 1000.
+   - **bin_width**: Integer. The width of the bin used to divide the chromatin into non-overlapping bins. Default: `1000`. Only change this if you compile a different reference database.
 
-	option = c("ALL", "PLS", "ELS"), Whether to filter the input regions with ENCODE defined cis-regulatory elements, default: "ALL" to use all input regions.
+   - **burnin**: `NULL` or an integer. Specifies the burn-in period when deriving the Bayesian inference for TR-level parameters. Default: `NULL`, which will use `N/2`.
 
-	burnin = NULL or integer, burn in when derive the Bayesian inference for TR level parameters, default: NULL will use N/2.
+   - **genome**: `hg38` or `mm10` for TR ChIP-seq data collected from different genome.
 
-
-If you set show = FALSE and later want to generate the rank table, you can use the following command:
+We can check the results:
 
 .. code-block:: R
 
-	Results_Table<-display_tables("file_path/file_name.rds","output_path")
-	> Results_Table
+	> Results_Table <- read.csv("output_path/file_name_rank_table.csv")
+	> head(Results_Table,10)
 	         TR   Theta_i     lower     upper  BIT_score BIT_score_lower BIT_score_upper Rank
 	1      CTCF -2.010571 -2.011593 -2.009676 0.11809745      0.11799114      0.11819079    1
 	2     RAD21 -2.028610 -2.031747 -2.025619 0.11623164      0.11590978      0.11653925    2

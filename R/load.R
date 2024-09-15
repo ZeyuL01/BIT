@@ -1,11 +1,12 @@
-##functions to transform peaks to windows.
+##functions to transform regions to bins.
 
-#' Count the 'good' and 'total' informative cases between input peak set with reference database.
+#' Count the 'good' and 'informative' cases by comparing input with the reference database.
 #'
-#' @param input_vec A input vector contains index of peaks transformed by applying import_peaks.
-#' @param bin_width width of bin, should be in 100/500/1000.
+#' @param input_vec A input vector contains index of transformed regions by applying import_input_regions.
+#' @param bin_width width of bin.
+#' @param genome the genome of TR ChIP-seq data, either as "hg38" or "mm10".
 #'
-#' @return a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
+#' @return a data frame has three columns, TR labels, number of 'good' cases, number of 'total' informative cases.
 alignment_wrapper <- function(input_vec, bin_width, genome=c("hg38", "mm10")) {
 
   # Validate genome input
@@ -70,7 +71,8 @@ alignment_wrapper <- function(input_vec, bin_width, genome=c("hg38", "mm10")) {
 #'
 #' @param file file path to the user-input.
 #' @param format format can be .bed, .narrowPeak, .broadPeak and .bigNarrowPeak.
-#' @param bin_width desired width of bin, should be in 100/500/1000.
+#' @param bin_width desired width of bin, default: 1000.
+#' @param genome the genome of TR ChIP-seq data, either as "hg38" or "mm10".
 #'
 #' @return A numeric vector contains the index of peaks with pre-specified number of bins in each chromosome.
 #' @export

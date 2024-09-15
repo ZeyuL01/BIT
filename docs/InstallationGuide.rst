@@ -28,21 +28,21 @@ You can directly install BIT from github by typing following command in the R te
    ** testing if installed package keeps a record of temporary installation path
    * DONE (BIT)
 
-Next you have to run load_chip_data() function to connect BIT to the reference database. You can download the data from `Box folder <https://smu.box.com/s/dswrvsz4chh7ygkjpwdq3lex2gvrz2gi>`_, assume the location of the reference 1000 bps database folder is /../chip_seq_data_1000/. Just type the following code in the R terminal:
+Next, run the `load_chip_data()` function to connect BIT to the reference database. You can download the data from the `Zenodo project <>`_. Assume the local directory for the folder containing the reference data for genome hg38 is `/../hg38/`. Enter the following code in the R terminal:
 
 .. code-block::
 
-   load_chip_data("/../chip_seq_data_1000/", bin_width = 1000)
+   load_chip_data("/../hg38/", bin_width = 1000, genome="hg38")
    [1] "ChIP-seq data successfully loaded, please run BIT with input to check!"
    NULL
 
 
-You can reconnect the updated or modified database anytime later.
+You can reconnect to the updated or modified database at any time.
 
-If you have compilation problem, please refer to the following posts.
+If you encounter compilation problems, please refer to the following resources:
 
-windows: https://cran.r-project.org/bin/windows/base/howto-R-devel.html
+- **Windows:** `CRAN R Development Guide <https://cran.r-project.org/bin/windows/base/howto-R-devel.html>`_
+- **macOS:** `R Compiler Tools for Rcpp on macOS <https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>`_
 
-macos: https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
+Alternatively, you can `submit an issue <https://github.com/ZeyuL01/BIT/issues>`_ on GitHub.
 
-Or you can `submit <https://github.com/ZeyuL01/BIT/issues>`_ the issue on GitHub.
