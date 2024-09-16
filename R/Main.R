@@ -3,12 +3,13 @@
 #' BIT
 #' @description Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width.
 #' @param file file path to the user-input.
+#' @param show Whether to show the results table, default: TRUE
+#' @param plot_bar Whether to plot the top 10 TRs BIT score by a horizontal barplot, default: TRUE
 #' @param output_path absoluate or relative directory to store the Gibbs sampler data
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
-#' @param bin_width desired width of bin, should be in 100/500/1000, default: 1000.
-#' @param option option to filter peaks with candidate cis-regulatory elements from ENCODE,
-#' default use "ALL", can be "PLS" for all promoters, "ELS" for all enhancers.
+#' @param bin_width desired width of bin, default: 1000.
+#' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10"
 #'
 #' @return NULL
 #' @export
@@ -21,6 +22,16 @@ BIT <- function(file,
                 bin_width=1000,
                 burnin=NULL,
                 genome=c("hg38", "mm10")) {
+
+  # Define log file path
+  output_path <- R.utils::getAbsolutePath(output_path)
+  log_file <- file.path(output_path, paste0(tools::file_path_sans_ext(basename(file)), "_log.txt"))
+
+  status <- tryCatch({
+
+  # Start logging
+  sink(log_file, append=TRUE)
+  cat("BIT process started.\n")
 
   # Validate inputs
   if (!file.exists(file)) stop("Input file does not exist.")
@@ -52,13 +63,9 @@ BIT <- function(file,
   nct <- alignment_results$TOTAL
   tr_labels <- as.numeric(factor(alignment_results$TR))
 
-  cat(paste0("Starting BIT Gibbs sampler with ", N, " iterations...\n"))
-
   # Run Gibbs sampling
-  gibbs_sampler_results <- Main_Sampling(N, xct, nct, tr_labels)
+  gibbs_sampler_results <- Main_Sampling(N, xct, nct, tr_labels, log_file)
   gibbs_sampler_results[["TR_names"]] <- alignment_results$TR
-
-  cat("Gibbs sampling completed.\n")
 
   # Save results to an RDS file
   file_name <- file.path(output_path, paste0(tools::file_path_sans_ext(basename(file)), ".rds"))
@@ -77,6 +84,24 @@ BIT <- function(file,
   }
 
   cat("BIT process completed.\n")
+  cat("status: 0")
+
+  sink()
+
+  }, error = function(e) {
+    # Error handler
+    cat("An error occurred: ", conditionMessage(e), "\n")
+    cat("BIT process failed.\n")
+    cat("status: -1")
+
+    # Stop logging and write the error message to the log file
+    sink()
+
+    # Return status code -1 for failure
+    return(-1)
+  })
+
+  return(status)
 }
 
 
@@ -84,12 +109,13 @@ BIT <- function(file,
 #' @description compare BIT identifid TRs for two user input epigenomic region sets.
 #' @param file1 file path to the user-input file 1.
 #' @param file2 file path to the user-input file 2.
+#' @param show Whether to show the results table, default: TRUE
+#' @param plot_scatter Whether to plot the BIT scores of two region sets in one scatter plot, default: TRUE
 #' @param output_path absoluate or relative directory to store the Gibbs sampler data.
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension, default: NULL.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
-#' @param bin_width desired width of bin, should be in 100/500/1000, default: 1000.
-#' @param option option to filter peaks with candidate cis-regulatory elements from ENCODE,
-#' default use "ALL", can be "PLS" for all promoters, "ELS" for all enhancers.
+#' @param bin_width desired width of bin, default: 1000.
+#' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10"
 #'
 #' @return NULL
 #' @export
@@ -176,6 +202,7 @@ BIT_compare <- function(file1,
   }
 
   cat("BIT comparison process completed.\n")
+
 }
 
 

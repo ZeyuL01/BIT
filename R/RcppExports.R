@@ -5,7 +5,7 @@ Alignment <- function(input_vec, ref_vec) {
     .Call(`_BIT_Alignment`, input_vec, ref_vec)
 }
 
-Main_Sampling <- function(N, xct, nct, tr_labels, display_progress = TRUE) {
-    .Call(`_BIT_Main_Sampling`, N, xct, nct, tr_labels, display_progress)
+Main_Sampling <- function(N, xct, nct, tr_labels, log_file_path, display_progress = TRUE) {
+    .Call(`_BIT_Main_Sampling`, N, xct, nct, tr_labels, log_file_path, display_progress)
 }
 

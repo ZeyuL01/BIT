@@ -24,8 +24,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_Sampling
-List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tr_labels, bool display_progress);
-RcppExport SEXP _BIT_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tr_labelsSEXP, SEXP display_progressSEXP) {
+List Main_Sampling(int N, arma::vec xct, arma::vec nct, arma::vec tr_labels, std::string log_file_path, bool display_progress);
+RcppExport SEXP _BIT_Main_Sampling(SEXP NSEXP, SEXP xctSEXP, SEXP nctSEXP, SEXP tr_labelsSEXP, SEXP log_file_pathSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -33,15 +33,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type xct(xctSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type nct(nctSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type tr_labels(tr_labelsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type log_file_path(log_file_pathSEXP);
     Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(Main_Sampling(N, xct, nct, tr_labels, display_progress));
+    rcpp_result_gen = Rcpp::wrap(Main_Sampling(N, xct, nct, tr_labels, log_file_path, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BIT_Alignment", (DL_FUNC) &_BIT_Alignment, 2},
-    {"_BIT_Main_Sampling", (DL_FUNC) &_BIT_Main_Sampling, 5},
+    {"_BIT_Main_Sampling", (DL_FUNC) &_BIT_Main_Sampling, 6},
     {NULL, NULL, 0}
 };
 

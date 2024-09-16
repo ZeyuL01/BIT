@@ -11,6 +11,7 @@
 #include "PolyaGammaApproxSP.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
+#include <fstream>
 
 
 using namespace Rcpp;
@@ -49,11 +50,18 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct);
 arma::vec sigmaS_0(arma::vec xct,arma::vec nct, arma::mat label_mat);
 
 // [[Rcpp::export]]
-List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tr_labels, bool display_progress=true){
+List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tr_labels, std::string log_file_path, bool display_progress=true){
   int i;
   int I;
   arma::vec kappa_ij = xct - nct / 2;
   Progress p(N, display_progress);
+
+  std::ofstream log_file(log_file_path, std::ios_base::app);
+  if (!log_file.is_open()) {
+    Rcpp::stop("Failed to open log file.");
+  }
+
+  log_file << "Starting BIT Gibbs sampler with " << N << " iterations..." << std::endl;
 
   //generate auxiliary lists for the ease of computation.
   List auxiliary_lists = auxiliary_list_generator(tr_labels);
@@ -87,8 +95,19 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tr_labels, bool d
   arma::mat lambda_ij_mat(xct.n_rows,N,fill::zeros);
   lambda_ij_mat.col(0) = lambda_ij_0(theta_ij_mat.col(0), nct);
 
+  int next_log_percent = 1;
+
   for(i=0;i<N-1;i++){
     p.increment();
+
+    // Calculate the current progress percentage
+    int current_percent = static_cast<int>((static_cast<double>(i) / N) * 100);
+
+    // Log progress every 1%
+    if (current_percent >= next_log_percent) {
+      log_file << "Progress: " << current_percent << "% completed." << std::endl;
+      next_log_percent++; // Increment to the next percent to log
+    }
 
     mu0_vec(i+1) = draw_mu0(I, tau0S_vec(i), theta_i_mat.col(i), unique_theta_i);
 
@@ -107,6 +126,12 @@ List Main_Sampling(int N,arma::vec xct,arma::vec nct,arma::vec tr_labels, bool d
     lambda_ij_mat.col(i+1) = draw_lambda_ij(nct, theta_ij_mat.col(i+1));
 
   }
+
+  // Final progress log
+  log_file << "Gibbs sampling completed." << std::endl;
+
+  // Close the log file
+  log_file.close();
 
   return(List::create(Rcpp::Named("mu0") = mu0_vec,
                       Rcpp::Named("tau0S") = tau0S_vec,
