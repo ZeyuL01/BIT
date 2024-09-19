@@ -4,9 +4,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-<center>
+<p align="center" width="100%">
   <img src="/docs/images/Logo.png" alt="Description" width="300"/>
-</center>
+</p>
 
 ## Bayesian Hierarchical Modeling for Identification of Transcriptional Regulators from Query Region Sets
 ![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen.svg) ![Made with Rcpp](https://img.shields.io/badge/Made%20with-Rcpp-1f425f.svg)
