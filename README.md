@@ -5,7 +5,7 @@
 <!-- badges: end -->
 
 <p align="center" width="100%">
-  <img src="/docs/images/Logo.png" alt="Description" width="300"/>
+  <img src="/docs/images/Logo.png" alt="Description" width="100"/>
 </p>
 
 ## Bayesian Hierarchical Modeling for Identification of Transcriptional Regulators from Query Region Sets
