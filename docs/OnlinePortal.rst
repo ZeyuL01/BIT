@@ -1,7 +1,7 @@
 Online Portal
 =============
 
-We also provided an easy-to-use online portal available at: `Online Portal <http://43.135.174.109:8080/>`_
+We also provide an easy-to-use online portal available at: `Online Portal <http://43.135.174.109:8080/>`_
 
 Home page
 ---------
