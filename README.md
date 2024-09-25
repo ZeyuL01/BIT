@@ -9,7 +9,7 @@
 </p>
 
 ## Bayesian Hierarchical Modeling for Identification of Transcriptional Regulators from Query Region Sets
-![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen.svg) ![BIT Portal](https://img.shields.io/badge/BIT%20Portal-Yes-brightgreen.svg) ![Made with Rcpp](https://img.shields.io/badge/Made%20with-Rcpp-1f425f.svg)
+![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen.svg) ![Online Portal](https://img.shields.io/badge/Online%20Portal-Yes-brightgreen.svg) ![Made with Rcpp](https://img.shields.io/badge/Made%20with-Rcpp-1f425f.svg)
 
 **BIT** is a novel bioinformatics tool designed to identify transcriptional regulators from a user-provided set of epigenomic regions. These regions are typically derived from genome-wide epigenomic profiling data that probe specific biological processes, such as ATAC-seq. Using a pre-processed reference library containing over 10,000 human TR ChIP-seq datasets and over 5,000 mouse TR ChIP-seq datasets, **BIT** leverages a Bayesian hierarchical model to achieve higher accuracy and enhanced interpretability.
 
@@ -21,8 +21,9 @@ We have an instruction manual on readthedocs.
 [Manual](https://bitbayesian-identification-of-transcriptional-regulators.readthedocs.io/en/latest/)
 
 ## Installation
+We provide an online portal: <[Online Portal](http://43.135.174.109:8080/)>
 
-You can install the development version of BIT from
+You can also install the development version of BIT from
 [GitHub](https://github.com/ZeyuL01/BIT) with:
 
 ``` r

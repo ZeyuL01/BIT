@@ -28,7 +28,7 @@ You can directly install BIT from github by typing following command in the R te
    ** testing if installed package keeps a record of temporary installation path
    * DONE (BIT)
 
-Next, run the `load_chip_data()` function to connect BIT to the reference database. You can download the data from the `Zenodo<https://zenodo.org/records/13732877>`_. Assume the local directory for the folder containing the reference data for genome hg38 is `/../hg38/`. Enter the following code in the R terminal:
+Next, run the `load_chip_data()` function to connect BIT to the reference database. You can download the data from the `Zenodo <https://zenodo.org/records/13732877>`_. Assume the local directory for the folder containing the reference data for genome hg38 is `/../hg38/`. Enter the following code in the R terminal:
 
 .. code-block::
 
