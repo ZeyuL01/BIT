@@ -17,8 +17,9 @@ BIT - Bayesian Hierarchical Modeling for Identification of Transcriptional Regul
 **BIT** (Bayesian Hierarchical Modeling for Identification of Transcriptional Regulators from Query Region Sets) is a novel bioinformatics tool designed to identify transcriptional regulators from a user-provided set of epigenomic regions. These regions are typically derived from genome-wide epigenomic profiling data that probe specific biological processes, such as ATAC-seq and DNase-seq. Using a pre-processed reference library containing over 10,000 human TR ChIP-seq datasets and over 5,000 mouse TR ChIP-seq datasets, **BIT** leverages a Bayesian hierarchical model to achieve higher accuracy and enhanced interpretability.
 
 
-
 `GitHub <https://github.com/ZeyuL01/BIT>`_
+
+Online portal can be accessed from: `BIT Portal <http://43.135.174.109:8080/>`_
 
 If you use BIT in your work, please cite us:
 
