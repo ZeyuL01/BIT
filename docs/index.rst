@@ -39,7 +39,7 @@ If you use BIT in your work, please cite us:
    :caption: Appendix
    :name: Appendix
 
-   BIT's paper <https://www.biorxiv.org/content/10.1101/2024.06.02.597061v1>
+   BIT's paper <https://www.biorxiv.org/content/10.1101/2024.06.02.597061v2>
    References
    Dr. Xinlei (Sherry) Wang <https://www.uta.edu/academics/faculty/profile?username=wangx9>
    Dr. Lin Xu <https://qbrc.swmed.edu/labs/xulab/>
