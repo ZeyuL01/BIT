@@ -8,7 +8,7 @@
 
 .. role:: red
 
-BIT - Bayesian Identification of Transcriptional Regulators from Epigenomic-Based Query Region Sets
+BIT - Bayesian Identification of Transcriptional Regulators from Epigenomics-Based Query Region Sets
 ===========================================================
 
 
