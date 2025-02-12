@@ -1,5 +1,5 @@
-Examples
-========
+BIT Plots
+====================
 
 The following examples show how to generate several more plots.
 

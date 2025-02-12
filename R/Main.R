@@ -3,13 +3,14 @@
 #' BIT
 #' @description Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width.
 #' @param file file path to the user-input.
-#' @param show Whether to show the results table, default: TRUE
-#' @param plot_bar Whether to plot the top 10 TRs BIT score by a horizontal barplot, default: TRUE
-#' @param output_path absoluate or relative directory to store the Gibbs sampler data
+#' @param show Whether to show the results table, default: TRUE.
+#' @param plot_bar Whether to plot the top 10 TRs BIT score by a horizontal barplot, default: TRUE.
+#' @param output_path absoluate or relative directory to store the Gibbs sampler data.
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, default: 1000.
-#' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10"
+#' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10".
+#' @param seed Set random seed for reproducibility.
 #'
 #' @return NULL
 #' @export
@@ -21,7 +22,8 @@ BIT <- function(file,
                 N=5000,
                 bin_width=1000,
                 burnin=NULL,
-                genome=c("hg38", "mm10")) {
+                genome=c("hg38", "mm10"),
+                seed=42) {
 
   # Define log file path
   output_path <- R.utils::getAbsolutePath(output_path)
@@ -62,6 +64,9 @@ BIT <- function(file,
   xct <- alignment_results$GOOD
   nct <- alignment_results$TOTAL
   tr_labels <- as.numeric(factor(alignment_results$TR))
+
+  # Set the seed for reproducibility
+  set.seed(seed)  # Set the seed before running the Gibbs sampler
 
   # Run Gibbs sampling
   gibbs_sampler_results <- Main_Sampling(N, xct, nct, tr_labels, log_file)
@@ -116,6 +121,7 @@ BIT <- function(file,
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, default: 1000.
 #' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10"
+#' @param seed Set random seed for reproducibility.
 #'
 #' @return NULL
 #' @export
@@ -128,7 +134,8 @@ BIT_compare <- function(file1,
                         N=5000,
                         bin_width=1000,
                         burnin=NULL,
-                        genome=c("hg38", "mm10")) {
+                        genome=c("hg38", "mm10"),
+                        seed=42) {
 
   # Validate inputs
   if (!file.exists(file1)) stop("Input file1 does not exist.")

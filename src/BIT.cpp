@@ -381,9 +381,3 @@ arma::vec lambda_ij_0(arma::vec theta_ij_0,arma::vec nct){
 
   return(lambda_ij_0);
 };
-
-
-
-
-
-

@@ -30,7 +30,7 @@ If you use BIT in your work, please cite us:
 
    InstallationGuide
    QuickStart
-   Examples
+   Examples/index
    Functions
    OnlinePortal
 
