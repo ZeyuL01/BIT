@@ -15,7 +15,7 @@ To plot the BIT scores, use the ``rank_plot()`` function to generate a bar plot 
 
 
 
-.. image:: ./images/file_name_rank_table.png
+.. image:: ../images/file_name_rank_table.png
 
 
 Compare Transcriptional Regulators (TRs) from Two Region Sets
@@ -73,7 +73,7 @@ It is clearly noted that the perturbed TR and other cohesion complex components 
 
 The output picture will be saved as "file1_name_file2_name_compare.pdf"
 
-.. image:: ./images/file1_name_file2_name_compare.png
+.. image:: ../images/file1_name_file2_name_compare.png
 
 
 
