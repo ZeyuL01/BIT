@@ -174,9 +174,192 @@ We run the simulation 100 times for each setting, using different total numbers 
   }
 
 
+The simulation raw data and BIT derived results will be saved as ``*.rds`` files in two separate folders: ``./simulation/MU/SIMU_DATA`` and ``./simulation/MU/SIMU_RESULTS``.
+
+``./simulation/MU/SIMU_DATA``
+.. image:: ../images/Examples/Simulation/Pic1.png
+
+``./simulation/MU/SIMU_RESULTS``
+.. image:: ../images/Examples/Simulation/Pic2.png
+
+
+Next we need to calculate the mean squared error of :math:`\mu` and spearman rho of estimated :math:`\hat{\theta}_i` with true :math:`\theta_i` from the raw data:
+
+.. code-block:: r
+
+  library(data.table)
+
+  logit_function<-function(x){
+  	return(log(x/(1-x)))
+  }
+
+  vec_logit<-Vectorize(logit_function)
+
+  Naive_Mu<-function(data){
+    part1<-data$xij/data$nij
+    part1[which(part1==0)]<-part1[which(part1==0)]+0.000001
+    part1<-vec_logit(part1)
+    group_means <- tapply(part1, data$label_vec, mean)
+    return(mean(group_means))
+  }
+
+  Naive_TAU2<-function(data){
+  	part1<-data$xij/data$nij
+  	part1[which(part1==0)]<-part1[which(part1==0)]+0.000001
+  	part1<-vec_logit(part1)
+  	return(var(part1))
+  }
+
+  Naive_SIGMA0<-function(data,Mc){
+  	part1<-data$xij/data$nij
+  	part1[which(part1==0)]<-part1[which(part1==0)]+0.000001
+  	part1<-vec_logit(part1)
+  	Mu_est<-Naive_Mu(data)
+  	part1_Mc<-part1[(length(part1)-Mc+1):length(part1)]
+  	return(sum((part1_Mc-Mu_est)^2)/(Mc-1))
+  }
+
+  Naive_Theta_i<-function(data){
+  	part1<-data$xij/data$nij
+  	part1[which(part1==0)]<-part1[which(part1==0)]+0.000001
+  	part1<-vec_logit(part1)
+  	return(tapply(part1,data$label_vec,mean))
+  }
+
+
+  ###################
+  work_dir_data<-"./simulation/MU/SIMU_DATA/"
+  work_dir_results<-"./simulation/MU/SIMU_RESULTS/"
+  output_dir<-"./simulation/test_results/MU/"
+
+  M_vec<-c(350,700,1050)
+  Mc_vec<-c(150,300,450)
+  MU<-c(-5,-4.5,-4,-3.5,-3,-2.5)
+
+
+  for(i in 1:3){
+  		output_mu_df<-data.frame(matrix(nrow=6,ncol=4))
+  		colnames(output_mu_df)<-c("BIT_Bias","BIT_MSE","Naive_Bias","Naive_MSE")
+  		for(k in 1:6){
+  			output_theta_i_df<-data.frame(matrix(nrow=(M_vec[i]+Mc_vec[i]),ncol=6))
+  			colnames(output_theta_i_df)<-c("BIT_Bias","BIT_MSE","Naive_Bias","Naive_MSE","Naive_Spearman","BIT_Spearman")
+
+  			data_files<-list.files(work_dir_data,pattern=paste0("*_mu_",MU[k],"_I_",M_vec[i]+Mc_vec[i],".rds"))
+  			results_files<-list.files(work_dir_results,pattern=paste0("*_mu_",MU[k],"_I_",M_vec[i]+Mc_vec[i],".rds"))
+
+  			naive_MU_vec<-c()
+  			naive_Theta_mat<-matrix(nrow=(M_vec[i]+Mc_vec[i]),ncol=100)
+
+  			BIT_MU_vec<-c()
+  			BIT_Theta_mat<-matrix(nrow=(M_vec[i]+Mc_vec[i]),ncol=100)
+
+  			for(m in 1:100){
+  			print(paste0(i,"_",k,"_",m))
+  				data<-readRDS(paste0(work_dir_data,data_files[m]))
+  				results<-readRDS(paste0(work_dir_results,results_files[m]))
+
+  				label_rank<-rank(-data$theta_i)
+
+  				true_mu<-MU[k]
+  				true_Theta_i<-data$theta_i
+
+  				naive_Mu<-Naive_Mu(data)
+  				naive_Theta_i<-Naive_Theta_i(data)
+
+  				naive_rank<-rank(-naive_Theta_i)
+  				names(naive_rank)<-NULL
+
+  				BIT_Mu<-results$mu
+  				BIT_Theta_i<-results$theta_i[!duplicated(results$label_vec)]
+
+  				BIT_rank<-rank(-BIT_Theta_i)
+
+  				naive_MU_vec<-c(naive_MU_vec,naive_Mu-true_mu)
+  				BIT_MU_vec<-c(BIT_MU_vec,BIT_Mu-true_mu)
+
+  				naive_Theta_mat[,m]<-naive_Theta_i-true_Theta_i
+  				BIT_Theta_mat[,m]<-BIT_Theta_i-true_Theta_i
+
+  				spearman_naive<-cor(label_rank,naive_rank,method="spearman")
+  				spearman_BIT<-cor(label_rank,BIT_rank,method="spearman")
+
+  				output_theta_i_df[m,5]<-spearman_naive
+  				output_theta_i_df[m,6]<-spearman_BIT
+  			}
+  			output_mu_df[k,1]<-mean(abs(BIT_MU_vec),na.rm=TRUE)
+  			output_mu_df[k,2]<-mean(BIT_MU_vec^2,na.rm=TRUE)
+  			output_mu_df[k,3]<-mean(abs(naive_MU_vec),na.rm=TRUE)
+  			output_mu_df[k,4]<-mean(naive_MU_vec^2,na.rm=TRUE)
+
+  			output_theta_i_df[,1]<-rowMeans(abs(BIT_Theta_mat),na.rm=TRUE)
+  			output_theta_i_df[,2]<-rowMeans(BIT_Theta_mat^2,na.rm=TRUE)
+  			output_theta_i_df[,3]<-rowMeans(abs(naive_Theta_mat),na.rm=TRUE)
+  			output_theta_i_df[,4]<-rowMeans(naive_Theta_mat^2,na.rm=TRUE)
+
+  			fwrite(output_theta_i_df,paste0(output_dir,"Theta_i_I_",M_vec[i]+Mc_vec[i],"_Mu_",MU[k],".csv"))
+  		}
+  		fwrite(output_mu_df,paste0(output_dir,"Mu_I_",M_vec[i]+Mc_vec[i],".csv"))
+  }
+
+
+We will get tables as below:
+
+``./simulation/test_results/MU``
+.. image:: ../images/Examples/Simulation/Pic3.png
+
+Finally, we generate the `Fig2A_Mu.csv` table:
+
+.. code-block:: r
+
+  work_dir_MU<-"./simulation/test_RESULTS/MU/"
+  I_vec<-c(500,1000,1500)
+
+  new_df<-data.frame(matrix(nrow=6,ncol=7))
+  colnames(new_df)[1]<-"mu"
+  new_df[,1]<-c(-5.0,-4.5,-4,-3.5,-3,-2.5)
+  for(i in 1:3){
+    data_df<-read.csv(paste0(work_dir_MU,"Mu_I_",I_vec[i],".csv"))
+    new_df[,i+1]<-data_df$BIT_MSE[c(1,2,3,4,5,6)]
+    new_df[,3+i+1]<-data_df$Naive_MSE[c(1,2,3,4,5,6)]
+  }
+
+  colnames(new_df)<-c("MU","BIT500","BIT1000","BIT1500","Naive500","Naive1000","Naive1500")
+  write.csv(new_df,".simulation/MU/Fig2A_MU.csv",row.names=FALSE)
+
+The ``Fig2A_MU.csv`` table should be:
+
+.. csv-table:: Example Table from CSV
+   :file: ../tables/Examples/Simulation/Fig2A_MU.csv
+   :header-rows: 1
 
 
 
+With the ``Fig2A_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
+
+.. code-block:: r
+
+  MU_sim<-read.csv("./simulation/MU/Fig2A_MU.csv")
+  long_data_mu <- pivot_longer(MU_sim, cols = -MU, names_to = "variable", values_to = "value")
+
+  p1<-ggplot(long_data_mu, aes(x = MU, y = value, color = variable, shape = variable)) +
+    geom_line() +     # Add lines
+    geom_point() +    # Add points
+    scale_color_manual(values = c("BIT500" = colors_element1[1], "BIT1000" = colors_element1[2], "BIT1500" = colors_element1[3],"Naive500" = colors_element2[1], "Naive1000" = colors_element2[2], "Naive1500" = colors_element2[3]),
+                       labels = c("BIT500" = "BIT (I=500)", "BIT1000" = "BIT (I=1000)", "BIT1500" = "BIT (I=1500)","Naive500" = "Naïve (I=500)", "Naive1000" = "Naïve (I=1000)", "Naive1500" = "Naïve (I=1500)"), name = "") +
+    scale_shape_manual(values = c("BIT500" = 1, "BIT1000" = 2, "BIT1500" = 4,"Naive500" = 5, "Naive1000" = 8, "Naive1500" = 9),
+                       labels = c("BIT500" = "BIT (I=500)", "BIT1000" = "BIT (I=1000)", "BIT1500" = "BIT (I=1500)","Naive500" = "Naïve (I=500)", "Naive1000" = "Naïve (I=1000)", "Naive1500" = "Naïve (I=1500)"),name = "") +
+    labs(title = "", x = expression(bold(mu)), y = "MSE") +
+    theme_bw() + theme(legend.position = "none",axis.text.x = element_text(size = 12,color="black"),  # Customizing x-axis tick labels
+                       axis.text.y = element_text(size = 10,color="black"),  # Customizing y-axis tick labels
+                       axis.title.x = element_text(size = 12,color="black"), # Customizing x-axis label
+                       axis.title.y = element_text( size = 12,color="black"), # Customizing y-axis label
+                       legend.text = element_text(size = 10,color="black"),  # Customizing legend text
+                       legend.title = element_text( size = 12,color="black")  # Customizing legend title
+    ) + scale_x_continuous(labels=c("-5","-4.5","-4","-3.5","-3","-2.5"))+scale_y_continuous(limits=c(0,0.0035),breaks=c(0,0.0010,0.0020,0.0030))
+
+Which gives us:
+
+.. image:: ../images/Examples/Simulation/Pic4.png
 
 
 
