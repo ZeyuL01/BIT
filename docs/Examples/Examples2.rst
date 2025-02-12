@@ -177,9 +177,11 @@ We run the simulation 100 times for each setting, using different total numbers 
 The simulation raw data and BIT derived results will be saved as ``*.rds`` files in two separate folders: ``./simulation/MU/SIMU_DATA`` and ``./simulation/MU/SIMU_RESULTS``.
 
 ``./simulation/MU/SIMU_DATA``
+
 .. image:: ../images/Examples/Simulation/Pic1.png
 
 ``./simulation/MU/SIMU_RESULTS``
+
 .. image:: ../images/Examples/Simulation/Pic2.png
 
 
@@ -305,6 +307,7 @@ Next we need to calculate the mean squared error of :math:`\mu` and spearman rho
 We will get tables as below:
 
 ``./simulation/test_results/MU``
+
 .. image:: ../images/Examples/Simulation/Pic3.png
 
 Finally, we generate the `Fig2A_Mu.csv` table:
