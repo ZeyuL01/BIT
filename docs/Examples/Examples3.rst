@@ -1,17 +1,17 @@
 K562 Perturbation
 ====================
 
-For preprocessing the CRISPR screen with scATAC-seq data we refer to the pipeline provided by the author of the data: `Pipeline <https://github.com/GreenleafLab/SpearATAC_MS_2021/tree/main>`_
+For preprocessing the CRISPR screen with scATAC-seq data, we use the pipeline provided by the data author: `Pipeline <https://github.com/GreenleafLab/SpearATAC_MS_2021/tree/main>`_
 
 - Pierce, S. E., Granja, J. M. & Greenleaf, W. J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun 12, 2969 (2021). `10.1038/s41467-021-23213-w <https://www.nature.com/articles/s41467-021-23213-w>`_
 
-To begin the process, we also need to retrieve the sequencing data based on the table:
+To initiate the preprocessing, we first retrieve the sequencing data as listed in the following table:
 
 .. csv-table:: K562 files
    :file: ../tables/Examples/K562/K562_Files.csv
    :header-rows: 1
 
-Once we have the files, we can modify the pipeline to process the data:
+Once the required files are obtained, we can modify the pipeline to process the data, certain steps require extra functions defined in a separate R file provided by the data author:
 
 .. code-block:: r
 
@@ -55,7 +55,7 @@ Once we have the files, we can modify the pipeline to process the data:
   #Files were created from JJJ.R
   sgRNAFiles <- c("K562_R1"="./K562/K562-LargeScreen-R1.sgRNA.rds", "K562_R2"="./K562/K562-LargeScreen-R2.sgRNA.rds",
                   "K562_R3"="./K562/K562-LargeScreen-R3.sgRNA.rds", "K562_R4"="./K562/K562-LargeScreen-R4.sgRNA.rds",
-                  "K562_R3"="./K562/K562-LargeScreen-R5.sgRNA.rds", "K562_R4"="./K562/K562-LargeScreen-R6.sgRNA.rds")
+                  "K562_R5"="./K562/K562-LargeScreen-R5.sgRNA.rds", "K562_R6"="./K562/K562-LargeScreen-R6.sgRNA.rds")
 
   #Create Arrow Files
   ArrowFiles <- createArrowFiles(inputFiles=inputFiles, validBarcodes = validBC)
@@ -269,11 +269,11 @@ Once we have the files, we can modify the pipeline to process the data:
     }
   }
 
-Then we will have the ``*.bed`` files for each sgRNA target.
+After processing, we obtain ``*.bed`` files for each sgRNA target.
 
 .. image:: ../images/Examples/K562/Pic1.png
 
-We next apply each state-of-the-art methods to the generated ``*.bed`` files and generate the outputs from each method. The steps of applying each method can refer to following:
+Next, we apply state-of-the-art methods to analyze the generated ``*.bed`` files and extract outputs from each method. The following tools are used:
 
 `BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>`_
 `HOMER <http://homer.ucsd.edu/homer/ngs/peakMotifs.html>`_
@@ -281,11 +281,11 @@ We next apply each state-of-the-art methods to the generated ``*.bed`` files and
 `ChIP-Atlas <https://chip-atlas.org>`_
 `i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>`_
 
-We start our analysis by having the outputs from each method.
+The analysis begins by collecting outputs from each method.
 
-We first need to process the results from HOMER and i-cisTarget, as HOMER outputs containing some alias to known TRs while i-cisTarget are returned as html format, which we have to manually extract the results:
+Before proceeding, we need to preprocess the results from HOMER and i-cisTarget, HOMER outputs may contain aliases for known TRs, while i-cisTarget results are provided in HTML format, requiring manual extraction of relevant data:
 
-For i-cisTraget:
+For i-cisTarget:
 
 .. code-block:: r
 
@@ -379,7 +379,7 @@ For HOMER:
   }
 
 
-Next we start to summarize the other tables and merge the results as one list:
+Next, we summarize the extracted data from other tables and merge the results into a unified list:
 
 
 .. code-block:: r
@@ -490,9 +490,9 @@ Next we start to summarize the other tables and merge the results as one list:
                     "i-cisTarget"=icistarget_table,
                     "WhichTF"=whichtf_table)
 
-Once we have all the summarized tables, we con continue to generate the plots:
+After summarizing all tables, we proceed to generate the plots.
 
-We first calculate the MRR of the rank of 40 perturbed TRs by these methods and simultaously count the number of TRs ranked to top 10 or top 50 by each method:
+First, we calculate the Mean Reciprocal Rank (MRR) for the 40 perturbed TRs across different methods. Simultaneously, we count the number of TRs ranked within the top 10 and top 50 by each method.
 
 .. code-block:: r
 
@@ -539,7 +539,7 @@ We first calculate the MRR of the rank of 40 perturbed TRs by these methods and 
   #          1           5           4           2           4           9
 
 
-Next we plot the MRRs of the six methods:
+Next, we visualize the MRRs for the six methods using the following plot:
 
 .. code-block:: r
 
@@ -568,7 +568,7 @@ Figure:
 
 .. image:: ../images/Examples/K562/Pic3.png
 
-And the top 10 / 50 counts by each method:
+We also visualize the number of TRs ranked within the top 10 and top 50 by each method:
 
 .. code-block:: r
 
