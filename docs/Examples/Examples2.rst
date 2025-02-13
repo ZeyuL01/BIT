@@ -492,7 +492,7 @@ We can also generate the ``Fig2C_MU.csv`` table:
   df1$mu<-as.factor(df1$mu)
   df1$group<-factor(df1$group,levels=c("BIT (I=1500)","BIT (I=1000)","BIT (I=500)","Naive (I=1500)","Naive (I=1000)","Naive (I=500)"))
 
-  write.csv(df1,./simulation/RESULTS/Fig2C_MU.csv",row.names=FALSE)
+  write.csv(df1,"./simulation/RESULTS/Fig2C_MU.csv",row.names=FALSE)
 
 The ``Fig2C_MU.csv`` table should be:
 
