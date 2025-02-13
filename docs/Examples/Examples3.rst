@@ -3,7 +3,7 @@ K562 Perturbation
 
 For preprocessing the CRISPR screen with scATAC-seq data we refer to the pipeline provided by the author of the data: `Pipeline <https://github.com/GreenleafLab/SpearATAC_MS_2021/tree/main>`_
 
-- Pierce, S. E., Granja, J. M. & Greenleaf, W. J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun 12, 2969 (2021). `10.1038/s41467-021-23213-w<https://doi.org/10.1038/s41467-021-23213-w>`
+- Pierce, S. E., Granja, J. M. & Greenleaf, W. J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun 12, 2969 (2021). `10.1038/s41467-021-23213-w <https://doi.org/10.1038/s41467-021-23213-w>`
 
 To begin the process, we also need to retrieve the sequencing data based on the table:
 
@@ -275,17 +275,22 @@ Then we will have the ``*.bed`` files for each sgRNA target.
 
 We next apply each state-of-the-art methods to the generated ``*.bed`` files and generate the outputs from each method. The steps of applying each method can refer to following:
 
-`BART2<https://github.com/zanglab/bart2?tab=readme-ov-file>_`
-`HOMER<http://homer.ucsd.edu/homer/ngs/peakMotifs.html>_`
-`WhichTF<https://bitbucket.org/bejerano/whichtf/src/master/>_`
-`ChIP-Atlas<https://chip-atlas.org>_`
-`i-cisTarget<https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>_`
+`BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>_`
+
+`HOMER <http://homer.ucsd.edu/homer/ngs/peakMotifs.html>_`
+
+`WhichTF <https://bitbucket.org/bejerano/whichtf/src/master/>_`
+
+`ChIP-Atlas <https://chip-atlas.org>_`
+
+`i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>_`
 
 We start our analysis by having the outputs from each method.
 
 We first need to process the results from HOMER and i-cisTarget, as HOMER outputs containing some alias to known TRs while i-cisTarget are returned as html format, which we have to manually extract the results:
 
 For i-cisTraget:
+
 .. code-block:: r
 
   library(rvest)
@@ -527,9 +532,16 @@ We first calculate the MRR of the rank of 40 perturbed TRs by these methods and 
   names(Top10)<-rev(Method_names)
   names(Top50)<-rev(Method_names)
 
-  MRR_res
-  Top10
-  Top50
+  #> MRR_res
+  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
+  #0.002632788 0.045862471 0.036355700 0.006783940 0.014126888 0.047616672
+  #> Top10
+  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
+  #          0           3           2           1           1           3
+  #> Top50
+  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
+  #          1           5           4           2           4           9
+
 
 Next we plot the MRRs of the six methods:
 
