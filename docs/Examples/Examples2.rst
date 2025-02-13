@@ -232,7 +232,8 @@ Next we need to calculate the mean squared error of :math:`\mu` and spearman rho
   ###################
   work_dir_data<-"./simulation/MU/SIMU_DATA/"
   work_dir_results<-"./simulation/MU/SIMU_RESULTS/"
-  output_dir<-"./simulation/test_results/MU/"
+  output_dir<-"./simulation/RESULTS/MU/"
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE))
 
   M_vec<-c(350,700,1050)
   Mc_vec<-c(150,300,450)
@@ -306,15 +307,19 @@ Next we need to calculate the mean squared error of :math:`\mu` and spearman rho
 
 We will get tables as below:
 
-``./simulation/test_results/MU``
+``./simulation/RESULTS/MU``
 
 .. image:: ../images/Examples/Simulation/Pic3.png
 
-Finally, we generate the `Fig2A_Mu.csv` table:
+
+Generating Figure. 2A
+------------------------
+
+We generate the `Fig2A_Mu.csv` table from the summarized results:
 
 .. code-block:: r
 
-  work_dir_MU<-"./simulation/test_RESULTS/MU/"
+  work_dir_MU<-"./simulation/RESULTS/MU/"
   I_vec<-c(500,1000,1500)
 
   new_df<-data.frame(matrix(nrow=6,ncol=7))
@@ -327,21 +332,20 @@ Finally, we generate the `Fig2A_Mu.csv` table:
   }
 
   colnames(new_df)<-c("MU","BIT500","BIT1000","BIT1500","Naive500","Naive1000","Naive1500")
-  write.csv(new_df,".simulation/MU/Fig2A_MU.csv",row.names=FALSE)
+  write.csv(new_df,"./simulation/RESULTS/Fig2A_MU.csv",row.names=FALSE)
 
 The ``Fig2A_MU.csv`` table should be:
 
-.. csv-table:: Example Table from CSV
+.. csv-table:: Figure. 2A table
    :file: ../tables/Examples/Simulation/Fig2A_MU.csv
    :header-rows: 1
-
 
 
 With the ``Fig2A_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
 
 .. code-block:: r
 
-  MU_sim<-read.csv("./simulation/MU/Fig2A_MU.csv")
+  MU_sim<-read.csv("./simulation/RESULTS/Fig2A_MU.csv")
   long_data_mu <- pivot_longer(MU_sim, cols = -MU, names_to = "variable", values_to = "value")
 
   p1<-ggplot(long_data_mu, aes(x = MU, y = value, color = variable, shape = variable)) +
@@ -365,5 +369,160 @@ Which gives us:
 .. image:: ../images/Examples/Simulation/Pic4.png
 
 
+Generating Figure. 2B
+------------------------
 
+We generate the ``Fig2B_MU.csv`` table from the summarized results:
+
+.. code-block:: r
+
+  library(tidyverse)
+  work_dir_MU<-"./simulation/RESULTS/MU/"
+
+  I_vec<-c(500,1000,1500)
+  mu<-c(-5,-4.5,-4,-3.5,-3,-2.5)
+  THETA_MSE_MU<-data.frame(matrix(nrow=18,ncol=4))
+  colnames(THETA_MSE_MU)<-c("MU","I_SIZE","BIT_MSE_MEAN","Naive_MSE_MEAN")
+  THETA_MSE_MU$MU<-rep(mu,3)
+  THETA_MSE_MU$I_SIZE<-rep(I_vec,each=6)
+
+  for(i in 1:3){
+    BIT_MSE_Mean<-c()
+    Naive_MSE_Mean<-c()
+
+    for(k in 1:6){
+      data_df<-read.csv(paste0(work_dir_MU,"Theta_i_I_",I_vec[i],"_Mu_",mu[k],".csv"))
+      BIT_MSE_Mean<-c(BIT_MSE_Mean,mean(data_df[,2],na.rm=TRUE))
+      Naive_MSE_Mean<-c(Naive_MSE_Mean,mean(data_df[,4],na.rm=TRUE))
+    }
+    THETA_MSE_MU$BIT_MSE_MEAN[((1:6)+(i-1)*6)]<-BIT_MSE_Mean
+    THETA_MSE_MU$Naive_MSE_MEAN[((1:6)+(i-1)*6)]<-Naive_MSE_Mean
+  }
+
+  THETA_MSE_MU <- THETA_MSE_MU %>%
+      # Pivot the MSE columns to long format
+      pivot_longer(
+        cols = c(BIT_MSE_MEAN, Naive_MSE_MEAN),
+        names_to = "method",
+        values_to = "value"
+      ) %>%
+      # Create the group column by combining method and I_SIZE
+      mutate(
+        # Extract just "BIT" or "Naive" from the method names
+        method = str_replace(method, "_MSE_MEAN", ""),
+        # Create the group label in the desired format
+        group = sprintf("%s (I=%d)", method, I_SIZE),
+        # Rename mu column to match desired output
+        mu = MU
+      ) %>%
+      # Select and arrange the final columns
+      select(value, mu, group) %>%
+      # Sort by mu and group
+      arrange(mu, group)
+
+  write.csv(THETA_MSE_MU,"./simulation/RESULTS/Fig2B_MU.csv",row.names = FALSE)
+
+
+The ``Fig2B_MU.csv`` table should be:
+
+.. csv-table:: Figure. 2B table (rows 1-10)
+   :file: ../tables/Examples/Simulation/Fig2B_MU.csv
+   :header-rows: 1
+   :rows: 1-10
+
+
+With the ``Fig2B_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
+
+.. code-block:: r
+
+  Theta_MU_sim<-read.csv("./simulation/RESULTS/Fig2B_MU.csv")
+  plot1<-ggplot(Theta_MU_sim, aes(x = mu, y = value, color = group, shape = group)) +
+    geom_line() +     # Add lines
+    geom_point() +    # Add points
+    scale_color_manual(values = c("BIT (I=500)" = colors_element1[1], "BIT (I=1000)" = colors_element1[2], "BIT (I=1500)" = colors_element1[3],"Naive (I=500)" = colors_element2[1], "Naive (I=1000)" = colors_element2[2], "Naive (I=1500)" = colors_element2[3]), name = "") +
+    scale_shape_manual(values = c("BIT (I=500)" = 1, "BIT (I=1000)" = 2, "BIT (I=1500)" = 4,"Naive (I=500)" = 5, "Naive (I=1000)" = 8, "Naive (I=1500)" = 9),name = "") +
+    labs(title = "", x = expression(bold(mu)), y = "Average of MSEs") +
+    theme_bw() + theme(legend.position = "none",axis.text.x = element_text(size = 12,color="black"),  # Customizing x-axis tick labels
+                       axis.text.y = element_text(size = 12,color="black"),  # Customizing y-axis tick labels
+                       axis.title.x = element_text(size = 14,color="black"), # Customizing x-axis label
+                       axis.title.y = element_text( size = 14,color="black"), # Customizing y-axis label
+                       legend.text = element_text(size = 10,color="black"),  # Customizing legend text
+                       legend.title = element_text( size = 12,color="black")  # Customizing legend title
+    ) + scale_x_continuous(labels=c("-5","-4.5","-4","-3.5","-3","-2.5"))+scale_y_continuous(limits=c(0.1,0.5),breaks=c(0.1,0.2,0.3,0.4,0.5))
+
+
+which gives the plot:
+
+.. image:: ../images/Examples/Simulation/Pic5.png
+
+
+Generating Figure. 2C
+------------------------
+
+We can also generate the ``Fig2C_MU.csv`` table:
+
+.. code-block:: r
+
+  work_dir_MU<-"./simulation/RESULTS/MU/"
+  work_files_MU<-list.files(work_dir_MU,pattern="Theta_i_I_*")
+  work_files_MU
+  I_vec<-c(500,1000,1500)
+  TR_level<-c("500","1000","1500")
+
+  mu<-c(-5,-4.5,-4,-3.5,-3,-2.5)
+  MU_spearman_df<-data.frame(matrix(nrow=3600,ncol=3))
+  colnames(MU_spearman_df)<-c("value","mu","group")
+  for(i in 1:6){
+    for(j in 1:3){
+      Theta_df<-as.data.frame(fread(paste0(work_dir_MU,"Theta_i_I_",I_vec[j],"_Mu_",mu[i],".csv")))
+      index1<-(i-1)*600+(j-1)*200+1
+      index2<-(i-1)*600+(j-1)*200+100
+      index3<-(i-1)*600+(j-1)*200+101
+      index4<-(i-1)*600+(j-1)*200+200
+      MU_spearman_df[index1:index2,1]<-Theta_df$Naive_Spearman[1:100]
+      MU_spearman_df[index3:index4,1]<-Theta_df$BIT_Spearman[1:100]
+      MU_spearman_df[index1:index2,2]<-mu[i]
+      MU_spearman_df[index3:index4,2]<-mu[i]
+      MU_spearman_df[index1:index2,3]<-paste0("Naive (I=",TR_level[j],")")
+      MU_spearman_df[index3:index4,3]<-paste0("BIT (I=",TR_level[j],")")
+    }
+  }
+
+  df1<-MU_spearman_df
+  df1$mu<-as.factor(df1$mu)
+  df1$group<-factor(df1$group,levels=c("BIT (I=1500)","BIT (I=1000)","BIT (I=500)","Naive (I=1500)","Naive (I=1000)","Naive (I=500)"))
+
+  write.csv(df1,./simulation/RESULTS/Fig2C_MU.csv",row.names=FALSE)
+
+The ``Fig2C_MU.csv`` table should be:
+
+.. csv-table:: Figure. 2C table (rows 1-10)
+   :file: ../tables/Examples/Simulation/Fig2C_MU.csv
+   :header-rows: 1
+   :rows: 1-10
+
+
+With the ``Fig2C_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
+
+.. code-block:: r
+
+  df1<-read.csv(paste0(DATA_DIR,"Fig2C_MU.csv"))
+  df1$mu<-as.factor(df1$mu)
+  df1$group<-factor(df1$group,levels=c("BIT (I=1500)","BIT (I=1000)","BIT (I=500)","Naive (I=1500)","Naive (I=1000)","Naive (I=500)"))
+
+  plot1<-ggplot(df1, aes(x = mu, y = value, fill = group)) +
+    geom_boxplot(width = 0.7, size = 0.3,position = position_dodge(0.8), outlier.shape=NA)+
+    ylim(c(0.7,1))+theme_bw()+theme(legend.position = "none",axis.text.x = element_text(size = 10,color="black"),  # Customizing x-axis tick labels
+                                     axis.text.y = element_text( size = 10,color="black"),  # Customizing y-axis tick labels
+                                     axis.title.x = element_text( size = 12,color="black"), # Customizing x-axis label
+                                     axis.title.y = element_text( size = 12,color="black"), # Customizing y-axis label
+                                     legend.text = element_text( size = 8,color="black"),  # Customizing legend text
+                                     legend.title = element_text(size = 10,color="black")  # Customizing legend title
+    )+
+    scale_fill_manual(values = c(colors_element1[3:1], colors_element2[3:1]))+
+    xlab(expression(mu))+ylab(expression(paste("Spearman ",rho)))
+
+which gives the plot:
+
+.. image:: ../images/Examples/Simulation/Pic6.png
 
