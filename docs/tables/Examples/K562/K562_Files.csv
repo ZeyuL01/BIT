@@ -1,0 +1,31 @@
+﻿Project,Sample,File Type,DownloadURL
+K562-LargeScreen,R1,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R1.fragments.tsv.gz
+K562-LargeScreen,R1,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R1.fragments.tsv.gz.tbi
+K562-LargeScreen,R1,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R1.sgRNA.rds
+K562-LargeScreen,R1,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R1.singlecell.csv
+K562-LargeScreen,R1,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R1.summary.csv
+K562-LargeScreen,R2,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R2.fragments.tsv.gz
+K562-LargeScreen,R2,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R2.fragments.tsv.gz.tbi
+K562-LargeScreen,R2,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R2.sgRNA.rds
+K562-LargeScreen,R2,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R2.singlecell.csv
+K562-LargeScreen,R2,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R2.summary.csv
+K562-LargeScreen,R3,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R3.fragments.tsv.gz
+K562-LargeScreen,R3,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R3.fragments.tsv.gz.tbi
+K562-LargeScreen,R3,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R3.sgRNA.rds
+K562-LargeScreen,R3,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R3.singlecell.csv
+K562-LargeScreen,R3,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R3.summary.csv
+K562-LargeScreen,R4,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R4.fragments.tsv.gz
+K562-LargeScreen,R4,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R4.fragments.tsv.gz.tbi
+K562-LargeScreen,R4,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R4.sgRNA.rds
+K562-LargeScreen,R4,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R4.singlecell.csv
+K562-LargeScreen,R4,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R4.summary.csv
+K562-LargeScreen,R5,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R5.fragments.tsv.gz
+K562-LargeScreen,R5,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R5.fragments.tsv.gz.tbi
+K562-LargeScreen,R5,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R5.sgRNA.rds
+K562-LargeScreen,R5,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R5.singlecell.csv
+K562-LargeScreen,R5,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R5.summary.csv
+K562-LargeScreen,R6,10x fragments file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R6.fragments.tsv.gz
+K562-LargeScreen,R6,10x fragments index file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R6.fragments.tsv.gz.tbi
+K562-LargeScreen,R6,sgRNA counts file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R6.sgRNA.rds
+K562-LargeScreen,R6,10x singlecell summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R6.singlecell.csv
+K562-LargeScreen,R6,10x run summary file,wget https://jeffgranja.s3.amazonaws.com/SpearATAC_2020/K562-LargeScreen-R6.summary.csv

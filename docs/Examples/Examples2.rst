@@ -1,4 +1,4 @@
-BIT Simulation
+Simulation
 ====================
 
 This example demonstrates how to generate simulation plots from raw data as presented in the manuscript. In manuscript, we considered three simulation cases examining :math:`\mu`, :math:`\tau^2`, and :math:`\sigma_0^2`, along with two distribution variants: Gamma and Student’s :math:`t` distributions. Below, we focus on the case of :math:`\mu`.
@@ -425,10 +425,10 @@ We generate the ``Fig2B_MU.csv`` table from the summarized results:
 
 The ``Fig2B_MU.csv`` table should be:
 
-.. csv-table:: Figure. 2B table (rows 1-10)
+.. csv-table:: Figure. 2B table
    :file: ../tables/Examples/Simulation/Fig2B_MU.csv
    :header-rows: 1
-   :rows: 1-10
+   :lines: 1-10
 
 
 With the ``Fig2B_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
@@ -496,10 +496,10 @@ We can also generate the ``Fig2C_MU.csv`` table:
 
 The ``Fig2C_MU.csv`` table should be:
 
-.. csv-table:: Figure. 2C table (rows 1-10)
+.. csv-table:: Figure. 2C table
    :file: ../tables/Examples/Simulation/Fig2C_MU.csv
    :header-rows: 1
-   :rows: 1-10
+   :lines: 1-10
 
 
 With the ``Fig2C_MU.csv`` table, we can now plot the MSE of BIT and naive methods:
