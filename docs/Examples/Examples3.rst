@@ -3,7 +3,7 @@ K562 Perturbation
 
 For preprocessing the CRISPR screen with scATAC-seq data we refer to the pipeline provided by the author of the data: `Pipeline <https://github.com/GreenleafLab/SpearATAC_MS_2021/tree/main>`_
 
-- Pierce, S. E., Granja, J. M. & Greenleaf, W. J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun 12, 2969 (2021). `10.1038/s41467-021-23213-w <https://doi.org/10.1038/s41467-021-23213-w>`
+- Pierce, S. E., Granja, J. M. & Greenleaf, W. J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun 12, 2969 (2021). `10.1038/s41467-021-23213-w <https://www.nature.com/articles/s41467-021-23213-w>`_
 
 To begin the process, we also need to retrieve the sequencing data based on the table:
 
@@ -275,15 +275,11 @@ Then we will have the ``*.bed`` files for each sgRNA target.
 
 We next apply each state-of-the-art methods to the generated ``*.bed`` files and generate the outputs from each method. The steps of applying each method can refer to following:
 
-`BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>_`
-
-`HOMER <http://homer.ucsd.edu/homer/ngs/peakMotifs.html>_`
-
-`WhichTF <https://bitbucket.org/bejerano/whichtf/src/master/>_`
-
-`ChIP-Atlas <https://chip-atlas.org>_`
-
-`i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>_`
+`BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>`_
+`HOMER <http://homer.ucsd.edu/homer/ngs/peakMotifs.html>`_
+`WhichTF <https://bitbucket.org/bejerano/whichtf/src/master/>`_
+`ChIP-Atlas <https://chip-atlas.org>`_
+`i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>`_
 
 We start our analysis by having the outputs from each method.
 
