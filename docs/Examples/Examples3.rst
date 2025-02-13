@@ -254,7 +254,7 @@ Once the required files are obtained, we can modify the pipeline to process the 
     maxCells = 250,
     threads = 10
   )
-
+  dir.create("./K562/MarkerSet/", showWarnings = FALSE, recursive = TRUE)
   markerLists<-getMarkers(DiffPeaks,cutOff = "FDR <= 0.05 & abs(Log2FC) >= 2")
   unique_TF_names<-names(markerLists)
   unique_TF_names
@@ -265,20 +265,76 @@ Once the required files are obtained, we can modify the pipeline to process the 
         ranges = IRanges(start = markerLists[[unique_TF_names[i]]]$start, end = markerLists[[unique_TF_names[i]]]$end),
         strand = "*",
         score = abs(markerLists[[unique_TF_names[i]]]$Log2FC))
-      export.bed(gr,paste0("./MarkerSet/",unique_TF_names[i],".bed"))
+      export.bed(gr,paste0("./K562/MarkerSet/",unique_TF_names[i],".bed"))
     }
   }
+
+We can generate the UMAP plots colored by sample replicates or sgRNA target.
+
+By sample replicate:
+
+.. image:: ../images/Examples/K562/Pic6.png
+
+By sgRNA target:
+
+.. image:: ../images/Examples/K562/Pic5.png
 
 After processing, we obtain ``*.bed`` files for each sgRNA target.
 
 .. image:: ../images/Examples/K562/Pic1.png
 
+Next we apply BIT to all datasets to generate the ranks:
+
+.. code-block:: r
+  work_dir<-"./K562/MarkerSet/"
+  work_files<-list.files(work_dir)
+  output_dir<-"./K562/bit"
+
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+  for(i in seq_along(work_files)){
+    BIT(paste0(work_dir,work_files[i]),output_dir,plot_bar=FALSE,genome="hg38")
+  }
+
+Noticed in plot 1 and in the original publication, the sgGATA1 targeted cells are more significantly differ from the rest cells. We show the top10 TRs ranked by BIT in the sgGATA1 targeted cells:
+
+.. code-block:: r
+
+  data_read<-read.csv(paste0("./K562/bit/sgGATA1_rank_table.csv"))
+  data<-data.frame(Group="sgGATA1 targeted cells",
+                   Label=data_read[1:10,"TR"],
+                   Value=data_read[1:10,"BIT_score"],
+                   Upper=data_read[1:10,"BIT_score_upper"],
+                   Lower=data_read[1:10,"BIT_score_lower"])
+  data$Label<-factor(data$Label,levels=rev(data$Label))
+
+  p1<-ggplot(data, aes(x = Label, y = Value)) +
+    geom_col(fill="#BADDF5",colour="black",size=0.25) +
+    geom_errorbar(aes(ymin = Lower, ymax = Upper), width = 0.5, color = "black", size = 0.35) +
+    coord_flip() +  # Flip coordinates to make the bar plot horizontal
+    facet_grid(.~Group, scales = "free_y") +  # Facet by group, allowing free scales on the y-axis
+    labs(title = "",
+         x = "Top 10 Identified TRs",
+         y = "") + scale_y_continuous(limits=c(0,0.05),breaks=seq(0,0.5,by=0.01),expand = c(0,0)) +
+    theme_bw() +  # Using a minimal theme
+    theme(axis.text.x = element_text(color="black",size=12),
+          axis.text.y = element_text(color="black",size=12),axis.title.y=element_text(size=14),
+          legend.position = "none", plot.margin = unit(c(0,0.5,0,0),"cm")) +theme(strip.background = element_rect(fill="#DBD1B6"),
+                                                                                  strip.text = element_text(size=12, colour="black"))
+  p1
+
+.. image:: ../images/Examples/K562/Pic7.png
+
 Next, we apply state-of-the-art methods to analyze the generated ``*.bed`` files and extract outputs from each method. The following tools are used:
 
 `BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>`_
+
 `HOMER <http://homer.ucsd.edu/homer/ngs/peakMotifs.html>`_
+
 `WhichTF <https://bitbucket.org/bejerano/whichtf/src/master/>`_
+
 `ChIP-Atlas <https://chip-atlas.org>`_
+
 `i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>`_
 
 The analysis begins by collecting outputs from each method.
