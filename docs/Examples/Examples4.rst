@@ -278,8 +278,6 @@ Once we have the CRISPR/cas9 data, we can first replicate the Figure. 4D to show
 
 .. image:: ../images/Examples/Cancer/Pic4.png
 
-.. code-block:: r
-
 Next, we apply state-of-the-art methods to analyze the generated ``*.bed`` files and extract outputs from each method. The following tools are used:
 
 `BART2 <https://github.com/zanglab/bart2?tab=readme-ov-file>`_
@@ -644,8 +642,74 @@ Next we plot the stacked barplot to show the total number of functionally essent
 
 .. image:: ../images/Examples/Cancer/Pic5.png
 
+We further plot the pearson correlation of top 50 TRs BIT score with their Chronos score:
+
+.. code-block:: r
+
+  crispr_gene_effect<-as.data.frame(fread("/Users/zeyulu/Dropbox/datasets/CRISPR/CRISPRGeneEffect.csv"))
+  colnames(crispr_gene_effect)<-sapply(strsplit(colnames(crispr_gene_effect)," ",fixed=TRUE),function(x){return(x[[1]])})
+
+  cancer_names<-sapply(strsplit(bit_files,".",fixed=TRUE),function(x){return(x[[1]])})
+  bit_files<-list.files(paste0(work_dir_cancer,"bit"))
+  bit_files
+
+  bit_table<-data.frame(matrix(nrow=1000,ncol=9))
+  cancer_names<-sapply(strsplit(bit_files,".",fixed=TRUE),function(x){return(x[[1]])})
+  colnames(bit_table)<-cancer_names
+  cor_list<-list()
+
+  cellline_ids<-read.csv("/Users/zeyulu/Desktop/Project/BIT/revision_data/cellline_ids.csv",row.names = 1)
+  cellline_ids
+  cellline_ids_list<-list()
+  for(i in 1:9){
+    cellline_ids_list[[cancer_names[i]]]=cellline_ids$model_ids[which(cellline_ids$cancer==cancer_names[i])]
+  }
+
+  cellline_ids_list
+
+  cor_df<-data.frame(matrix(nrow=209,ncol=2))
+  colnames(cor_df)<-c("Cancer","Pearson")
+
+  cumsum<-0
+  for(i in seq_along(cancer_names)){
+    df<-read.csv(paste0(work_dir_cancer,"bit/",cancer_names[i],".csv"), header=TRUE,row.names=NULL)
+    model_ids<-cellline_ids_list[[cancer_names[i]]]
+    method_tf<-df
+
+    common_TRs<-method_tf[which(method_tf[1:50,"TR"]%in%colnames(crispr_gene_effect)),"TR"]
+    subtable_50<-crispr_gene_effect[which(crispr_gene_effect$ModelID%in%model_ids),common_TRs]
+    cor_vec<-c()
+    for(j in 1:nrow(subtable_50)){
+      v1<-unlist(subtable_50[j,common_TRs])
+      v2<-method_tf$BIT_score[match(common_TRs,method_tf$TR)]
+      nonNA<-!is.na(v1)
+      cor_vec<-c(cor_vec,cor(v1[nonNA],v2[nonNA]))
+    }
+    cor_list[[cancer_names[i]]]=cor_vec
+
+    cor_df$Cancer[(cumsum+1):(cumsum+length(cor_vec))]=cancer_names[i]
+    cor_df$Pearson[(cumsum+1):(cumsum+length(cor_vec))]=cor_vec
+    cumsum<-cumsum+length(cor_vec)
+  }
+  cor_df
+
+  colors<-c("#9B3A4D","#FC8002","#394A92","#70A0AC","#D2352C","#8E549E","#BAAFD1","#497EB2","#ADDB88")
+  df<-cor_df
+  df$Cancer<-tools::toTitleCase(df$Cancer)
+  df$Cancer<-factor(df$Cancer,levels=c("Breast","Bladder","Colon","Lung","Liver","Mesothelium","Prostate","Squamous","Testis"))
+  ggplot(df,aes(x=Cancer,y=Pearson,group=Cancer,fill=Cancer))+scale_fill_manual(values=c("Breast"=colors[1],"Bladder"=colors[2],"Colon"=colors[3],
+                                                                                         "Lung"=colors[4],"Liver"=colors[5],"Mesothelium"=colors[6],"Prostate"=colors[7],
+                                                                                         "Squamous"=colors[8],"Testis"=colors[9]))+
+    geom_boxplot(width=0.3,outlier.size = 0.5)+theme_bw()+ylim(-0.5,0.25)+geom_hline(yintercept = 0,linetype="dashed",linewidth=0.3)+
+    guides(fill = guide_legend(ncol = 2))+labs(y="Pearson Correlation",x="Cancer Type")+theme(axis.text.y=element_text(size=12,color="black"),
+                                                                                              axis.text.x=element_text(size=12,color="black"),
+                                                                                              axis.title.x = element_text(size=12,color="black"),
+                                                                                              axis.title.y = element_text(size=12,color="black"))
 
 
+And we get the plot:
+
+.. image:: ../images/Examples/Cancer/Pic6.png
 
 
 
