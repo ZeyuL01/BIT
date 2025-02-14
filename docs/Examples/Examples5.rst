@@ -360,7 +360,7 @@ We use SnapATAC2's built-in motif enrichment analysis method to derive the corre
                   df=df.sort_values(by="adjusted p-value",ascending=True)
                   df.to_csv('./10XGENOMICS/motifs/pbmc10k_'+str(i)+"/"+keys+'_motifs.csv',index=False)
 
-To generate results using ArchR and scBasset, you cannot use the marker peaks produced by SnapATAC2. Instead, you need to process the scATAC-seq data directly from the fragments. We recommend consulting the original manuals for further details: (1) the (1) `ArchR manual <https://www.archrproject.com/index.html>`_ (2) `scBasset manual <https://github.com/calico/scBasset>`_.
+To generate results using ArchR and scBasset, you cannot use the marker peaks produced by SnapATAC2. Instead, you need to process the scATAC-seq data directly from the fragments. We recommend consulting the original manuals for further details: (1) `ArchR manual <https://www.archrproject.com/index.html>`_ (2) `scBasset manual <https://github.com/calico/scBasset>`_.
 
 For ArchR:
 
@@ -764,6 +764,8 @@ Finally, we need to annotate the cell types and export the cell type level motif
   TF_score_df.index = ad.obs.index
   TF_score_df.to_csv("./10XGENOMICS/scbasset/results/motif_cell_types.csv")
 
+Following steps in R.
+
 .. code-block:: r
 
   scbasset_motif<-read.csv("./10XGENOMICS/scbasset/results/motif_cell_types.csv")
@@ -789,3 +791,141 @@ Finally, we need to annotate the cell types and export the cell type level motif
   }
 
   write.csv(TR_ranks,"./10XGENOMICS/scbasset/results/PBMC_TR_ranks_scbasset.csv",row.names = FALSE)
+
+
+We plot the GO enrichment analysis results of top TRs by each method:
+
+.. code-block:: r
+
+  # -----------------------------
+  # Define Working Directories
+  # -----------------------------
+  # Main working directory
+  work_dir <- "/Users/zeyulu/Desktop/Project/BIT/revision_data/comparison/"
+
+  # -----------------------------
+  # Read In Results from Different Methods
+  # -----------------------------
+  # Read BIT and ArchR results (set first column as row names)
+  BIT_result <- read.csv(paste0(work_dir, "BIT.csv"), row.names = 1)
+  ArchR_result <- read.csv(paste0(work_dir, "ArchR.csv"), row.names = 1)
+
+  # For ArchR results, remove additional annotations by splitting at '_' and keeping the first part for each column
+  for (i in 1:9) {
+    ArchR_result[, i] <- sapply(strsplit(ArchR_result[, i], "_", fixed = TRUE), function(x) { return(x[[1]]) })
+  }
+
+  # Read scBasset results and select every other column (columns 1, 3, ..., 17)
+  scbasset_result <- read.csv(paste0(work_dir, "scbasset.csv"))
+  scbasset_result <- scbasset_result[, c(seq(1, 18, 2))]
+
+  # Read SnapATAC2 results (set first column as row names)
+  SnapATAC2_result <- read.csv(paste0(work_dir, "SnapATAC2.csv"), row.names = 1)
+
+  # -----------------------------
+  # Define Common Cell Type Names and Rename Columns
+  # -----------------------------
+  # List of cell types to use as column names for each method's result
+  Cell_Types <- c("B cell", "CD4+ cell", "CD8+ cell", "Dendritic cell", "gdT cell", "HSPC", "MAIT cell", "Monocyte", "NK cell")
+
+  # Assign cell type names to the result data frames
+  colnames(BIT_result) <- Cell_Types
+  colnames(ArchR_result) <- Cell_Types
+  colnames(scbasset_result) <- Cell_Types
+  colnames(SnapATAC2_result) <- Cell_Types
+
+  # -----------------------------
+  # Extract Top 20 Genes for "B cell" from Each Method
+  # -----------------------------
+  # Create a list containing the top 20 genes for B cell from each method
+  Top20_list <- list(
+    "BIT" = BIT_result$`B cell`[1:20],
+    "ArchR" = ArchR_result$`B cell`[1:20],
+    "scBasset" = scbasset_result$`B cell`[1:20],
+    "SnapATAC2" = SnapATAC2_result$`B cell`[1:20]
+  )
+
+  # Display the Top20_list
+  Top20_list
+
+  # -----------------------------
+  # Perform GO Enrichment and Plotting for Each Method
+  # -----------------------------
+  # Loop over each method in the Top20_list (4 methods)
+  for (i in 1:4) {
+    # Convert gene symbols to ENTREZ IDs using the 'bitr' function
+    BIT_gene_ids <- bitr(Top20_list[[i]], fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+
+    # Perform Gene Ontology enrichment analysis on the converted ENTREZ IDs (only considering Biological Process: BP)
+    BIT_Results <- enrichGO(
+      gene          = BIT_gene_ids$ENTREZID[1:20],
+      OrgDb         = "org.Hs.eg.db",
+      ont           = "BP",
+      pAdjustMethod = "BH",
+      pvalueCutoff  = 0.01,
+      qvalueCutoff  = 0.05
+    )
+
+    # Extract the top 5 GO terms from the enrichment results
+    GO_BIT_table <- head(BIT_Results, 5)
+
+    # Create a data frame for plotting with columns for GO term description, gene ratio, p-value, and count
+    GO_PLOT_Table_BIT <- data.frame(
+      GO = GO_BIT_table$Description,
+      GeneRatio = Trans_to_double(GO_BIT_table),  # Custom function to transform gene ratio values
+      Pvalue = GO_BIT_table$pvalue,
+      Count = GO_BIT_table$Count
+    )
+
+    # Generate a ggplot for the GO enrichment results
+    plot_list[[i]] <- ggplot(GO_PLOT_Table_BIT, aes(x = GeneRatio, y = reorder(GO, -Pvalue), size = Count, color = Pvalue)) +
+      geom_point() +
+      # Customize the color scale for P-values with 4 pretty breaks
+      scale_color_gradient(
+        low = "red",
+        high = "blue",
+        limits = c(min(GO_BIT_table$pvalue), max(GO_BIT_table$pvalue)),
+        breaks = scales::breaks_pretty(n = 4),
+        guide = guide_colorbar(
+          order = 1,
+          title.position = "top",
+          barheight = unit(1.6, "cm"),
+          ticks = FALSE
+        )
+      ) +
+      # Customize the size scale for Count with integer breaks
+      scale_size_continuous(
+        breaks = integer_breaks(GO_PLOT_Table_BIT$Count, n = 4),
+        range = c(2, 5),
+        guide = guide_legend(
+          order = 2,
+          title.position = "top",
+          override.aes = list(color = "black")
+        )
+      ) +
+      theme_bw() +
+      labs(y = "GO", x = "Gene Ratio", color = "P-Value", size = "Count") +
+      theme(
+        text = element_text(size = 12),
+        legend.position = "right",
+        legend.box = "vertical",
+        legend.spacing.y = unit(0.1, "cm"),
+        legend.margin = margin(0, 0, 0, 0),
+        axis.text.y = element_text(color = "black")
+      ) +
+      xlim(c(0.0, 0.6))
+  }
+
+  # -----------------------------
+  # Combine and Display Plots
+  # -----------------------------
+  # Combine the four individual plots into one layout with 2 columns and shared axis titles
+  p_combined <- plot_list[[1]] + plot_list[[2]] + plot_list[[3]] + plot_list[[4]] +
+    plot_layout(ncol = 1, axis_titles = "collect")
+
+  # Print the combined plot to display the GO enrichment results for each method
+  print(p_combined)
+
+.. image:: ../images/Examples/singlecell/Pic5.png
+
+
