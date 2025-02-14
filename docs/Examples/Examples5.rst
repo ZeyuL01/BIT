@@ -344,6 +344,106 @@ We plot the top 10 TRs identified by BIT in each cell type along with the 95% cr
 
 .. image:: ../images/Examples/singlecell/Pic4.png
 
+We can also plot the GO enrichment analysis results of each cell type:
+
+.. code-block:: r
+
+  split_go_term <- function(term) {
+    words <- strsplit(term, " ")[[1]]
+    n_words <- length(words)
+
+    # Find split points for 2-3 lines
+    if(n_words <= 3) {
+      split_at <- ceiling(n_words/2)
+    } else {
+      split_at <- c(ceiling(n_words/3), ceiling(n_words*2/3))
+    }
+
+    # Split words into groups
+    groups <- split(words, cut(seq_along(words), breaks = c(0, split_at, n_words)))
+
+    # Combine with newlines
+    paste(sapply(groups, paste, collapse = " "), collapse = "\n")
+  }
+
+  integer_breaks <- function(x, n = 4) {
+    x <- x[!is.na(x)]
+    if (length(x) == 0) return(numeric())
+    rng <- range(x)
+    breaks <- floor(rng[1]):ceiling(rng[2])
+    breaks <- unique(round(breaks))
+    if (length(breaks) > n) {
+      breaks <- breaks[seq(1, length(breaks), length.out = n)]
+    }
+    breaks
+  }
+
+  work_files_BIT
+  plot_list<-list()
+
+  for(i in 1:9){
+    table<-read.csv(paste0(work_dir,work_files_BIT[i]),row.names=1)
+    data<-data.frame(TR=table$TR[1:20],
+                     group=cell_names[i])
+    BIT_gene_ids<-bitr(data$TR,fromType = "SYMBOL",toType = "ENTREZID",OrgDb="org.Hs.eg.db")
+    BIT_Results=enrichGO(gene          = BIT_gene_ids$ENTREZID[1:20],
+                         OrgDb = "org.Hs.eg.db",
+                         ont = "BP",
+                         pAdjustMethod = "BH",
+                         pvalueCutoff  = 0.01,
+                         qvalueCutoff  = 0.05)
+    GO_BIT_table<-head(BIT_Results,5)
+    GO_PLOT_Table_BIT<-data.frame(GO=GO_BIT_table$Description,
+                                  GeneRatio=Trans_to_double(GO_BIT_table),
+                                  Pvalue=GO_BIT_table$pvalue,
+                                  Count=GO_BIT_table$Count)
+    GO_PLOT_Table_BIT$GO <- sapply(GO_PLOT_Table_BIT$GO, split_go_term)
+    plot_list[[i]] <- ggplot(GO_PLOT_Table_BIT, aes(x = GeneRatio, y = reorder(GO, -Pvalue), size = Count, color = Pvalue)) +
+      geom_point() +
+      # Fix Pvalue color legend (4 breaks, no overlap)
+      scale_color_gradient(
+        low = "red",
+        high = "blue",
+        limits = c(min(GO_BIT_table$pvalue), max(GO_BIT_table$pvalue)),
+        breaks = scales::breaks_pretty(n = 4), # 4 breaks # 2 decimal places
+        guide = guide_colorbar(
+          order = 1,
+          title.position = "top",
+          barheight = unit(1.6, "cm"),
+          ticks = FALSE
+        )
+      ) +
+      # Fix Count size legend (integer breaks)
+      scale_size_continuous(
+        breaks = integer_breaks(GO_PLOT_Table_BIT$Count, n = 4), # 4 integer breaks
+        range = c(2, 5), # Adjust point sizes
+        guide = guide_legend(
+          order = 2,
+          title.position = "top",
+          override.aes = list(color = "black")
+        )
+      ) +
+      theme_bw() +
+      labs(y = "GO", x = "Gene Ratio", color = "P-Value", size = "Count") +
+      theme(
+        text = element_text(size = 12),
+        legend.position = "right",
+        legend.box = "vertical",
+        legend.spacing.y = unit(0.1, "cm"),
+        legend.margin = margin(0, 0, 0, 0),
+        axis.text.y = element_text(color = "black")
+      ) +
+      xlim(c(0.0, 0.6))
+  }
+  p_combined<-plot_list[[1]]+plot_list[[2]]+ plot_list[[3]] +
+  plot_list[[4]]+plot_list[[5]]+plot_list[[6]] +
+    plot_list[[7]]+plot_list[[8]]+plot_list[[9]]+ plot_layout(ncol=3,axis_titles = "collect")
+
+  print(p_combined)
+
+.. image:: ../images/Examples/singlecell/Pic6.png
+
+
 We use SnapATAC2's built-in motif enrichment analysis method to derive the corresponding motif enrichment results:
 
 .. code-block:: python

@@ -302,13 +302,14 @@ Noticed in plot 1 and in the original publication, the sgGATA1 targeted cells ar
 
   data_read<-read.csv(paste0("./K562/bit/sgGATA1_rank_table.csv"))
   data<-data.frame(Group="sgGATA1 targeted cells",
-                   Label=data_read[1:10,"TR"],
-                   Value=data_read[1:10,"BIT_score"],
-                   Upper=data_read[1:10,"BIT_score_upper"],
-                   Lower=data_read[1:10,"BIT_score_lower"])
+                   Label=data_read[1:20,"TR"],
+                   Value=data_read[1:20,"BIT_score"],
+                   Upper=data_read[1:20,"BIT_score_upper"],
+                   Lower=data_read[1:20,"BIT_score_lower"])
   data$Label<-factor(data$Label,levels=rev(data$Label))
+  top10_data <- data[1:10, ]
 
-  p1<-ggplot(data, aes(x = Label, y = Value)) +
+  p1<-ggplot(top10_data, aes(x = Label, y = Value)) +
     geom_col(fill="#BADDF5",colour="black",size=0.25) +
     geom_errorbar(aes(ymin = Lower, ymax = Upper), width = 0.5, color = "black", size = 0.35) +
     coord_flip() +  # Flip coordinates to make the bar plot horizontal
@@ -324,6 +325,78 @@ Noticed in plot 1 and in the original publication, the sgGATA1 targeted cells ar
   p1
 
 .. image:: ../images/Examples/K562/Pic7.png
+
+We can see BIT successfully rank GATA1 to top 1. We next conduct GO enrichment analysis using top 20 TRs identified by BIT in sgGATA1-targeted cells:
+
+.. code-block:: r
+  # Convert gene symbols to Entrez IDs using the 'bitr' function from the clusterProfiler package
+  BIT_gene_ids_sgGATA1 <- bitr(data$Label,
+                               fromType = "SYMBOL",
+                               toType = "ENTREZID",
+                               OrgDb = "org.Hs.eg.db")
+
+  # Perform Disease Ontology (DO) enrichment analysis on the top 20 Entrez IDs
+  BIT_Results <- enrichDO(gene          = BIT_gene_ids_sgGATA1$ENTREZID[1:20],
+                          pvalueCutoff  = 0.1,
+                          pAdjustMethod = "BH",
+                          minGSSize     = 1,
+                          maxGSSize     = 1000,
+                          qvalueCutoff  = 0.1,
+                          readable      = FALSE)
+
+  # Function to convert GeneRatio strings (e.g., "3/100") to a numeric value (3/100)
+  Trans_to_double <- function(GO_table) {
+    # Split the GeneRatio string into numerator and denominator parts
+    nominator   <- sapply(strsplit(GO_table$GeneRatio, "/", fixed = TRUE),
+                          function(x) x[[1]])
+    denominator <- sapply(strsplit(GO_table$GeneRatio, "/", fixed = TRUE),
+                          function(x) x[[2]])
+    # Convert the split parts to integers and compute the ratio
+    as.integer(nominator) / as.integer(denominator)
+  }
+
+  # Extract the top 10 enriched GO terms from the BIT_Results
+  GO_BIT_table <- head(BIT_Results, 10)
+
+  # Build a data frame for plotting that includes GO descriptions, gene ratios, p-values, and counts
+  GO_PLOT_Table_BIT <- data.frame(
+    GO        = GO_BIT_table$Description,
+    GeneRatio = Trans_to_double(GO_BIT_table),
+    Pvalue    = GO_BIT_table$pvalue,
+    Count     = GO_BIT_table$Count
+  )
+
+  # For long GO term descriptions, add line breaks to improve readability in the plot
+  GO_PLOT_Table_BIT$GO[c(7, 8, 9)] <- c("transient myeloproliferative\nsyndrome",
+                                        "autosomal dominant intellectual\ndevelopmental disorder 41",
+                                        "myeloid leukemia associated\nwith Down Syndrome")
+
+  # Define colors for y-axis text: first five terms in black, last five in red
+  color_factor <- c("black", "black", "black", "black", "black",
+                    "red", "red", "red", "red", "red")
+
+  # Create a ggplot scatter plot with point size indicating 'Count' and color representing 'Pvalue'
+  ggplot(GO_PLOT_Table_BIT, aes(x = GeneRatio, y = reorder(GO, -Pvalue), size = Count, color = Pvalue)) +
+    geom_point() +
+    # Gradient scale for p-values: low p-values in red and high in blue
+    scale_color_gradient(low = "red", high = "blue", limits = c(min(GO_BIT_table$pvalue), max(GO_BIT_table$pvalue))) +
+    # Set point size range
+    scale_size(range = c(3, 10)) +
+    theme_bw() +
+    labs(y = "GO",
+         x = "Gene Ratio",
+         color = "P-Value",
+         size = "Count") +
+    # Customize text size and legend, and color y-axis labels based on 'color_factor'
+    theme(text = element_text(size = 12),
+          legend.position = "right",
+          axis.text.y = element_text(color = color_factor)) +
+    # Limit the x-axis to improve focus on the data range
+    xlim(c(0.0, 0.6))
+
+The GO enrichment analysis result plot is:
+
+.. image:: ../images/Examples/K562/Pic8.png
 
 Next, we apply state-of-the-art methods to analyze the generated ``*.bed`` files and extract outputs from each method. The following tools are used:
 
