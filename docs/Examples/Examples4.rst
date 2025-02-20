@@ -298,7 +298,7 @@ We merged the outputs from each cancer-type to get the merged output table for e
   work_dir_cancer<-"./Cancer"
 
   bart2_table<-read.csv(paste0(work_dir,"bart2_table.csv"))
-  chip_atlas_table<-read.csv(paste0(work_dir,"chipa_tlas_table.csv"))
+  chip_atlas_table<-read.csv(paste0(work_dir,"chip_atlas_table.csv"))
   bit_table<-read.csv(paste0(work_dir,"bit_table.csv"))
   icistarget_table<-read.csv(paste0(work_dir,"icistarget_table.csv"))
   whichtf_files<-read.csv(paste0(work_dir,"whichtf_table.csv"))
