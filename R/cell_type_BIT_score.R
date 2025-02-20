@@ -124,6 +124,7 @@ for(i in 1:9){
     ) +
     theme_bw() +
     labs(y = "GO", x = "Gene Ratio", color = "P-Value", size = "Count") +
+    ggtitle(cell_names[i]) +
     theme(
       text = element_text(size = 12),
       legend.position = "right",
@@ -139,6 +140,7 @@ plot_list[[4]]+plot_list[[5]]+plot_list[[6]] +
   plot_list[[7]]+plot_list[[8]]+plot_list[[9]]+ plot_layout(ncol=3,axis_titles = "collect")
 
 print(p_combined)
+
 GO_PLOT_Table_BIT
 
 work_files_BIT

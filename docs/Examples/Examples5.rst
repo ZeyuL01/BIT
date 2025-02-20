@@ -128,39 +128,10 @@ For improved efficiency, some steps require a GPU to accelerate model training.
   # Annotate ATAC Data with Predicted Cell Types
   # -----------------------------
   # Map predicted cell type labels from the integrated data to the original ATAC dataset
-  atac.obs['cell_type'] = data.obs.loc[atac.obs_names + '_query']['C_scANVI'].to_numpy()
-
-  # -----------------------------
-  # Merge Similar Cell Types
-  # -----------------------------
-  # Define a mapping dictionary to merge similar cell type annotations
-  mapping_dict = {
-      'CD4 Naive': 'CD4+ cell',
-      'CD4 TCM': 'CD4+ cell',
-      'CD4 TEM': 'CD4+ cell',
-      'Treg': 'CD4+ cell',
-      'CD8 Naive': 'CD8+ cell',
-      'CD8 TEM_1': 'CD8+ cell',
-      'CD8 TEM_2': 'CD8+ cell',
-      'Naive B': 'B cell',
-      'Intermediate B': 'B cell',
-      'Memory B': 'B cell',
-      'Plasma': 'B cell',
-      'NK': 'NK cell',
-      'cDC': 'Dendritic cell',
-      'pDC': 'Dendritic cell',
-      'CD14 Mono': 'Monocyte',
-      'CD16 Mono': 'Monocyte',
-      'HSPC': 'HSPC',
-      'MAIT': 'MAIT cell',
-      'gdT': 'gdT cell'
-  }
+  atac.obs['Cell_Types'] = data.obs.loc[atac.obs_names + '_query']['C_scANVI'].to_numpy()
 
   # Save the ATAC data with annotations
   atac.write("./10XGENOMICS/pbmc10k_annotated.h5ad", compression="gzip")
-
-  # Map the cell type labels in the integrated data using the provided dictionary
-  data.obs["Cell_Types"] = data.obs["cell_type"].map(mapping_dict)
 
   # -----------------------------
   # Peak Calling and Matrix Generation

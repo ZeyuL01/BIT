@@ -410,106 +410,7 @@ Next, we apply state-of-the-art methods to analyze the generated ``*.bed`` files
 
 `i-cisTarget <https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/>`_
 
-The analysis begins by collecting outputs from each method.
-
-Before proceeding, we need to preprocess the results from HOMER and i-cisTarget, HOMER outputs may contain aliases for known TRs, while i-cisTarget results are provided in HTML format, requiring manual extraction of relevant data:
-
-For i-cisTarget:
-
-.. code-block:: r
-
-  library(rvest)
-  library(stringr)
-
-  work_dir<-"./K562/icistarget/"
-  work_files<-list.files(work_dir)
-  work_files
-  icistarget_result<-data.frame(matrix(nrow=500,ncol=40))
-  TR_names<-sapply(strsplit(work_files,".",fixed=TRUE),function(x){return(x[[1]])})
-  TR_names<-sapply(strsplit(TR_names,"sg",fixed=TRUE),function(x){return(x[[2]])})
-
-  colnames(icistarget_result)<-TR_names
-  icistarget_result
-
-  for(j in 1:length(work_files)){
-    html <- read_html(paste0(work_dir,work_files[j]))
-    rows <- html %>% html_nodes('tr')
-    ids <- c()
-    descriptions <- c()
-    tfs_list <- list()
-
-    # Loop through each row
-    for (i in 13:length(rows)) {
-      # Extract the ID
-      id_value <- rows[i] %>% html_node('td') %>% html_text() %>% str_trim()
-
-      # Extract the description and TFs
-      td_content <- rows[i] %>% html_nodes('td') %>% .[2] %>% html_text() %>% str_trim()
-      description <- str_extract(td_content, "Description:.*Possible TFs:") %>%
-        str_remove("Description:") %>% str_remove("Possible TFs:") %>% str_trim()
-      tfs <- str_extract(td_content, "Possible TFs:.*") %>%
-        str_remove("Possible TFs:") %>% str_trim() %>% str_split(", ") %>% unlist()
-
-      # Append to vectors
-      ids <- c(ids, id_value)
-      descriptions <- c(descriptions, description)
-      tfs_list[[i-12]] <- tfs
-    }
-
-    # Ensure tfs_list is a list of character vectors
-    tfs_list <- lapply(tfs_list, function(x) if (length(x) == 0) NA else x)
-
-    tfs_list
-
-
-    # Create a data frame
-    df <- data.frame(
-      ID = rep(ids, sapply(tfs_list, length)),
-      Description = rep(descriptions, sapply(tfs_list, length)),
-      Possible_TFs = unlist(tfs_list)
-    )
-    # Remove rows with NA in Possible_TFs
-    df <- df %>% filter(!is.na(Possible_TFs))
-    uniqueTFs<-unique(df$Possible_TFs)
-    icistarget_result[1:length(uniqueTFs),j]<-uniqueTFs
-  }
-  icistarget_result
-  write.csv(icistarget_result,"./K562/icistarget/icistarget_result.csv")
-
-For HOMER:
-
-.. code-block:: r
-
-  work_dir_homer<-"./HOMER_results/"
-  work_sub_dir<-list.files(work_dir_homer)
-  sgTF<-sapply(strsplit(work_sub_dir,".",fixed=TRUE),function(x){return(x[[1]])})
-  TF_names<-sapply(strsplit(sgTF,"sg",fixed=TRUE),function(x){return(x[[2]])})
-
-  HGNC_symbol_converter<-c("AMYB"="MYBL1","AP-2alpha"="TFAP2A","AP-2gamma"="TFAP2C","AP4"="TFAP4","Boris"="CTCFL","Brn1"="POU3F3",
-  "Brn2"="POU3F2","brachyury"="TBXT","c-Jun-CRE"="JUN","c-Myc"="MYC","CArG"="IER5","COUP-TFII"="NR2F2","Chop"="DDIT3",
-  "E-box"="ZEB1","Erra"="ESRRA","ERRg"="ESRRG","ETS:RUNX"="RUNX1","EWS:FLI1-fusion"="FLI1","FXR"="NR1H4","NFAT"="NFATC","NFkB-p50,p52"="NFKB1,NFKB2","NFkB-p65"="RELA",
-  "NFkB-p65-Rel"="RELA","NFY"="NFYA,NFYB,NFAC","Nur77"="NR4A1","OCT4-SOX2-TCF-NANOG"="OCT4,SOX2,TCF,NANOG","Oct4:Sox17"="OCT4,SOX17","p53"="TP53","p63"="TP63","p73"="TP73",
-  "Pit1"="POU2F1","PSE"="SNAPC2","PU.1"="SPI1","RAR:RXR"="RXRA","Reverb"="NR1D2","BORIS"="CTCFL","LXRE"="NR1H3")
-
-  df<-data.frame(matrix(ncol=length(sgTF),nrow=500))
-  colnames(df)<-TF_names
-
-  for(i in 1:ncol(df)){
-  	testdf<-read.table(paste0(work_dir_homer,work_sub_dir[i],"/knownResults.txt"),row.names=NULL)
-  	TF_names<-sapply(strsplit(testdf$row.names,"(",fixed=TRUE),function(x){return(x[[1]])})
-  	indices<-which(TF_names%in%names(HGNC_symbol_converter))
-  	TF_names[indices]<-HGNC_symbol_converter[TF_names[indices]]
-  	TF_names<-toupper(TF_names)
-  	TF_names<-sapply(strsplit(TF_names,":",fixed=TRUE),function(x){return(x[[1]])})
-  	TF_names<-sapply(strsplit(TF_names,"/",fixed=TRUE),function(x){return(x[[1]])})
-  	TF_names<-str_replace_all(TF_names,"\\.", "-")
-
-  	df[1:length(TF_names),i]<-TF_names
-  }
-
-
-Next, we summarize the extracted data from other tables and merge the results into a unified list:
-
+We merged the outputs from each sgRNA-targeted-cells cluster to get the merged output table for each method.
 
 .. code-block:: r
 
@@ -520,97 +421,14 @@ Next, we summarize the extracted data from other tables and merge the results in
 
   work_dir<-"/Users/zeyulu/Desktop/Project/BIT/revision_data/K562/"
 
-  ######BART2
-  bart2_files<-list.files(paste0(work_dir,"/bart2"))
-  df<-read.table(paste0(work_dir,"/bart2/",bart2_files[1]),sep="\t",header=TRUE)
-
-  bart2_table<-data.frame(matrix(nrow=1000,ncol=40))
-
-  TR_names<-sapply(strsplit(bart2_files,".",fixed=TRUE),function(x){return(x[[1]])})
-  TR_names<-sapply(strsplit(TR_names,"sg",fixed=TRUE),function(x){return(x[[2]])})
-  TR_names
-
-  colnames(bart2_table)<-TR_names
-
-  for(i in seq_along(TR_names)){
-    df<-read.table(paste0(work_dir,"bart2/",bart2_files[i]),sep="\t",header=TRUE)
-    bart2_table[1:nrow(df),TR_names[i]]<-df$TF
-  }
-
-  bart2_table
-
-
-  ######ChIP-Atlas
-  #ChIP-Atlas return multiple ranks, calculate the mean rank
-  avg_rank_unique <- function(x) {
-    unique_elements <- unique(x)
-    mean_ranks <- sapply(unique_elements, function(u) mean(which(x == u)))
-    setNames(mean_ranks, unique_elements)
-    return(names(mean_ranks)[order(mean_ranks)])
-  }
-
-  chip_atlas_files<-list.files(paste0(work_dir,"/chipatlas"))
-  chip_atlas_files
-  chip_atlas_table<-data.frame(matrix(nrow=2000,ncol=40))
-  TR_names<-sapply(strsplit(chip_atlas_files,".",fixed=TRUE),function(x){return(x[[1]])})
-  TR_names<-sapply(strsplit(TR_names,"sg",fixed=TRUE),function(x){return(x[[2]])})
-  colnames(chip_atlas_table)<-TR_names
-
-  chip_atlas_table
-
-  for(i in seq_along(TR_names)){
-    df<-read.table(paste0(work_dir,"chipatlas/","sg",TR_names[i],".tsv"),sep="\t",header=FALSE)
-    uniqueTFs<-avg_rank_unique(df$V3)
-    chip_atlas_table[1:length(uniqueTFs),TR_names[i]]<-uniqueTFs
-  }
-
-  chip_atlas_table
-
-  ######BIT
-  bit_files<-list.files(paste0(work_dir,"/bit"))
-  bit_files
-
-  bit_table<-data.frame(matrix(nrow=1000,ncol=40))
-  TR_names<-sapply(strsplit(bit_files,"_",fixed=TRUE),function(x){return(x[[1]])})
-  TR_names<-sapply(strsplit(TR_names,"sg",fixed=TRUE),function(x){return(x[[2]])})
-  colnames(bit_table)<-TR_names
-
-  for(i in seq_along(TR_names)){
-    df<-read.csv(paste0(work_dir,"bit/","sg",TR_names[i],"_rank_table.csv"), header=TRUE,row.names=NULL)
-    bit_table[1:nrow(df),TR_names[i]]<-df$TR
-  }
-
-  bit_table
-
-  ######i-cisTarget
-  icistarget_table<-read.csv(paste0(work_dir,"/icistarget/icistarget_result.csv"),header=TRUE,row.names=1)
-  icistarget_table
-
-  ######WhichTF
-  whichtf_files<-list.files(paste0(work_dir,"/whichtf"))
-
-  whichtf_table<-data.frame(matrix(nrow=1000,ncol=40))
-  TR_names<-sapply(strsplit(whichtf_files,".",fixed=TRUE),function(x){return(x[[1]])})
-  TR_names<-sapply(strsplit(TR_names,"sg",fixed=TRUE),function(x){return(x[[2]])})
-  colnames(whichtf_table)<-TR_names
-
-  for(i in seq_along(TR_names)){
-    df<-read.table(paste0(work_dir,"whichtf/","sg",TR_names[i],".tsv"),sep="\t",header=TRUE)
-    whichtf_table[1:nrow(df),TR_names[i]]<-df$TF
-  }
-
-
-  ######HOMER
-  homer_table<-read.csv(paste0(work_dir,"/homer/homer_result.csv"))
-  homer_table
+  bart2_table<-read.csv(paste0(work_dir,"bart2_table.csv"))
+  chip_atlas_table<-read.csv(paste0(work_dir,"chipa_tlas_table.csv"))
+  bit_table<-read.csv(paste0(work_dir,"bit_table.csv"))
+  icistarget_table<-read.csv(paste0(work_dir,"icistarget_table.csv"))
+  whichtf_files<-read.csv(paste0(work_dir,"whichtf_table.csv"))
+  homer_table<-read.csv(paste0(work_dir,"homer_table.csv"))
 
   ###############################################################
-  whichtf_table
-  bart2_table
-  bit_table
-  icistarget_table
-  homer_table
-  chip_atlas_table
 
   table_lists<-list("BIT"=bit_table,
                     "BART2"=bart2_table,
@@ -689,8 +507,7 @@ Next, we visualize the MRRs for the six methods using the following plot:
                        axis.title.y = element_text(size=14,color="black"),
                        axis.text.x = element_text(size=12,color="black"),
                        axis.text.y = element_text(size=12,color="black"))+
-  scale_fill_manual(values = c("BIT" = "#ED4043", "BART2" = "#EE6A33", "HOMER" = "#039F89", "ChIP-Atlas" = "#1C6AB1","i-cisTarget"=
-                                 "#874F8D","WhichTF"="#F8CB1F")) +  # Custom colors
+  scale_fill_manual(values = c("BIT" = "#D2352C", "BART2" = "#ADDB88", "HOMER" = "#E3E457", "ChIP-Atlas" = "#8E549E","i-cisTarget"="#FA8002","WhichTF"="#497EB2")) +  # Custom colors
     scale_y_continuous(limits=c(0,0.052),expand = expansion(mult = c(0, 0.1)))  # Adjust y-axis to fit text labels
 
 Figure:
@@ -708,17 +525,18 @@ We also visualize the number of TRs ranked within the top 10 and top 50 by each 
   Top_df_long$Group<-factor(Top_df_long$Group,levels=c("Top50","Top10"))
 
   ggplot(Top_df_long, aes(x = Method, y = Value, fill = Method)) +
-    geom_bar(stat = "identity", position = position_dodge(),color="black") +
-    facet_wrap(~ Group, ncol = 2) +  # Separate into two groups (Top10 and Top50)
-    labs(title = "Number of perturbed TRs ranked to top positions",
-         x = "Method",
-         y = "Count",
-         fill = "Method") + geom_text(aes(label = Value), hjust = 0.5,vjust=-0.5, size = 4) +
-    theme_bw() + scale_y_continuous(breaks = c(0,10,5),limits=c(0,10))+
-    theme(axis.text.x = element_text(size=10,angle = 45, hjust = 1,color="black"), axis.title.y = element_text(size=12,color="black"),
-          axis.title.x = element_text(size=12,color="black"),
-          axis.text.y = element_text(size=10,color="black"), title=element_text(size=12,color="black"),strip.background = element_rect(fill="#DBD1B6"),
-          strip.text = element_text(size=12, colour="black"))  # Rotate x-axis labels for better readability
+  geom_bar(stat = "identity", position = position_dodge(),color="black") +
+  facet_wrap(~ Group, ncol = 2) +  # Separate into two groups (Top10 and Top50)
+  labs(title = "Number of perturbed TRs ranked to top positions",
+       x = "Method",
+       y = "Count",
+       fill = "Method") + geom_text(aes(label = Value), hjust = 0.5,vjust=-0.5, size = 4) +
+  theme_bw() + scale_y_continuous(breaks = c(0,10,5),limits=c(0,10))+ scale_fill_manual(values = c("BIT" = "#D2352C", "BART2" = "#ADDB88", "HOMER" = "#E3E457", "ChIP-Atlas" = "#8E549E","i-cisTarget"= "#FA8002","WhichTF"="#497EB2")) +  # Custom colors
+  theme(axis.text.x = element_text(size=10,angle = 45, hjust = 1,color="black"), axis.title.y = element_text(size=12,color="black"),
+        axis.title.x = element_text(size=12,color="black"),
+        axis.text.y = element_text(size=10,color="black"), title=element_text(size=12,color="black"),strip.background = element_rect(fill="#DBD1B6"),
+        strip.text = element_text(size=12, colour="black"))  # Rotate x-axis labels for better readability
+
 
 Figure:
 
