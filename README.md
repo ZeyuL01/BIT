@@ -15,10 +15,22 @@
 
 ![BIT](inst/Figure_1.png)
 
-## Read the Docs documentation
-We have an instruction manual on readthedocs.
+## Read the Docs Documentation
+
+We have an manual on Read the Docs.
 
 [Manual](https://bitbayesian-identification-of-transcriptional-regulators.readthedocs.io/en/latest/)
+
+In this manual, we provide an introduction to BIT, a detailed walkthrough of BIT's main installation and primary functions, and four examples to reproduce figures from our manuscript.
+
+## Reference ChIP-seq Data
+
+We have pre-compiled 10,140 TR ChIP-seq datasets associated with 988 human TRs and 5,681 TR ChIP-seq datasets associated with 607 mouse TRs. We also offer different bin-width options for the TR reference database to suit user needs. These data can be downloaded from the Zenodo online data repository:
+
+- **Pre-compiled reference TR ChIP-seq Data (hg38):** [hg38.zip](https://zenodo.org/records/13732877)
+- **Pre-compiled reference TR ChIP-seq Data (mm10):** [mm10.zip](https://zenodo.org/records/13732877)
+
+<span style="color: red; font-weight: bold;">Please note: BIT cannot run without the reference data, so please load the reference ChIP-seq database once BIT has been installed.</span>
 
 ## Installation
 We provide an online portal: <[Online Portal](http://43.135.174.109:8080/)>
@@ -43,29 +55,25 @@ For Windows users please refer to the following:
 
 Or submit your questions through issues, we are happy to answer them.
 
-## Load ChIP-seq data
+## Load ChIP-seq Data
 
-Pre-compiled ChIP-seq database can be accessed through:
-<[Zenodo](https://zenodo.org/records/13732877)>
+In this example, we use a bin-width of 1000. For data with other bin-widths, please refer to the pre-compiled ChIP-seq database available on [Zenodo](https://zenodo.org/records/13732877).
 
-``` r
-#Please download the chip-seq file and unzip it to a local directory.
-#For example: /.../Desktop/data/ChIP-seq/hg38/
+```r
+# Download the ChIP-seq file from Zenodo and unzip it to a local directory.
+# For example, unzip to: /.../Desktop/data/ChIP-seq/hg38/
 
-#The function below needs to run once to set up.
+# Set the path to your unzipped ChIP-seq data.
+chip_path <- "/.../Desktop/data/ChIP-seq/hg38/"
 
-chip_path = "/.../Desktop/data/ChIP-seq/hg38/"
-
-#Set genome="hg38" for hg38.zip and "mm10" for mm10.zip
-load_chip_data(chip_path, bin_width = 1000, genome="hg38")
-
-##
+# Set genome = "hg38" for hg38.zip and "mm10" for mm10.zip.
+# Run the function below once to load the data.
+load_chip_data(chip_path, bin_width = 1000, genome = "hg38")
 ```
 
-## Quick start to use BIT.
+## Quick Start to Use BIT
 
-It is very simple to run **BIT** as long as you have the input file with the format as one of 
-bed/narrowPeak/broadPeak/bigNarrowPeak/csv.
+Running **BIT** is very simple as long as your input file is in one of the supported formats: `bed`, `narrowPeak`, `broadPeak`, `bigNarrowPeak`, or `csv`. Note that if your input bed file includes a column named **"summit"**, those values will be used instead of the region's midpoint when converting to binarized vectors.
 
 ``` r
 #As an example, the user-input peak set file path is "file_path/CTCF.bed"
@@ -106,6 +114,7 @@ BIT(input_path, output_path, N=5000, burnin=2500, genome="hg38")
 #9    NELFCD -2.371794 -2.476460 -2.276018 0.08534898      0.07752502      0.09312872    9
 #10     NFYC -2.373795 -2.767204 -2.122314 0.08519290      0.05912233      0.10694685   10
 ```
+
 
 ## Appendix
 If you use BIT in your work, please cite us!
