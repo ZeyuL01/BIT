@@ -128,8 +128,14 @@ import_input_regions <- function(file, format = NULL, bin_width = 1000, genome=c
                      end <- rtracklayer::end(peak_dat[GenomicRanges::seqnames(peak_dat) == chr_lab])
                      (end + start) %/% (2 * bin_width) + 1
                    },
-                   narrowPeak = peak_dat[GenomicRanges::seqnames(peak_dat) == chr_lab]$peak %/% bin_width + 1,
-                   broadPeak = peak_dat[GenomicRanges::seqnames(peak_dat) == chr_lab]$peak %/% bin_width + 1,
+                   narrowPeak = {
+                     start <- rtracklayer::start(peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab])
+                     (start+peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$peak)%/% bin_width + 1
+                   },
+                   broadPeak = {
+                     start <- rtracklayer::start(peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab])
+                     (start+peak_dat[GenomicRanges::seqnames(peak_dat)==chr_lab]$abs_summit)%/% bin_width + 1
+                   },
                    bigNarrowPeak = peak_dat[GenomicRanges::seqnames(peak_dat) == chr_lab]$abs_summit %/% bin_width + 1,
                    csv = {
                      start <- peak_dat$Start[peak_dat$Chrom == chr_lab]
