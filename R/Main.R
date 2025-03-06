@@ -17,7 +17,7 @@
 BIT <- function(file,
                 output_path,
                 show=TRUE,
-                plot_bar=TRUE,
+                plot_bar=FALSE,
                 format=NULL,
                 N=5000,
                 bin_width=1000,
