@@ -167,7 +167,9 @@ dataset](https://bitbayesian-identification-of-transcriptional-regulators.readth
 If you use BIT in your work, please cite us!
 
 BIT: Bayesian Identification of Transcriptional Regulators from
-Epigenomics-Based Query Region Sets Zeyu Lu, Lin Xu, Xinlei Wang bioRxiv
+Epigenomics-Based Query Region Sets 
+
+Zeyu Lu, Lin Xu, Xinlei Wang bioRxiv
 2024.06.02.597061; doi: <https://doi.org/10.1101/2024.06.02.597061>
 
 [Dr. Xinlei (Sherry)
