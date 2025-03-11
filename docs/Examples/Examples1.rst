@@ -55,8 +55,6 @@ For illustration purposes, the pipeline below demonstrates processing for a sing
    -S "${DATA_DIR}${MIDDLE_DIR}${ATAC_NAME_1}.sam"
 
    ## Samtools transfer to BAM
-   module load gcc/11.2.0
-   module load samtools/1.15.1-tyq2r6q
    samtools view -h -S -b \
    -o "${DATA_DIR}${MIDDLE_DIR}${ATAC_NAME_1}.bam" \
    "${DATA_DIR}${MIDDLE_DIR}${ATAC_NAME_1}.sam"
