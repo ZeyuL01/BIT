@@ -1,0 +1,6 @@
+"","SampleID","Factor","Condition","Treatment","Replicate","bamReads","Peaks","PeakCaller"
+"1","RUNX1_WT1","RUNX1","WT","full",1,"RUNX1_WT_Rep1_Final.bam","RUNX1_WT_Rep1_peaks.narrowPeak","narrow"
+"2","RUNX1_WT2","RUNX1","WT","full",2,"RUNX1_WT_Rep2_Final.bam","RUNX1_WT_Rep2_peaks.narrowPeak","narrow"
+"3","RUNX1_KO1","RUNX1","KO","full",1,"RUNX1_cKO_Rep1_Final.bam","RUNX1_cKO_Rep1_peaks.narrowPeak","narrow"
+"4","RUNX1_KO2","RUNX1","KO","full",2,"RUNX1_cKO_Rep2_Final.bam","RUNX1_cKO_Rep2_peaks.narrowPeak","narrow"
+
