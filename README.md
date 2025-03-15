@@ -48,11 +48,11 @@ We also offer different bin-width options for the TR reference database
 to suit user needs. These data can be downloaded from the Zenodo online
 data repository:
 
--   **Pre-compiled reference TR ChIP-seq Data (hg38):**
-    [hg38.zip](https://zenodo.org/records/14231098/files/hg38_1000.tar.gz?download=1)
--   **Pre-compiled reference TR ChIP-seq Data (mm10):**
-    [mm10.zip](https://zenodo.org/records/14231098/files/mm10_1000.tar.gz?download=1)
-
+| Bin Width | hg38 Download Link                                                                                   | mm10 Download Link                                                                                   |
+|-----------|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| 1000      | [hg38_1000.tar.gz](https://zenodo.org/records/14231098/files/hg38_1000.tar.gz?download=1)              | [mm10_1000.tar.gz](https://zenodo.org/records/14231098/files/mm10_1000.tar.gz?download=1)              |
+| 500       | [hg38_500.tar.gz](https://zenodo.org/records/14231098/files/hg38_500.tar.gz?download=1)                 | [mm10_500.tar.gz](https://zenodo.org/records/14231098/files/mm10_500.tar.gz?download=1)                 |
+| 200       | [hg38_200.tar.gz](https://zenodo.org/records/14231098/files/hg38_200.tar.gz?download=1)                 | [mm10_200.tar.gz](https://zenodo.org/records/14231098/files/mm10_200.tar.gz?download=1)                 |
 [Please note: BIT cannot run without the reference data, so please load
 the reference ChIP-seq database once BIT has been
 installed.]{style="color: red; font-weight: bold;"}
