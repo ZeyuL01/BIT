@@ -382,68 +382,32 @@ After executing the script, the following output is displayed:
 
 
 .. code-block:: r
+  RUNX1_KO_increase<-read.csv("./test/RUNX1_KO_increase_rank_table.csv")
+  RUNX1_KO_decrease<-read.csv("./test/RUNX1_KO_decrease_rank_table.csv")
 
-   # Load required libraries
-   library(rtracklayer)
-   library(ggrepel)
-   library(patchwork)
-   library(ggplot2)
-   library(scales)  # Required for rescaling
+  data1<-data.frame(x1=RUNX1_KO_increase$BIT_score,y1=RUNX1_KO_decrease$BIT_score[match(RUNX1_KO_increase$TR,RUNX1_KO_decrease$TR)],label1="")
+  labels<-c(RUNX1_KO_increase$TR[1:5],RUNX1_KO_decrease$TR[1:5])
+  data1$label1[!is.na(match(RUNX1_KO_increase$TR,labels))]=labels
 
-   # Load the ranking tables
-   RUNX1_KO_increase <- read.csv("/Users/zeyulu/Desktop/Project/BIT/mm10_Results/RUNX1_cKO_increase_rank_table.csv")
-   RUNX1_KO_decrease <- read.csv("/Users/zeyulu/Desktop/Project/BIT/mm10_Results/RUNX1_cKO_decrease_rank_table.csv")
-
-   # Create a merged dataframe for plotting
-   data1 <- data.frame(
-       x1 = RUNX1_KO_increase$BIT_score,
-       y1 = RUNX1_KO_decrease$BIT_score[match(RUNX1_KO_increase$TR, RUNX1_KO_decrease$TR)],
-       label1 = ""
-   )
-
-   # Select top 5 transcription factors from both increased and decreased lists
-   labels <- c(RUNX1_KO_increase$TR[1:5], RUNX1_KO_decrease$TR[1:5])
-   data1$label1[!is.na(match(RUNX1_KO_increase$TR, labels))] <- labels
-
-   # Compute scaling factor for visualization
-   scale1_vec <- (RUNX1_KO_increase$BIT_score / max(RUNX1_KO_increase$BIT_score))
-   scale2_vec <- (RUNX1_KO_decrease$BIT_score / max(RUNX1_KO_decrease$BIT_score))
-   data1$size_var1 <- pmax(scale1_vec, scale2_vec)  # Max scaling for visualization
-
-   # Function to blend colors based on scaled x and y values
-   blend_colors <- function(x, y) {
-       start_color <- c(128, 128, 128)  # Grey in RGB
-       x_color <- c(80, 128, 255)       # Blue in RGB
-       y_color <- c(255, 0, 0)          # Red in RGB
-
-       # Compute blended color components
-       red <- start_color[1] + x * (x_color[1] - start_color[1]) + y * (y_color[1] - start_color[1])
-       green <- start_color[2] + x * (x_color[2] - start_color[2]) + y * (y_color[2] - start_color[2])
-       blue <- start_color[3] + x * (x_color[3] - start_color[3]) + y * (y_color[3] - start_color[3])
-
-       # Ensure values stay in the valid RGB range (0-255)
-       rgb(pmin(pmax(red, 0), 255), pmin(pmax(green, 0), 255), pmin(pmax(blue, 0), 255), maxColorValue = 255)
-   }
-
-   # Assign blended colors to each point based on BIT scores
-   data1$point_color_p1 <- blend_colors(rescale(data1$x1, c(0, 2)), rescale(data1$y1, c(0, 1)))
-
-   # Generate scatter plot
-   plot1 <- ggplot(data1, aes(x = x1, y = y1, size = size_var1, fill = point_color_p1)) +
-       geom_point(alpha = 0.8, shape = 21, color = "black", stroke = 0.2) +
-       geom_label_repel(aes(label = label1), min.segment.length = unit(0, 'lines'), color = "black", size = 3, fill = "white") +
-       theme_bw() +
-       theme(
-           axis.text.x = element_text(color = "black", size = 11),
-           axis.text.y = element_text(color = "black", size = 11),
-           legend.position = "none"
-       ) +
-       labs(x = "BIT Score (Gained accessibility regions)", y = "BIT Score (Lost accessibility regions)") +
-       scale_size(range = c(0, 2.5)) +  # Adjust size range to fit data
-       scale_fill_identity()
-
-   # Display the plot
-   print(plot1)
+  plot1 <- ggplot(data1, aes(x = x1, y = y1, color = (label1 != ""))) +
+    geom_point(alpha = 0.8, shape = 20, stroke = 0.2) +
+    geom_label_repel(
+      aes(label = label1), max.overlaps = 20,
+      min.segment.length = unit(0, 'lines'),
+      color = "black", size = 3, fill = "white"
+    ) +
+    # Manually set colors: labeled = red, not labeled = black
+    scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+    theme_bw() +
+    theme(
+      axis.text.x = element_text(color="black", size=11),
+      axis.text.y = element_text(color="black", size=11),
+      legend.position = "none"         # hide legend
+    ) +
+    labs(x = "", y = "BIT Score (Lost accessibility regions)") +
+    scale_y_continuous(limits = c(0, 0.07),
+                     breaks = c(0, 0.03, 0.06, 0.09, 0.12)) + xlim(0,0.1)
+  plot1
 
 
 .. image:: ../images/Examples/RUNX1_KO/Pic3.png
