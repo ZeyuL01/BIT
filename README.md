@@ -162,6 +162,21 @@ dataset](https://bitbayesian-identification-of-transcriptional-regulators.readth
 [PBMCs
 dataset](https://bitbayesian-identification-of-transcriptional-regulators.readthedocs.io/en/latest/Examples/Examples5.html).
 
+## Hardware Overview (Mac and HPC)
+
+Below is an overview of the system hardware information (Personal, Macbook Pro):
+
+| **Attribute**               | **Value**                                    |
+|-----------------------------|----------------------------------------------|
+| **Model Name**              | MacBook Pro                                  |
+| **Model Identifier**        | MacBookPro18,3                               |
+| **Model Number**            | MKGQ3LL/A                                    |
+| **Chip**                    | Apple M1 Pro                                 |
+| **Total Number of Cores**   | 10 (8 performance and 2 efficiency)          |
+| **Memory**                  | 16 GB                                        |
+
+For HPC information, please refer to the SMU M3 manual: [SMU M3 Manual](https://southernmethodistuniversity.github.io/hpc_docs/about.html)
+
 ## Appendix
 
 If you use BIT in your work, please cite us!
