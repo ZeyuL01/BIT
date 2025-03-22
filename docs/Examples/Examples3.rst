@@ -475,15 +475,6 @@ First, we calculate the Mean Reciprocal Rank (MRR) for the 40 perturbed TRs acro
   names(Top10)<-rev(Method_names)
   names(Top50)<-rev(Method_names)
 
-  #> MRR_res
-  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
-  #0.002632788 0.045862471 0.036355700 0.006783940 0.014126888 0.047616672
-  #> Top10
-  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
-  #          0           3           2           1           1           3
-  #> Top50
-  #    WhichTF i-cisTarget       HOMER  ChIP-Atlas       BART2         BIT
-  #          1           5           4           2           4           9
 
 
 Next, we visualize the MRRs for the six methods using the following plot:

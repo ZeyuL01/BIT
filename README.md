@@ -54,7 +54,14 @@ data repository:
 | 500       | [hg38_500.tar.gz](https://zenodo.org/records/14231098/files/hg38_500.tar.gz?download=1)                 | [mm10_500.tar.gz](https://zenodo.org/records/14231098/files/mm10_500.tar.gz?download=1)                 |
 | 200       | [hg38_200.tar.gz](https://zenodo.org/records/14231098/files/hg38_200.tar.gz?download=1)                 | [mm10_200.tar.gz](https://zenodo.org/records/14231098/files/mm10_200.tar.gz?download=1)                 |
 
+<<<<<<< Updated upstream
 **Please note: BIT cannot run without the reference data, so please load the reference ChIP-seq database once BIT has been installed.**
+=======
+
+[Please note: BIT cannot run without the reference data, so please load
+the reference ChIP-seq database once BIT has been
+installed.]{style="color: red; font-weight: bold;"}
+>>>>>>> Stashed changes
 
 ## Installation
 
