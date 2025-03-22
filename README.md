@@ -54,14 +54,10 @@ data repository:
 | 500       | [hg38_500.tar.gz](https://zenodo.org/records/14231098/files/hg38_500.tar.gz?download=1)                 | [mm10_500.tar.gz](https://zenodo.org/records/14231098/files/mm10_500.tar.gz?download=1)                 |
 | 200       | [hg38_200.tar.gz](https://zenodo.org/records/14231098/files/hg38_200.tar.gz?download=1)                 | [mm10_200.tar.gz](https://zenodo.org/records/14231098/files/mm10_200.tar.gz?download=1)                 |
 
-<<<<<<< Updated upstream
+
 **Please note: BIT cannot run without the reference data, so please load the reference ChIP-seq database once BIT has been installed.**
 =======
 
-[Please note: BIT cannot run without the reference data, so please load
-the reference ChIP-seq database once BIT has been
-installed.]{style="color: red; font-weight: bold;"}
->>>>>>> Stashed changes
 
 ## Installation
 
@@ -92,7 +88,7 @@ Or submit your questions through issues, we are happy to answer them.
 
 In this example, we use a bin-width of 1000. For data with other
 bin-widths, please refer to the pre-compiled ChIP-seq database available
-on [Zenodo](https://zenodo.org/records/13732877).
+on [Zenodo](https://zenodo.org/records/14231098).
 
 ``` r
 # Download the ChIP-seq file from Zenodo and unzip it to a local directory.
