@@ -92,7 +92,7 @@ Or submit your questions through issues, we are happy to answer them.
 
 In this example, we use a bin-width of 1000. For data with other
 bin-widths, please refer to the pre-compiled ChIP-seq database available
-on [Zenodo](https://zenodo.org/records/14231098).
+on [Zenodo](https://zenodo.org/records/13732877).
 
 ``` r
 # Download the ChIP-seq file from Zenodo and unzip it to a local directory.
