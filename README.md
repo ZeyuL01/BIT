@@ -56,7 +56,6 @@ data repository:
 
 
 **Please note: BIT cannot run without the reference data, so please load the reference ChIP-seq database once BIT has been installed.**
-=======
 
 
 ## Installation
