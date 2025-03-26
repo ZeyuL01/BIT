@@ -8,27 +8,33 @@ BIT(
   file,
   output_path,
   show = TRUE,
-  plot_bar = TRUE,
+  plot_bar = FALSE,
   format = NULL,
   N = 5000,
   bin_width = 1000,
   burnin = NULL,
-  genome = c("hg38", "mm10")
+  genome = c("hg38", "mm10"),
+  seed = 42
 )
 }
 \arguments{
 \item{file}{file path to the user-input.}
 
-\item{output_path}{absoluate or relative directory to store the Gibbs sampler data}
+\item{output_path}{absoluate or relative directory to store the Gibbs sampler data.}
+
+\item{show}{Whether to show the results table, default: TRUE.}
+
+\item{plot_bar}{Whether to plot the top 10 TRs BIT score by a horizontal barplot, default: TRUE.}
 
 \item{format}{if specify as NULL, BIT will automatically read and judge the file type based on extension.}
 
 \item{N}{number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.}
 
-\item{bin_width}{desired width of bin, should be in 100/500/1000, default: 1000.}
+\item{bin_width}{desired width of bin, default: 1000.}
 
-\item{option}{option to filter peaks with candidate cis-regulatory elements from ENCODE,
-default use "ALL", can be "PLS" for all promoters, "ELS" for all enhancers.}
+\item{genome}{Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10".}
+
+\item{seed}{Set random seed for reproducibility.}
 }
 \description{
 Main interface to run BIT method, please set the input file path, input file format, number of iterations and bin width.

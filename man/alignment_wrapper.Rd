@@ -2,18 +2,20 @@
 % Please edit documentation in R/load.R
 \name{alignment_wrapper}
 \alias{alignment_wrapper}
-\title{Count the 'good' and 'total' informative cases between input peak set with reference database.}
+\title{Count the 'good' and 'informative' cases by comparing input with the reference database.}
 \usage{
 alignment_wrapper(input_vec, bin_width, genome = c("hg38", "mm10"))
 }
 \arguments{
-\item{input_vec}{A input vector contains index of peaks transformed by applying import_peaks.}
+\item{input_vec}{A input vector contains index of transformed regions by applying import_input_regions.}
 
-\item{bin_width}{width of bin, should be in 100/500/1000.}
+\item{bin_width}{width of bin.}
+
+\item{genome}{the genome of TR ChIP-seq data, either as "hg38" or "mm10".}
 }
 \value{
-a data frame has three columns, TR labels, number of 'good' windows, number of 'total' informative cases.
+a data frame has three columns, TR labels, number of 'good' cases, number of 'total' informative cases.
 }
 \description{
-Count the 'good' and 'total' informative cases between input peak set with reference database.
+Count the 'good' and 'informative' cases by comparing input with the reference database.
 }

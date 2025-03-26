@@ -9,7 +9,7 @@ load_chip_data(data_path, bin_width, genome = c("hg38", "mm10"))
 \arguments{
 \item{data_path}{path to the ChIP-seq data folder, can be absolute or relative path.}
 
-\item{bin_width}{width of bin, which should be in 100/500/1000 and map with your ChIP-seq data.}
+\item{bin_width}{width of bin, which should be in 100/200/500/1000 and map with your ChIP-seq data.}
 }
 \description{
 load the pre-compiled chip-seq data. Please follow the tutorial on: https://github.com/ZeyuL01/BIT.
