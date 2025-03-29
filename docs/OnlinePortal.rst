@@ -10,6 +10,8 @@ The homepage serves as the main interface of the BIT online portal, where you ca
 
 .. image:: ./images/Home1.png
 
-For example datasets,
-
 .. image:: ./images/Home2.png
+
+.. image:: ./images/Home3.png
+
+.. image:: ./images/Home4.png

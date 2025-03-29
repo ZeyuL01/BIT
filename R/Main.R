@@ -9,6 +9,7 @@
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, default: 1000.
+#' @param burnin number of iterations used for burnin.
 #' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10".
 #' @param seed Set random seed for reproducibility.
 #'
@@ -120,6 +121,7 @@ BIT <- function(file,
 #' @param format if specify as NULL, BIT will automatically read and judge the file type based on extension, default: NULL.
 #' @param N number of iterations for gibbs sampler, recommended for >= 5000, default: 5000.
 #' @param bin_width desired width of bin, default: 1000.
+#' @param burnin number of iterations used for burnin.
 #' @param genome Genome of the reference TR ChIP-seq data, must be "hg38" or "mm10"
 #' @param seed Set random seed for reproducibility.
 #'
