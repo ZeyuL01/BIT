@@ -151,7 +151,7 @@ BIT(input_path, output_path, N=5000, burnin=2500, genome="hg38")
 
 ## Additional examples
 
-[RUNX1 Knockout
+[Runx1 Knockout
 dataset](https://bitbayesian-identification-of-transcriptional-regulators.readthedocs.io/en/latest/Examples/Examples1.html).
 
 [scPerturbation
