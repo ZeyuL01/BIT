@@ -182,11 +182,7 @@ For HPC information, please refer to the SMU M3 manual: [SMU M3 Manual](https://
 
 If you use BIT in your work, please cite us!
 
-BIT: Bayesian Identification of Transcriptional Regulators from
-Epigenomics-Based Query Region Sets 
-
-Zeyu Lu, Lin Xu, Xinlei Wang bioRxiv
-2024.06.02.597061; doi: <https://doi.org/10.1101/2024.06.02.597061>
+Lu, Z., Xu, L. & Wang, X. BIT: Bayesian Identification of Transcriptional regulators from epigenomics-based query region sets. Nat Commun 16, 4966 (2025). https://doi.org/10.1038/s41467-025-60269-4
 
 [Dr. Xinlei (Sherry)
 Wang](https://www.uta.edu/academics/faculty/profile?username=wangx9)
