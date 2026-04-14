@@ -100,6 +100,20 @@ import_input_regions <- function(file, format = NULL, bin_width = 1000, genome=c
                      stop("Unsupported format")
   )
 
+  if (format == "csv") {
+    peak_dat$Chrom <- ifelse(
+      grepl("^chr", peak_dat$Chrom),
+      peak_dat$Chrom,
+      paste0("chr", peak_dat$Chrom)
+    )
+  } else {
+    GenomeInfoDb::seqlevels(peak_dat) <- ifelse(
+      grepl("^chr", GenomeInfoDb::seqlevels(peak_dat)),
+      GenomeInfoDb::seqlevels(peak_dat),
+      paste0("chr", GenomeInfoDb::seqlevels(peak_dat))
+    )
+  }
+  
   # Define fixed window numbers
   if (genome == "hg38") {
     N <- 3031030 * (1000 / bin_width)
